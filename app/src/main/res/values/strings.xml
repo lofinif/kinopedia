@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Kinopedia</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="title_search">Search</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="top_await">Ожидаемые новинки</string>
+    <string name="categories">Категории</string>
+    <string name="all">Все</string>
+    <string name="categories_movie">Фильмы</string>
+    <string name="categories_serial">Сериалы</string>
+    <string name="categories_anime">Аниме</string>
+    <string name="categories_cartoon">Мультики</string>
+    <string name="coming_soon">Скоро выйдет</string>
+    <string name="view_all">Больше</string>
+    <string name="trending">Популярно</string>
+    <string name="coming_this_month">В этом месяце</string>
+    <string name="nearest_cinema">Ближайший кинотеатр</string>
+    <string name="name_home">Привет!</string>
+</resources>

@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/gradient_home_background">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.kinopedia.ui.home.HomeViewModel"/>
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="55dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:background="@drawable/gradient_home_background">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/content_start"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="24dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/content_end"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="24dp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/avatar_home"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/test_poster" />
+
+            <TextView
+                android:id="@+id/name_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="84dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/name_home"
+                android:textAppearance="@style/name_home"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/categories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="101dp"
+                android:text="@string/categories"
+                android:textAppearance="@style/title_home"
+                app:layout_constraintStart_toStartOf="@id/content_start"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="none"
+                android:layout_marginTop="140dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <RelativeLayout
+                    android:id="@+id/categories_list"
+                    android:layout_width="332dp"
+                    android:layout_height="54dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp">
+
+                    <Button
+                        android:id="@+id/categories_all"
+                        style="@style/PrimaryColoredButton"
+                        android:layout_width="50dp"
+                        android:layout_height="54dp"
+                        android:layout_alignParentStart="true"
+                        android:text="@string/all" />
+
+                    <Button
+                        android:id="@+id/categories_movie"
+                        style="@style/PrimaryColoredButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="54dp"
+                        android:minWidth="90dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_toEndOf="@+id/categories_all"
+                        android:background="@drawable/button_border"
+                        android:text="@string/categories_movie"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/categories_serial"
+                        style="@style/PrimaryColoredButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="54dp"
+                        android:layout_marginStart="12dp"
+                        android:minWidth="90dp"
+                        android:layout_toEndOf="@+id/categories_movie"
+                        android:background="@drawable/button_border"
+                        android:text="@string/categories_serial"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/categories_anime"
+                        style="@style/PrimaryColoredButton"
+                        android:layout_width="77dp"
+                        android:layout_height="54dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_toEndOf="@+id/categories_serial"
+                        android:background="@drawable/button_border"
+                        android:text="@string/categories_anime"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <Button
+                        android:id="@+id/categories_cartoon"
+                        style="@style/PrimaryColoredButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="54dp"
+                        android:minWidth="100dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_toEndOf="@+id/categories_anime"
+                        android:background="@drawable/button_border"
+                        android:text="@string/categories_cartoon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </RelativeLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/coming_soon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="205dp"
+                android:text="@string/coming_soon"
+                android:textAppearance="@style/title_home"
+                app:layout_constraintStart_toStartOf="@id/content_start"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/view_all_coming_soon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/view_all"
+                android:textAppearance="@style/view_all"
+                app:layout_constraintBaseline_toBaselineOf="@id/coming_soon"
+                app:layout_constraintEnd_toEndOf="@id/content_end"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@+id/coming_soon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_coming_soon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:overScrollMode="ifContentScrolls"
+                android:paddingStart="24dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="24dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@id/content_end"
+                app:layout_constraintStart_toStartOf="@id/content_start"
+                app:layout_constraintTop_toBottomOf="@id/coming_soon"
+                app:listData="@{viewModel.imageComing}"
+                />
+
+            <Button
+                android:id="@+id/nearest_cinema_button"
+                style="@style/PrimaryColoredButton"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/nearest_cinema"
+                app:layout_constraintStart_toStartOf="@id/content_start"
+                app:layout_constraintTop_toBottomOf="@id/recyclerView_coming_soon" />
+
+
+            <TextView
+                android:id="@+id/trending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="@string/trending"
+                android:textAppearance="@style/title_home"
+                app:layout_constraintStart_toStartOf="@id/content_start"
+                app:layout_constraintTop_toBottomOf="@id/nearest_cinema_button" />
+
+            <TextView
+                android:id="@+id/view_all_trending"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/view_all"
+                android:textAppearance="@style/view_all"
+                app:layout_constraintBaseline_toBaselineOf="@id/trending"
+                app:layout_constraintEnd_toEndOf="@id/content_end"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@+id/trending"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_trending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:overScrollMode="ifContentScrolls"
+                android:paddingStart="24dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="24dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@id/content_end"
+                app:layout_constraintStart_toStartOf="@id/content_start"
+                app:layout_constraintTop_toBottomOf="@id/trending"
+                app:listData="@{viewModel.imageTrending}" />
+
+            <TextView
+                android:id="@+id/coming_this_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="@string/coming_this_month"
+                android:textAppearance="@style/title_home"
+                app:layout_constraintStart_toStartOf="@id/content_start"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerView_trending" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView_coming_this_mouth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:overScrollMode="ifContentScrolls"
+                android:paddingStart="24dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="24dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@id/content_end"
+                app:layout_constraintStart_toStartOf="@id/content_start"
+                app:layout_constraintTop_toBottomOf="@id/coming_this_month"
+                listDataThisMonth="@{viewModel.imageThisMonth}"
+                />
+
+            <TextView
+                android:id="@+id/view_all_coming_this_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/view_all"
+                android:textAppearance="@style/view_all"
+                app:layout_constraintBaseline_toBaselineOf="@id/coming_this_month"
+                app:layout_constraintEnd_toEndOf="@id/content_end"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@+id/coming_this_month"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>
