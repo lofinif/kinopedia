@@ -32,6 +32,12 @@ interface ApiService {
     suspend fun getPopularFilms(): TopFilms
 
     @Headers("X-API-KEY: 6246d18e-5a4f-48aa-821f-805472008972")
+    @GET("/api/v2.2/films/{id}")
+    suspend fun getFilmById(
+        @Path("id") id : Int
+    ): Film
+
+    @Headers("X-API-KEY: 6246d18e-5a4f-48aa-821f-805472008972")
     @GET("/api/v2.2/films/premieres")
     suspend fun getFilmsThisMonth(
         @Query("year") year: Int,

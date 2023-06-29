@@ -146,6 +146,23 @@
                 app:layout_constraintTop_toBottomOf="@id/details_movie"
                 tools:text="@tools:sample/lorem/random" />
 
+            <TextView
+                android:id="@+id/title_actors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Актеры"
+                android:textAppearance="@style/title_film_page"
+                app:layout_constraintTop_toBottomOf="@id/details_movie_more"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                app:layout_constraintTop_toBottomOf="@id/title_actors"
+                app:layout_constraintStart_toStartOf="parent"/>
+
 
 
 
