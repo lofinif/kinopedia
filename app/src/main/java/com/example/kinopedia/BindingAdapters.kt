@@ -6,6 +6,7 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.kinopedia.network.Film
+import com.example.kinopedia.network.KinopoiskFilm
 import com.example.kinopedia.network.ThisMonthFilm
 import com.example.kinopedia.ui.home.HomeAdapter
 import com.example.kinopedia.ui.home.HomeAdapterThisMonth

@@ -17,7 +17,9 @@ private const val BASE_URL = "https://kinopoiskapiunofficial.tech"
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory()).build()
 
-private val retrofit = Retrofit.Builder()
+val interceptor = HttpLoggingInterceptor()
+val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+private val retrofit = Retrofit.Builder().client(client)
     .addConverterFactory(MoshiConverterFactory.create(moshi))
     .baseUrl(BASE_URL).build()
 
@@ -35,7 +37,7 @@ interface ApiService {
     @GET("/api/v2.2/films/{id}")
     suspend fun getFilmById(
         @Path("id") id : Int
-    ): Film
+    ): KinopoiskFilm
 
     @Headers("X-API-KEY: 6246d18e-5a4f-48aa-821f-805472008972")
     @GET("/api/v2.2/films/premieres")

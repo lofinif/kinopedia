@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kinopedia.network.Film
 import com.example.kinopedia.network.FilmApi
+import com.example.kinopedia.network.KinopoiskFilm
 import com.example.kinopedia.network.ThisMonthFilm
+import com.example.kinopedia.network.interceptor
 import kotlinx.coroutines.launch
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.Locale
@@ -26,8 +28,10 @@ class HomeViewModel : ViewModel() {
 
     init {
         getAwaitFilms()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
         getPopularFilms()
         getFilmsThisMonth()
+
     }
     private fun getAwaitFilms() = viewModelScope.launch {
        val list = FilmApi.retrofitService.getAwaitFilms()

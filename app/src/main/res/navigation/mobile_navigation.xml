@@ -33,6 +33,10 @@
     <fragment
         android:id="@+id/filmPageFragment"
         android:name="com.example.kinopedia.ui.film.FilmPageFragment"
-        android:label="FilmPageFragment" />
+        android:label="FilmPageFragment" >
+        <argument
+            android:name="FilmId"
+            android:defaultValue="0" />
+    </fragment>
 
 </navigation>

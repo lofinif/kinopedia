@@ -1,8 +1,10 @@
 package com.example.kinopedia.ui.home
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -19,10 +21,13 @@ class HomeAdapter: ListAdapter<Film, HomeAdapter.HomeViewHolder>(Comparator()) {
     class HomeViewHolder(private var binding: HomeItemBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(film: Film){
             Picasso.get().load(film.posterUrl).into(binding.poster)
-            binding.nameMovie.text = film.nameRu
+            binding.nameMovie.text = film.displayName
             binding.genreMovie.text = film.genres[0].genre
+            val bundle = Bundle()
+
             binding.poster.setOnClickListener {
-            MAIN.navController.navigate(R.id.action_navigation_home_to_filmPageFragment)
+                bundle.putInt("kinopoiskId", film.filmId)
+                MAIN.navController.navigate(R.id.action_navigation_home_to_filmPageFragment, bundle)
             }
         }
     }

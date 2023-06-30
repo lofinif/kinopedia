@@ -25,6 +25,12 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="name_actor">
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">-0.03</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <style name="genre_movie">
         <item name="android:textSize">10sp</item>
         <item name="android:letterSpacing">-0.03</item>
@@ -51,7 +57,7 @@
     </style>
 
     <style name="details_film_page">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">-0.03</item>
         <item name="android:textColor">@color/grey</item>
     </style>

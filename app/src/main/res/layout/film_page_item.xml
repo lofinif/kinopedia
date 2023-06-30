@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="kinopoisk_film"
+            type="com.example.kinopedia.network.KinopoiskFilm" />
+    </data>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="175dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="#EAEAEA"
+            >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/avatar_actor"
+                android:layout_width="50dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                tools:src = "@tools:sample/avatars"/>
+
+            <TextView
+                android:id="@+id/name_actor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginStart="53dp"
+                android:textAppearance="@style/name_actor"
+                tools:text = "Keanu Reeves"
+                />
+        </androidx.cardview.widget.CardView>
+</layout>
