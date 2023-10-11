@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.kinopedia.ui.filter.FilterViewModel" />
+    </data>
+
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gentian_blue"
+    app:cardBackgroundColor="@color/gentian_blue"
+    android:orientation="vertical"
+    app:cardCornerRadius="20dp">
+
+    <ImageView
+        android:id="@+id/status_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        app:loadingStatusElement="@{viewModel.status}" />
+
+    <EditText
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/search_bar"
+        android:hint="@string/hint_search"
+        android:paddingLeft="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="62dp"
+        />
+
+    <Button
+        android:id="@+id/button_reset_countries"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/button_reset"
+        android:textColor="@color/white"
+        android:layout_gravity="end|bottom"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/reset" />
+
+</androidx.cardview.widget.CardView>
+</layout>

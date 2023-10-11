@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.kinopedia.ui.genre.GenreViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/content_start"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="70dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@id/cardView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/poster"
+                android:layout_width="115dp"
+                android:layout_height="140dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/test_poster" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/name_movie"
+            style="@style/name_movie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/content_start"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/cardView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Аватар" />
+
+        <TextView
+            android:id="@+id/name_movie_original"
+            style="@style/name_original_movie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@+id/content_start"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/cardView"
+            app:layout_constraintTop_toBottomOf="@+id/name_movie"
+            tools:text="Avatar" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="description_year, description_genre"/>
+
+
+        <TextView
+            android:id="@+id/description_year"
+            android:textAppearance="@style/description_movie_favourite_page"
+            android:background="@drawable/corner_view_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@id/barrier"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/cardView"
+            app:layout_constraintTop_toBottomOf="@+id/name_movie_original"
+            tools:text="2022" />
+
+
+        <TextView
+            android:id="@+id/description_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/corner_view_page"
+            android:textAppearance="@style/description_movie_favourite_page"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@id/barrier"
+            app:layout_constraintEnd_toStartOf="@+id/content_start"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/description_year"
+            app:layout_constraintTop_toBottomOf="@+id/name_movie_original"
+            app:layout_constraintVertical_bias="0"
+            tools:text="фантастикa" />
+
+        <TextView
+            android:id="@+id/description_country"
+            android:textAppearance="@style/description_movie_favourite_page"
+            android:background="@drawable/corner_view_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/content_start"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@id/description_year"
+            app:layout_constraintTop_toBottomOf="@+id/barrier"
+            tools:text="США" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_rating_kinopoisk"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="kinopoisk_logo"/>
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_rating_imdb"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="imdb_logo"/>
+
+
+
+
+        <TextView
+            android:id="@+id/rating_kinopoisk"
+            android:textAppearance="@style/description_movie_favourite_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:layout_marginStart="1dp"
+            app:layout_constraintVertical_bias="0.85"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@id/barrier_rating_kinopoisk"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.307"
+            app:layout_constraintStart_toEndOf="@id/kinopoisk_logo"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5.4" />
+
+        <TextView
+            android:id="@+id/rating_imdb"
+            android:textAppearance="@style/description_movie_favourite_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:layout_marginStart="1dp"
+            app:layout_constraintVertical_bias="0.66"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/barrier_rating_imdb"
+            app:layout_constraintHorizontal_bias="0.25"
+            app:layout_constraintStart_toEndOf="@id/imdb_logo"
+            app:layout_constraintTop_toBottomOf="@id/barrier_rating_kinopoisk"
+            tools:text="2.6" />
+
+        <ImageView
+            android:id="@+id/imdb_logo"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="25dp"
+            android:src="@drawable/ic_imdb_mono"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/content_start"
+            app:layout_constraintTop_toBottomOf="@id/kinopoisk_logo"
+            app:layout_constraintVertical_bias="0.077" />
+
+        <ImageView
+            android:id="@+id/kinopoisk_logo"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="25dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_kinopoisk_mono"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@+id/content_start"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.162" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

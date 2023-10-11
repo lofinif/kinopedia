@@ -3,40 +3,200 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@id/navigation_home_graph">
 
-    <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.kinopedia.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_navigation_home_to_filmPageFragment"
-            app:destination="@id/filmPageFragment" />
-    </fragment>
+    <navigation
+        android:id="@+id/navigation_home_graph"
+        app:startDestination="@id/navigation_home">
+        <fragment
+            android:id="@+id/filmPageFragment"
+            android:name="com.example.kinopedia.ui.film.FilmPageFragment"
+            android:label="FilmPageFragment">
+            <argument
+                android:name="FilmId"
+                android:defaultValue="-1"
+                app:argType="integer" />
+            <argument
+                android:name="personId"
+                android:defaultValue="-1"
+                app:argType="integer" />
+            <argument
+                android:name="premier"
+                android:defaultValue="unknown"
+                app:argType="string" />
 
-    <fragment
-        android:id="@+id/navigation_favorite"
-        android:name="com.example.kinopedia.ui.favourite.FavouriteFragment"
-        android:label="@string/title_favorite"
-        tools:layout="@layout/fragment_favourite" />
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.example.kinopedia.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/navigation_search"
-        android:name="com.example.kinopedia.ui.search.SearchFragment"
-        android:label="title_search"
-        tools:layout="@layout/fragment_search" />
-    <fragment
-        android:id="@+id/filmPageFragment"
-        android:name="com.example.kinopedia.ui.film.FilmPageFragment"
-        android:label="FilmPageFragment" >
-        <argument
-            android:name="FilmId"
-            android:defaultValue="0" />
-    </fragment>
+        </fragment>
+        <fragment
+            android:id="@+id/navigation_home"
+            android:name="com.example.kinopedia.ui.home.HomeFragment"
+            android:label="@string/title_home"
+            tools:layout="@layout/fragment_home">
+            <action
+                android:id="@+id/action_navigation_home_to_moreFragment"
+                app:destination="@id/moreFragment" />
+            <argument android:name="more_type" />
+            <action
+                android:id="@+id/action_navigation_home_to_filmPageFragment"
+                app:destination="@id/filmPageFragment"
+                />
 
+            <action
+                android:id="@+id/action_navigation_home_to_cinemaWelcomeFragment"
+                app:destination="@id/cinemaWelcomeFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/moreFragment"
+            android:name="com.example.kinopedia.ui.more.MoreFragment"
+            android:label="fragment_more"
+            tools:layout="@layout/fragment_more">
+            <action
+                android:id="@+id/action_moreFragment_to_filmPageFragment"
+                app:destination="@id/filmPageFragment"
+                />
+        </fragment>
+        <fragment
+            android:id="@+id/nearestCinemaFragment"
+            android:name="com.example.kinopedia.ui.cinema.NearestCinemaFragment"
+            android:label="fragment_nearest_cinema"
+            tools:layout="@layout/fragment_nearest_cinema" />
+        <fragment
+            android:id="@+id/cinemaWelcomeFragment"
+            android:name="com.example.kinopedia.ui.cinema.CinemaWelcomeFragment"
+            android:label="fragment_cinema_welcome"
+            tools:layout="@layout/fragment_cinema_welcome">
+
+            <action
+                android:id="@+id/action_cinemaWelcomeFragment_to_nearestCinemaFragment"
+                app:destination="@id/nearestCinemaFragment" />
+        </fragment>
+    </navigation>
+    <navigation
+        android:id="@+id/navigation_search_graph"
+        app:startDestination="@id/navigation_search">
+        <fragment
+            android:id="@+id/filmPageFragment"
+            android:name="com.example.kinopedia.ui.film.FilmPageFragment"
+            android:label="FilmPageFragment">
+            <argument
+                android:name="FilmId"
+                android:defaultValue="-1"
+                app:argType="integer" />
+            <argument
+                android:name="personId"
+                android:defaultValue="-1"
+                app:argType="integer" />
+        </fragment>
+        <fragment
+            android:id="@+id/navigation_search"
+            android:name="com.example.kinopedia.ui.search.SearchFragment"
+            android:label="Поиск"
+            tools:layout="@layout/fragment_search">
+
+            <argument
+                android:name="genre"
+                android:defaultValue=""
+                app:argType="string" />
+            <action
+                android:id="@+id/action_navigation_search_to_searchResultFragment"
+                app:destination="@id/searchResultFragment" />
+            <action
+                android:id="@+id/action_navigation_search_to_filterFragment"
+                app:destination="@id/filterFragment" />
+            <action
+                android:id="@+id/action_navigation_search_to_filmPageFragment"
+                app:destination="@id/filmPageFragment" />
+            <action
+                android:id="@+id/action_navigation_search_to_genreFragment"
+                app:destination="@id/genreFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/searchResultFragment"
+            android:name="com.example.kinopedia.ui.search.SearchResultFragment"
+            android:label="fragment_search_result"
+            tools:layout="@layout/fragment_search_result">
+            <action
+                android:id="@+id/action_searchResultFragment_to_filmPageFragment"
+                app:destination="@id/filmPageFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/filterFragment"
+            android:name="com.example.kinopedia.ui.filter.FilterFragment"
+            android:label="Поиск по фильтрам"
+            tools:layout="@layout/fragment_filter">
+            <action
+                android:id="@+id/action_filterFragment_to_filterResultFragment"
+                app:destination="@id/filterResultFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/filterResultFragment"
+            android:name="com.example.kinopedia.ui.filter.FilterResultFragment"
+            android:label="fragment_filter_result"
+            tools:layout="@layout/fragment_filter_result">
+
+            <action
+                android:id="@+id/action_filterResultFragment_to_filmPageFragment"
+                app:destination="@id/filmPageFragment"
+                />
+            <argument
+                android:name="countryId"
+                app:argType="integer"/>
+            <argument
+                android:name="sortType"
+                app:argType="string" />
+            <argument
+                android:name="minRating"
+                app:argType="integer" />
+            <argument
+                android:name="maxRating"
+                app:argType="integer"
+                />
+            <argument
+                android:name="selectedYearFrom"
+                app:argType="integer"/>
+            <argument
+                android:name="selectedYearTo"
+                app:argType="integer" />
+            <argument
+                android:name="genreId"
+                app:argType="integer"/>
+            <argument
+                android:name="type"
+                app:argType="string"/>
+        </fragment>
+        <fragment
+            android:id="@+id/genreFragment"
+            android:name="com.example.kinopedia.ui.genre.GenreFragment"
+            android:label="fragment_genre"
+            tools:layout="@layout/fragment_genre" >
+            <action
+                android:id="@+id/action_genreFragment_to_filmPageFragment"
+                app:destination="@id/filmPageFragment" />
+        </fragment>
+    </navigation>
+    <navigation android:id="@+id/navigation_favourite_graph"
+        app:startDestination="@id/navigation_favourite">
+        <fragment
+            android:id="@+id/filmPageFragment"
+            android:name="com.example.kinopedia.ui.film.FilmPageFragment"
+            android:label="FilmPageFragment">
+            <argument
+                android:name="FilmId"
+                android:defaultValue="-1"
+                app:argType="integer" />
+            <argument
+                android:name="personId"
+                android:defaultValue="-1"
+                app:argType="integer" />
+        </fragment>
+        <fragment
+            android:id="@+id/navigation_favourite"
+            android:name="com.example.kinopedia.ui.favourite.FavouriteFragment"
+            android:label="Избранное" >
+            <action
+                android:id="@+id/action_navigation_favorite_to_filmPageFragment"
+                app:destination="@id/filmPageFragment"
+
+                />
+        </fragment>
+    </navigation>
 </navigation>

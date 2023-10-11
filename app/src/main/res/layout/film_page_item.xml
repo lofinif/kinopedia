@@ -5,27 +5,29 @@
 
     <data>
         <variable
-            name="kinopoisk_film"
-            type="com.example.kinopedia.network.KinopoiskFilm" />
+            name="actor"
+            type="com.example.kinopedia.network.ActorFilmPage" />
     </data>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"
             android:layout_width="175dp"
             android:layout_height="48dp"
-            app:cardCornerRadius="30dp"
+            app:cardCornerRadius="15dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:background="#EAEAEA"
+            app:cardBackgroundColor="#D8454865"
+            app:cardElevation="0dp"
             >
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/avatar_actor"
                 android:layout_width="50dp"
-                android:layout_height="44dp"
+                android:layout_height="45dp"
                 android:layout_marginStart="2dp"
                 android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="4dp"
+                app:imageUrl="@{actor.posterUrl}"
                 tools:src = "@tools:sample/avatars"/>
 
             <TextView
@@ -34,8 +36,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
                 android:layout_marginStart="53dp"
+                android:layout_marginEnd="7dp"
                 android:textAppearance="@style/name_actor"
                 tools:text = "Keanu Reeves"
                 />
-        </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/role_actor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:layout_marginStart="53dp"
+                android:layout_marginEnd="7dp"
+                android:textAppearance="@style/role_actor"
+                tools:text = "Neo"
+                />
+        </com.google.android.material.card.MaterialCardView>
 </layout>
