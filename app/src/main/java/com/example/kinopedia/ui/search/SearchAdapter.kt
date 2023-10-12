@@ -6,24 +6,23 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.MAIN
-import com.example.kinopedia.R
+import com.example.kinopedia.NavigationActionListener
 import com.example.kinopedia.databinding.FilterTopItemBinding
 import com.example.kinopedia.network.Film
 import com.squareup.picasso.Picasso
 
-class SearchAdapter: ListAdapter<Film, SearchAdapter.SearchViewHolder>(Comparator()) {
+class SearchAdapter(private val navigation: NavigationActionListener): ListAdapter<Film, SearchAdapter.SearchViewHolder>(Comparator()) {
 
     class SearchViewHolder(private var binding: FilterTopItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val bundle = Bundle()
         private val dash = "\u2014"
-        fun bind(film: Film) {
+        fun bind(film: Film, navigation: NavigationActionListener) {
             Picasso.get().load(film.posterUrl).into(binding.poster)
             binding.nameMovie.text = film.displayName
             if(film.genres?.size == 0) binding.genreMovie.text = dash else binding.genreMovie.text = film.genres?.get(0)?.genre
             binding.poster.setOnClickListener {
                 bundle.putInt("filmId", film.filmId)
-                MAIN.navController.navigate(R.id.action_navigation_search_to_filmPageFragment, bundle)
+                navigation.navigateToFilmPage(bundle)
             }
         }
     }
@@ -42,7 +41,7 @@ class SearchAdapter: ListAdapter<Film, SearchAdapter.SearchViewHolder>(Comparato
     }
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), navigation)
     }
 
 }

@@ -27,18 +27,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.ItemOffsetDecoration
-import com.example.kinopedia.MAIN
+import com.example.kinopedia.NavigationActionListener
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentSearchBinding
 import com.example.kinopedia.ui.filter.FilterFragment
 import com.example.kinopedia.ui.genre.GenreFragment
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), NavigationActionListener {
 
     private val sharedViewModel: SearchViewModel by activityViewModels()
     private lateinit var binding: FragmentSearchBinding
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 30, 0, 0)
-    private val adapter = SearchAdapter()
+    private val adapter = SearchAdapter(this)
     private val bundleGenre = Bundle()
 
     override fun onCreateView(
@@ -94,12 +94,16 @@ class SearchFragment : Fragment() {
             }
 
             searchButton.setOnClickListener {
-                    MAIN.navController.navigate(R.id.action_navigation_search_to_searchResultFragment)
+                    findNavController().navigate(R.id.action_navigation_search_to_searchResultFragment)
 
             }
             buttonFilters.setOnClickListener {
-                MAIN.navController.navigate(R.id.action_navigation_search_to_filterFragment)
+                findNavController().navigate(R.id.action_navigation_search_to_filterFragment)
             }
         }
+    }
+
+    override fun navigateToFilmPage(bundle: Bundle) {
+        findNavController().navigate(R.id.action_navigation_search_to_filmPageFragment, bundle)
     }
 }

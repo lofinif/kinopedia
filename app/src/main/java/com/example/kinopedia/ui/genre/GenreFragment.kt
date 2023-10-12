@@ -10,18 +10,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.ItemOffsetDecoration
+import com.example.kinopedia.NavigationActionListener
+import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentGenreBinding
 
 
-class GenreFragment : Fragment() {
+class GenreFragment : Fragment(), NavigationActionListener {
 
     private val sharedViewModel: GenreViewModel by viewModels()
     private lateinit var binding: FragmentGenreBinding
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 0, 30, 0)
-    private val adapter = GenreAdapter()
+    private val adapter = GenreAdapter(this)
     private var isLoaded = false
     private var genre = arrayOf(0)
     private var page = 1
@@ -192,9 +195,8 @@ class GenreFragment : Fragment() {
             page
         )
         sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
-            sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
             binding.recyclerViewGenre.post{
-                adapter.notifyDataSetChanged()
+                sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
             }
         }
         Handler(Looper.getMainLooper()).postDelayed({
@@ -217,5 +219,9 @@ class GenreFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun navigateToFilmPage(bundle: Bundle) {
+        findNavController().navigate(R.id.action_genreFragment_to_filmPageFragment, bundle)
     }
 }

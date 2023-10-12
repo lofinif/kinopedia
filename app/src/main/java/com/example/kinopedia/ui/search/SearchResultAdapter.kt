@@ -1,25 +1,23 @@
 package com.example.kinopedia.ui.search
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.MAIN
-import com.example.kinopedia.R
+import com.example.kinopedia.NavigationActionListener
 import com.example.kinopedia.databinding.SearchItemBinding
 import com.example.kinopedia.network.KinopoiskFilm
 import com.squareup.picasso.Picasso
 
 
-class SearchResultAdapter: ListAdapter<KinopoiskFilm, SearchResultAdapter.SearchViewHolder>(Comparator()) {
+class SearchResultAdapter(private val navigation: NavigationActionListener): ListAdapter<KinopoiskFilm, SearchResultAdapter.SearchViewHolder>(Comparator()) {
     private val items = mutableListOf<KinopoiskFilm>()
-
-
     class SearchViewHolder(private var binding: SearchItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val bundle = Bundle()
-        fun bind(film: KinopoiskFilm) {
+        fun bind(film: KinopoiskFilm, navigation: NavigationActionListener) {
             val genre = if(film.genres.isEmpty() == true)  "-" else film.genres.get(0).genre
             val country = if(film.countries.isEmpty() == true)  "-" else film.countries.get(0).country
             Picasso.get().load(film.posterUrl).into(binding.poster)
@@ -32,7 +30,7 @@ class SearchResultAdapter: ListAdapter<KinopoiskFilm, SearchResultAdapter.Search
             binding.ratingImdb.text = film.displayRatingImdb
             binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.kinopoiskId)
-                MAIN.navController.navigate(R.id.action_searchResultFragment_to_filmPageFragment, bundle)
+                navigation.navigateToFilmPage(bundle)
             }
         }
     }
@@ -51,10 +49,12 @@ class SearchResultAdapter: ListAdapter<KinopoiskFilm, SearchResultAdapter.Search
     }
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position),navigation)
     }
+    @SuppressLint("NotifyDataSetChanged")
     fun addAll(newItems: List<KinopoiskFilm>) {
         items.addAll(newItems)
+        notifyDataSetChanged()
     }
 
 }

@@ -20,6 +20,7 @@ import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.kinopedia.data.FavouriteDatabase
 import com.example.kinopedia.databinding.ActivityMainBinding
 import com.example.kinopedia.ui.favourite.FavouriteFragment
 import com.example.kinopedia.ui.home.HomeFragment
@@ -32,10 +33,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
     lateinit var bottomNavigation: BottomNavigationView
+    lateinit var db: FavouriteDatabase
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MAIN = this
+        db = FavouriteDatabase.getDatabase(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

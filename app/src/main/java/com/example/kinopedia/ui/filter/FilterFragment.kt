@@ -27,7 +27,7 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import com.example.kinopedia.MAIN
+import androidx.navigation.fragment.findNavController
 import com.example.kinopedia.databinding.FragmentFilterBinding
 import java.text.DecimalFormat
 
@@ -90,7 +90,7 @@ class FilterFragment : Fragment() {
 
 
     private fun showYearPickerDialog() {
-        val dialogView: View = LayoutInflater.from(MAIN).inflate(R.layout.dialog_year_picker, null)
+        val dialogView: View = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_year_picker, null)
         val yearPickerFrom: com.shawnlin.numberpicker.NumberPicker = dialogView.findViewById(R.id.number_picker_from)
         val yearPickerTo: com.shawnlin.numberpicker.NumberPicker = dialogView.findViewById(R.id.number_picker_to)
         val title = TextView(context)
@@ -106,10 +106,10 @@ class FilterFragment : Fragment() {
 
         title.text = "Год"
         title.setPadding(60, 40, 10, 10)
-        title.setTextColor(ContextCompat.getColor(MAIN, R.color.grey))
+        title.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey))
         title.textSize = 16f
 
-        val builder = AlertDialog.Builder(MAIN, R.style.year_picker_style)
+        val builder = AlertDialog.Builder(requireContext(), R.style.year_picker_style)
             .setView(dialogView)
             .setCustomTitle(title)
             .setPositiveButton("Выбрать") { dialog, _ ->
@@ -210,7 +210,7 @@ class FilterFragment : Fragment() {
          }
     }
     private fun showPopupMenu() {
-        val wrapper: Context = ContextThemeWrapper(MAIN, R.style.style_popup_menu)
+        val wrapper: Context = ContextThemeWrapper(requireContext(), R.style.style_popup_menu)
         val popupMenu = PopupMenu(wrapper, binding.sortBy)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item: MenuItem ->
@@ -327,7 +327,7 @@ class FilterFragment : Fragment() {
                 selectedYearTo,
                 page
             )
-            MAIN.navController.navigate(R.id.action_filterFragment_to_filterResultFragment, bundle)
+            findNavController().navigate(R.id.action_filterFragment_to_filterResultFragment, bundle)
 
     }
 

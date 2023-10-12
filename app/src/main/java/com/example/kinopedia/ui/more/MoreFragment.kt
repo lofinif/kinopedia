@@ -9,16 +9,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.ItemOffsetDecoration
+import com.example.kinopedia.NavigationActionListener
+import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentMoreBinding
 
-class MoreFragment : Fragment() {
+class MoreFragment : Fragment(), NavigationActionListener {
     private val sharedViewModel: MoreViewModel by viewModels()
     private lateinit var binding: FragmentMoreBinding
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 0, 30, 0)
-    private val adapter = MoreAdapter()
+    private val adapter = MoreAdapter(this)
     private var isLoaded = false
     private var currentPage = 1
 
@@ -33,62 +36,73 @@ class MoreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind()
-
     }
 
     private fun comingSoon(){
         sharedViewModel.getAwaitFilms(currentPage)
         binding.recyclerViewMore.addOnScrollListener(listenerComingSoon)
-        sharedViewModel.coming.observe(viewLifecycleOwner){adapter.addAllTrendingAndAwait(it)}
+        sharedViewModel.coming.observe(viewLifecycleOwner){
+            binding.recyclerViewMore.post {
+                adapter.addAllTrendingAndAwait(it)
+            }
+        }
     }
 
     private fun thisMonth(){
         sharedViewModel.getFilmsThisMonth(currentPage)
         binding.recyclerViewMore.addOnScrollListener(listenerComingThisMonth)
-        sharedViewModel.thisMonth.observe(viewLifecycleOwner){ adapter.addAllComingThisMonth(it) }
+        sharedViewModel.thisMonth.observe(viewLifecycleOwner){
+            binding.recyclerViewMore.post {
+                adapter.addAllComingThisMonth(it)
+            }
+        }
 
     }
 
     private fun trending() {
         sharedViewModel.getPopularFilms(currentPage)
         binding.recyclerViewMore.addOnScrollListener(listenerTrending)
-        sharedViewModel.trending.observe(viewLifecycleOwner) { adapter.addAllTrendingAndAwait(it) }
+        sharedViewModel.trending.observe(viewLifecycleOwner) {
+            binding.recyclerViewMore.post {
+                adapter.addAllTrendingAndAwait(it)
+            }
+        }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun loadNextItemsTrending(page: Int) {
         sharedViewModel.loadNextTrending(page)
         sharedViewModel.trending.observe(viewLifecycleOwner) {
-            sharedViewModel.trending.value?.let {
-                        adapter.addAllTrendingAndAwait(it)}
-                binding.recyclerViewMore.post {
-                    adapter.notifyDataSetChanged()
+            binding.recyclerViewMore.post {
+                sharedViewModel.trending.value?.let {
+                    adapter.addAllTrendingAndAwait(it)
                 }
             }
+        }
             Handler(Looper.getMainLooper()).postDelayed({
                 isLoaded = false
             }, 1500)
         }
-    @SuppressLint("NotifyDataSetChanged")
     private fun loadNextItemsComingSoon(page: Int) {
         sharedViewModel.loadNextComingSoon(page)
         sharedViewModel.coming.observe(viewLifecycleOwner) {
-            sharedViewModel.coming.value?.let { adapter.addAllTrendingAndAwait(it) }
-            binding.recyclerViewMore.post{
-                adapter.notifyDataSetChanged()
+            sharedViewModel.coming.value?.let {
+                binding.recyclerViewMore.post {
+                    adapter.addAllTrendingAndAwait(it)
+                }
             }
+
         }
         Handler(Looper.getMainLooper()).postDelayed({
           isLoaded = false
         }, 500)
     }
-    @SuppressLint("NotifyDataSetChanged")
     private fun loadNextItemsComingThisMonth(page: Int) {
         sharedViewModel.loadNextComingThisMonth(page)
         sharedViewModel.thisMonth.observe(viewLifecycleOwner) {
-            sharedViewModel.thisMonth.value?.let { adapter.addAllComingThisMonth(it) }
-            binding.recyclerViewMore.post{
-                adapter.notifyDataSetChanged()
+            sharedViewModel.thisMonth.value?.let {
+                binding.recyclerViewMore.post {
+                    adapter.addAllComingThisMonth(it)
+                }
             }
         }
         Handler(Looper.getMainLooper()).postDelayed({
@@ -158,5 +172,11 @@ class MoreFragment : Fragment() {
             "Trending" -> trending()
             "Coming this month" -> thisMonth()
         }
+    }
+
+    override fun navigateToFilmPage(bundle: Bundle) {
+        findNavController().navigate(
+            R.id.action_moreFragment_to_filmPageFragment,
+            bundle)
     }
 }

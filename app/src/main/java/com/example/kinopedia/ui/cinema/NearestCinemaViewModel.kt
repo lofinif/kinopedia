@@ -12,6 +12,7 @@ import com.example.kinopedia.network.OSMApi
 import com.example.kinopedia.network.OverpassApi
 import com.example.kinopedia.network.interceptorOSM
 import com.example.kinopedia.network.interceptorOverpass
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.logging.HttpLoggingInterceptor
 import java.lang.Exception
@@ -21,44 +22,43 @@ class NearestCinemaViewModel : ViewModel() {
     private val _city = MutableLiveData<CityOSM>()
     val city: LiveData<CityOSM> = _city
 
-    private val _status = MutableLiveData<LoadingStatus>()
+    private val _status = MutableLiveData(LoadingStatus.DEFAULT)
     val status: LiveData<LoadingStatus> = _status
 
     private val _cinemas = MutableLiveData<Cinemas>()
     val cinemas: LiveData<Cinemas> = _cinemas
 
-    init {
-        _status.value = LoadingStatus.LOADING
-        interceptorOSM.level = HttpLoggingInterceptor.Level.BODY
-        interceptorOverpass.level = HttpLoggingInterceptor.Level.BODY
-    }
 
-    fun getCity(latitude: Double, longitude: Double) = viewModelScope.launch {
-        if (_city.value == null ) {
-            _status.value = LoadingStatus.LOADING
-            try {
-                val list = OSMApi.retrofitService.getCity(latitude, longitude)
-                _city.value = list
-                _status.value = LoadingStatus.DONE
-            } catch (E: Exception) {
-                _status.value = LoadingStatus.ERROR
-                Log.e("NearestCinemaViewModel", "getCity error")
+    fun getCity(latitude: Double, longitude: Double) {
+        if (_city.value == null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                _status.postValue(LoadingStatus.LOADING)
+                try {
+                    val list = OSMApi.retrofitService.getCity(latitude, longitude)
+                    _city.postValue(list)
+                    _status.postValue(LoadingStatus.DONE)
+                } catch (E: Exception) {
+                    _status.postValue(LoadingStatus.ERROR)
+                    Log.e("NearestCinemaViewModel", "getCity error")
+                }
             }
         }
     }
 
-    fun getCinemas(data: String) = viewModelScope.launch {
+    fun getCinemas(data: String) {
         if (_cinemas.value == null) {
-            _status.value = LoadingStatus.LOADING
-            try {
-                viewModelScope.launch {
-                    val list = OverpassApi.retrofitService.getCinemas(data)
-                    _cinemas.value = list
-                    _status.value = LoadingStatus.DONE
+            viewModelScope.launch(Dispatchers.IO) {
+                _status.postValue(LoadingStatus.LOADING)
+                try {
+                    viewModelScope.launch {
+                        val list = OverpassApi.retrofitService.getCinemas(data)
+                        _cinemas.postValue(list)
+                        _status.postValue(LoadingStatus.DONE)
+                    }
+                } catch (E: Exception) {
+                    _status.postValue(LoadingStatus.ERROR)
+                    Log.e("NearestCinemaViewModel", "getCinemas error")
                 }
-            } catch (E: Exception) {
-                _status.value = LoadingStatus.ERROR
-                Log.e("NearestCinemaViewModel", "getCinemas error")
             }
         }
     }

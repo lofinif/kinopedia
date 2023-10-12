@@ -8,18 +8,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.kinopedia.ItemOffsetDecoration
+import com.example.kinopedia.NavigationActionListener
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), NavigationActionListener {
 
     private val sharedViewModel: HomeViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
-    private val homeViewPagerAdapter = HomeViewPagerAdapter()
+    private val homeViewPagerAdapter = HomeViewPagerAdapter(this)
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 60, 0, 0)
     private val itemOffsetDecorationViewPager = ItemOffsetDecoration(30, 30, 0, 0)
-    private val homeAdapterTrending = HomeAdapter()
-    private val homeAdapterComingSoon = HomeAdapter()
+    private val homeAdapterTrending = HomeAdapter(this)
+    private val homeAdapterComingSoon = HomeAdapter(this)
     private val bundle =  Bundle()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,5 +72,9 @@ class HomeFragment : Fragment() {
                 homeViewPagerAdapter.addAllComingThisMonth(it)
             }
         }
+    }
+
+    override fun navigateToFilmPage(bundle: Bundle) {
+        findNavController().navigate(R.id.action_navigation_home_to_filmPageFragment, bundle)
     }
 }

@@ -1,25 +1,25 @@
 package com.example.kinopedia.ui.genre
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.MAIN
-import com.example.kinopedia.R
+import com.example.kinopedia.NavigationActionListener
 import com.example.kinopedia.databinding.SearchItemBinding
 import com.example.kinopedia.network.KinopoiskFilm
 import com.squareup.picasso.Picasso
 
-class GenreAdapter: ListAdapter<KinopoiskFilm, GenreAdapter.GenreViewHolder>(Comparator()) {
+class GenreAdapter(private val navigation: NavigationActionListener): ListAdapter<KinopoiskFilm, GenreAdapter.GenreViewHolder>(Comparator()) {
     private val items = mutableListOf<KinopoiskFilm>()
 
 
     class GenreViewHolder(private var binding: SearchItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val bundle = Bundle()
         private val dash = "\u2014"
-        fun bind(film: KinopoiskFilm) {
+        fun bind(film: KinopoiskFilm, navigation: NavigationActionListener) {
             val genre = if(film.genres.isEmpty())  dash else film.genres[0].genre
             val country = if(film.countries.isEmpty())  dash else film.countries[0].country
             binding.nameMovie.text = film.displayName
@@ -32,7 +32,7 @@ class GenreAdapter: ListAdapter<KinopoiskFilm, GenreAdapter.GenreViewHolder>(Com
             Picasso.get().load(film.posterUrl).into(binding.poster)
             binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.kinopoiskId)
-                MAIN.navController.navigate(R.id.action_genreFragment_to_filmPageFragment, bundle)
+                navigation.navigateToFilmPage(bundle)
             }
         }
     }
@@ -51,11 +51,13 @@ class GenreAdapter: ListAdapter<KinopoiskFilm, GenreAdapter.GenreViewHolder>(Com
     }
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), navigation)
 
     }
+    @SuppressLint("NotifyDataSetChanged")
     fun addAll(newItems: List<KinopoiskFilm>) {
         items.addAll(newItems)
+        notifyDataSetChanged()
     }
 
 }

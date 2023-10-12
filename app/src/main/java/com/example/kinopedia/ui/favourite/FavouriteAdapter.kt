@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.MAIN
-import com.example.kinopedia.R
 import com.example.kinopedia.data.FavouriteEntity
 import com.example.kinopedia.databinding.FavouriteFilmsItemBinding
 import com.squareup.picasso.Picasso
@@ -31,8 +29,7 @@ class FavouriteAdapter(private val fragment: FavouriteFragment): ListAdapter <Fa
                 bundle.putInt("filmId", film.filmId)
 
             binding.constraintLayout.setOnClickListener {
-                MAIN.navController.navigate(
-                    R.id.action_navigation_favorite_to_filmPageFragment, bundle)
+                fragment.navigateToFilmPage(bundle)
 
             }
             binding.constraintLayout.setOnTouchListener(

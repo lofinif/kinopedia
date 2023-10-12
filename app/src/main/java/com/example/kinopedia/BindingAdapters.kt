@@ -1,6 +1,5 @@
 package com.example.kinopedia
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.net.toUri
@@ -13,7 +12,6 @@ import com.example.kinopedia.network.ExternalSource
 import com.example.kinopedia.network.Film
 import com.example.kinopedia.network.KinopoiskFilm
 import com.example.kinopedia.network.LoadingStatus
-import com.example.kinopedia.network.ThisMonthFilm
 import com.example.kinopedia.ui.favourite.FavouriteAdapter
 import com.example.kinopedia.ui.film.FilmPageAdapter
 import com.example.kinopedia.ui.film.FilmPageExternalAdapter
@@ -21,8 +19,6 @@ import com.example.kinopedia.ui.film.FilmPageSimilarAdapter
 import com.example.kinopedia.ui.filter.FilterResultAdapter
 import com.example.kinopedia.ui.genre.GenreAdapter
 import com.example.kinopedia.ui.home.HomeAdapter
-import com.example.kinopedia.ui.home.HomeAdapterThisMonth
-import com.example.kinopedia.ui.more.MoreAdapter
 import com.example.kinopedia.ui.search.SearchAdapter
 import com.example.kinopedia.ui.search.SearchResultAdapter
 
@@ -32,11 +28,6 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<Film>?) {
     adapterRecommend.submitList(data)
 }
 
-@BindingAdapter("listDataThisMonth")
-fun bindRecyclerViewThisMonth(recyclerView: RecyclerView, data: List<ThisMonthFilm>?) {
-    val adapter = recyclerView.adapter as HomeAdapterThisMonth
-    adapter.submitList(data)
-}
 @BindingAdapter("listFavouriteFilms")
 fun bindRecyclerViewFavouriteFilms(recyclerView: RecyclerView, data: List<FavouriteEntity>?) {
     val adapter = recyclerView.adapter as FavouriteAdapter
@@ -104,6 +95,10 @@ fun bindStatus(statusImageView: ImageView, status: LoadingStatus) {
         LoadingStatus.DONE -> {
             statusImageView.visibility = View.GONE
         }
+        LoadingStatus.DEFAULT -> {
+            statusImageView.visibility = View.VISIBLE
+            statusImageView.setImageResource(R.drawable.loading_deafault)
+        }
     }
 }
     @BindingAdapter("loadingStatusElement")
@@ -120,6 +115,10 @@ fun bindStatusElement(statusImageView: ImageView, status: LoadingStatus) {
                 statusImageView.setImageResource(R.drawable.ic_connection_error)
             }
             LoadingStatus.DONE -> {
+                statusImageView.visibility = View.GONE
+            }
+
+            LoadingStatus.DEFAULT -> {
                 statusImageView.visibility = View.GONE
             }
         }

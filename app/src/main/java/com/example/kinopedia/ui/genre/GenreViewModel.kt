@@ -9,6 +9,7 @@ import com.example.kinopedia.network.FilmApi
 import com.example.kinopedia.network.KinopoiskFilm
 import com.example.kinopedia.network.LoadingStatus
 import com.example.kinopedia.network.interceptor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.logging.HttpLoggingInterceptor
 
@@ -18,47 +19,40 @@ class GenreViewModel: ViewModel() {
     private val liveDataFilmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
     val dataFilmsByFilter: LiveData<List<KinopoiskFilm>> = liveDataFilmsByFilter
 
-    private val _status = MutableLiveData<LoadingStatus>()
+    private val _status = MutableLiveData(LoadingStatus.DEFAULT)
     val status: LiveData<LoadingStatus> = _status
-
-    private val _genre = MutableLiveData<String>()
-    val genre: LiveData<String> = _genre.map { String.format("%1s", it) }
-
-    init {
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-    }
-
 
     fun getFilmsByFiler(
         countries: Array<Int>?, genres: Array<Int>, order: String, type: String,
         keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
         yearTo: Int, page: Int
-    ) = viewModelScope.launch {
+    ) {
         if (liveDataFilmsByFilter.value.isNullOrEmpty()) {
-            _status.value = LoadingStatus.LOADING
-            try {
-                val list = FilmApi.retrofitService.getFilmByFilters(
-                    countries, genres, order, type, keyword,
-                    ratingFrom, ratingTo, yearFrom, yearTo, page
-                )
-
-                pageCount = list.totalPages
-                liveDataFilmsByFilter.value = list.items
-                _status.value = LoadingStatus.DONE
-            } catch (e: Exception) {
-                _status.value = LoadingStatus.ERROR
+        viewModelScope.launch(Dispatchers.IO) {
+                _status.postValue(LoadingStatus.LOADING)
+                try {
+                    val list = FilmApi.retrofitService.getFilmByFilters(
+                        countries, genres, order, type, keyword,
+                        ratingFrom, ratingTo, yearFrom, yearTo, page
+                    )
+                    pageCount = list.totalPages
+                    liveDataFilmsByFilter.postValue(list.items)
+                    _status.postValue(LoadingStatus.DONE)
+                } catch (e: Exception) {
+                    _status.postValue(LoadingStatus.ERROR)
+                }
             }
         }
     }
     fun loadNextItems( countries: Array<Int>?, genres: Array<Int>, order: String, type: String,
                        keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
-                       yearTo: Int, page: Int) = viewModelScope.launch {
+                       yearTo: Int, page: Int) = viewModelScope.launch(Dispatchers.IO) {
         val list = FilmApi.retrofitService.getFilmByFilters(
             countries, genres, order, type, keyword,
             ratingFrom, ratingTo, yearFrom, yearTo, page
         )
         val currentList = liveDataFilmsByFilter.value?.toMutableList() ?: mutableListOf()
         currentList.addAll(list.items)
-        liveDataFilmsByFilter.value = currentList.distinctBy{it.kinopoiskId}
+        liveDataFilmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
     }
 }

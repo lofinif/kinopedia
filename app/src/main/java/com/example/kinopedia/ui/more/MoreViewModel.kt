@@ -12,6 +12,7 @@ import com.example.kinopedia.network.FilmApi
 import com.example.kinopedia.network.LoadingStatus
 import com.example.kinopedia.network.ThisMonthFilm
 import com.example.kinopedia.network.interceptor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.Locale
@@ -28,7 +29,7 @@ class MoreViewModel : ViewModel() {
     private val _coming = MutableLiveData<List<Film>>()
     val coming: LiveData<List<Film>> = _coming
 
-    private val _status = MutableLiveData<LoadingStatus>()
+    private val _status = MutableLiveData(LoadingStatus.DEFAULT)
     val status: LiveData<LoadingStatus> = _status
 
     private val _trending = MutableLiveData<List<Film>>()
@@ -37,67 +38,67 @@ class MoreViewModel : ViewModel() {
     private val _thisMonth = MutableLiveData<List<ThisMonthFilm>>()
     val thisMonth: LiveData<List<ThisMonthFilm>> = _thisMonth
 
-
-
-    init {
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-    }
-
-    fun getAwaitFilms(page: Int) = viewModelScope.launch {
+    fun getAwaitFilms(page: Int) {
         titleFragment = "Скоро выйдет"
-        _status.value = LoadingStatus.LOADING
-        try {
-            val list = FilmApi.retrofitService.getAwaitFilms(page)
-            _coming.value = list.films
-            pageCountTrendingAndAwait = list.pagesCount
-            _status.value = LoadingStatus.DONE
-        } catch (e: Exception) {
-            _status.value = LoadingStatus.ERROR
+        viewModelScope.launch(Dispatchers.IO) {
+            _status.postValue(LoadingStatus.LOADING)
+            try {
+                val list = FilmApi.retrofitService.getAwaitFilms(page)
+                _coming.postValue( list.films)
+                pageCountTrendingAndAwait = list.pagesCount
+                _status.postValue(LoadingStatus.DONE)
+            } catch (e: Exception) {
+                _status.postValue(LoadingStatus.ERROR)
+            }
         }
     }
 
-    fun getPopularFilms(page: Int) = viewModelScope.launch {
+    fun getPopularFilms(page: Int) {
         titleFragment = "Популярно"
-        _status.value = LoadingStatus.LOADING
-        try {
-            val list = FilmApi.retrofitService.getPopularFilms(page)
-            _trending.value = list.films
-            pageCountTrendingAndAwait = list.pagesCount
-            _status.value = LoadingStatus.DONE
-        } catch (e: Exception) {
-            _status.value = LoadingStatus.ERROR
+        viewModelScope.launch(Dispatchers.IO) {
+            _status.postValue(LoadingStatus.LOADING)
+            try {
+                val list = FilmApi.retrofitService.getPopularFilms(page)
+                _trending.postValue(list.films)
+                pageCountTrendingAndAwait = list.pagesCount
+                _status.postValue(LoadingStatus.DONE)
+            } catch (e: Exception) {
+                _status.postValue(LoadingStatus.ERROR)
+            }
         }
     }
 
-    fun getFilmsThisMonth(page: Int) = viewModelScope.launch {
+    fun getFilmsThisMonth(page: Int) {
         titleFragment = "Премьеры"
-        _status.value = LoadingStatus.LOADING
-        try {
-            val list = FilmApi.retrofitService.getFilmsThisMonth(year, month, page)
-            _thisMonth.value = list.items
-            Log.i("thisMonth", thisMonth.value.toString())
-            _status.value = LoadingStatus.DONE
-        } catch (e: Exception) {
-            _status.value = LoadingStatus.ERROR
+        viewModelScope.launch(Dispatchers.IO) {
+            _status.postValue(LoadingStatus.LOADING)
+            try {
+                val list = FilmApi.retrofitService.getFilmsThisMonth(year, month, page)
+                _thisMonth.postValue(list.items)
+                Log.i("thisMonth", thisMonth.value.toString())
+                _status.postValue(LoadingStatus.DONE)
+            } catch (e: Exception) {
+                _status.postValue(LoadingStatus.ERROR)
+            }
         }
     }
 
-    fun loadNextTrending(page: Int) = viewModelScope.launch {
+    fun loadNextTrending(page: Int) = viewModelScope.launch(Dispatchers.IO) {
         val list = FilmApi.retrofitService.getPopularFilms(page)
         val currentList = _trending.value?.toMutableList() ?: mutableListOf()
         currentList.addAll(list.films)
-        _trending.value = currentList.distinctBy{it.filmId}
+        _trending.postValue(currentList.distinctBy{it.filmId})
     }
 
-    fun loadNextComingSoon(page:Int) = viewModelScope.launch {
+    fun loadNextComingSoon(page:Int) = viewModelScope.launch(Dispatchers.IO) {
         val list = FilmApi.retrofitService.getFilmsThisMonth(year, month, page)
         val currentList = _coming.value?.toMutableList()?.distinctBy { it.filmId } ?: mutableListOf()
-        _coming.value = currentList.distinctBy{it.filmId}
+        _coming.postValue(currentList.distinctBy{it.filmId})
 
     }
-    fun loadNextComingThisMonth(page:Int) = viewModelScope.launch {
+    fun loadNextComingThisMonth(page:Int) = viewModelScope.launch(Dispatchers.IO) {
         val list = FilmApi.retrofitService.getFilmsThisMonth(year, month, page)
         val currentList = _thisMonth.value?.toMutableList()?.distinctBy { it.kinopoiskId } ?: mutableListOf()
-        _thisMonth.value = currentList.distinctBy{it.kinopoiskId}
+        _thisMonth.postValue(currentList.distinctBy{it.kinopoiskId})
     }
 }

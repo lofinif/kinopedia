@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
@@ -21,7 +20,6 @@ import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import com.example.kinopedia.FavouriteApplication
 import com.example.kinopedia.ItemOffsetDecoration
-import com.example.kinopedia.MAIN
 import com.example.kinopedia.R
 import com.example.kinopedia.data.FavouriteDao
 import com.example.kinopedia.data.FavouriteDatabase
@@ -69,7 +67,6 @@ class FilmPageFragment : Fragment() {
         if (sharedViewModel.data.value?.kinopoiskId == null) {
             getFilm(filmId)
         }
-
         bind()
         hidePremier()
         showPremierButton()
@@ -101,8 +98,11 @@ class FilmPageFragment : Fragment() {
             }
             sharedViewModel.apply {
                 data.observe(viewLifecycleOwner) {
+                    val formattedString = getString(R.string.text_view_details_film, "${data.value?.displayYear}",
+                        "${data.value?.displayGenres}", "${data.value?.displayFilmLength}", "${data.value?.displayCountry}")
                     ratingImdb.text = data.value?.displayRatingImdb
                     ratingKinopoisk.text = data.value?.displayRatingKinopoisk
+                    yearMovie.text = formattedString
                     Picasso.get().load(getDataKinopoiskFilm().posterUrl).into(poster)
                     Picasso.get()
                         .load(getDataKinopoiskFilm().posterUrl)
@@ -113,7 +113,7 @@ class FilmPageFragment : Fragment() {
                             descriptionMovieMore.maxLines = Integer.MAX_VALUE
                             TransitionManager.beginDelayedTransition(
                                 descriptionMovieMore.parent as ViewGroup,
-                                TransitionInflater.from(MAIN).inflateTransition(R.transition.expand_animation)
+                                TransitionInflater.from(requireContext()).inflateTransition(R.transition.expand_animation)
                             )
                         } else descriptionMovieMore.maxLines = 4
                     }

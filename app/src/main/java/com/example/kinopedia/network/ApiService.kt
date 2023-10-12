@@ -11,7 +11,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-enum class LoadingStatus { LOADING, ERROR, DONE }
+enum class LoadingStatus { LOADING, ERROR, DONE, DEFAULT }
 
 
 private const val BASE_URL = "https://kinopoiskapiunofficial.tech"

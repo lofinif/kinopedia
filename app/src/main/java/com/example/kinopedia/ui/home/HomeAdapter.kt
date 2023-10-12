@@ -6,15 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.MAIN
-import com.example.kinopedia.R
+import com.example.kinopedia.NavigationActionListener
 import com.example.kinopedia.databinding.FilmItemBinding
 import com.example.kinopedia.network.Film
 import com.squareup.picasso.Picasso
 
-class HomeAdapter: ListAdapter<Film, HomeAdapter.HomeViewHolder>(Comparator()) {
+class HomeAdapter(private val navigation: NavigationActionListener): ListAdapter<Film, HomeAdapter.HomeViewHolder>(Comparator()) {
     class HomeViewHolder(private var binding: FilmItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(film: Film){
+        fun bind(film: Film, navigation: NavigationActionListener){
             Picasso.get().load(film.posterUrl).into(binding.poster)
             binding.nameMovie.text = film.displayName
             if(film.genres?.size != 0) binding.genreMovie.text = film.genres?.get(0)?.genre
@@ -23,7 +22,7 @@ class HomeAdapter: ListAdapter<Film, HomeAdapter.HomeViewHolder>(Comparator()) {
             binding.poster.setOnClickListener {
                 bundle.putInt("filmId", film.filmId)
                 bundle.putInt("personId", film.filmId)
-                 MAIN.navController.navigate(R.id.action_navigation_home_to_filmPageFragment, bundle)
+                navigation.navigateToFilmPage(bundle)
             }
         }
     }
@@ -42,7 +41,7 @@ class HomeAdapter: ListAdapter<Film, HomeAdapter.HomeViewHolder>(Comparator()) {
     }
 
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), navigation)
     }
 
 }

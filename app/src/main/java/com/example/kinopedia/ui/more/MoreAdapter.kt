@@ -1,5 +1,6 @@
 package com.example.kinopedia.ui.more
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,14 +9,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.ITEM_TYPE_THIS_MONTH
 import com.example.kinopedia.ITEM_TYPE_TOP
-import com.example.kinopedia.MAIN
-import com.example.kinopedia.R
+import com.example.kinopedia.NavigationActionListener
 import com.example.kinopedia.databinding.SearchItemBinding
 import com.example.kinopedia.network.Film
 import com.example.kinopedia.network.ThisMonthFilm
 import com.squareup.picasso.Picasso
 
-class MoreAdapter : ListAdapter<Film, RecyclerView.ViewHolder>(Comparator()) {
+class MoreAdapter(private val navigation: NavigationActionListener) : ListAdapter<Film, RecyclerView.ViewHolder>(Comparator()) {
 
     private val items = mutableListOf<Film>()
     private val itemsThisMonth = mutableListOf<ThisMonthFilm>()
@@ -23,7 +23,7 @@ class MoreAdapter : ListAdapter<Film, RecyclerView.ViewHolder>(Comparator()) {
     class MoreViewHolderTrendingAndAwait(private var binding: SearchItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val bundle = Bundle()
         private val dash = "\u2014"
-        fun bind(film: Film) {
+        fun bind(film: Film, navigation: NavigationActionListener) {
             val genre = if(film.genres?.isEmpty() == true)  dash else film.genres?.get(0)?.genre
             val country = if(film.countries?.isEmpty() == true)  dash else film.countries?.get(0)?.country
             Picasso.get().load(film.posterUrl).into(binding.poster)
@@ -36,15 +36,13 @@ class MoreAdapter : ListAdapter<Film, RecyclerView.ViewHolder>(Comparator()) {
             binding.descriptionCountry.text = country
             binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.filmId)
-                    MAIN.navController.navigate(
-                        R.id.action_moreFragment_to_filmPageFragment,
-                        bundle)
+                    navigation.navigateToFilmPage(bundle)
             }
         }
     }
     class MoreViewHolderComingThisMonth(private var binding: SearchItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val bundle = Bundle()
-        fun bind(film: ThisMonthFilm) {
+        fun bind(film: ThisMonthFilm, navigation: NavigationActionListener) {
             val genre = if(film.genres?.isEmpty() == true)  film.dash else film.genres?.get(0)?.genre
             val country = if(film.countries?.isEmpty() == true)  film.dash else film.countries?.get(0)?.country
             Picasso.get().load(film.posterUrl).into(binding.poster)
@@ -55,12 +53,10 @@ class MoreAdapter : ListAdapter<Film, RecyclerView.ViewHolder>(Comparator()) {
             binding.descriptionYear.text = film.displayYear
             binding.descriptionGenre.text = genre
             binding.descriptionCountry.text = country
-            binding.poster.setOnClickListener {
+            binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.kinopoiskId)
                 bundle.putString("premier", film.premiereRu)
-                    MAIN.navController.navigate(
-                        R.id.action_moreFragment_to_filmPageFragment,
-                        bundle)
+                    navigation.navigateToFilmPage(bundle)
             }
         }
     }
@@ -97,19 +93,23 @@ class MoreAdapter : ListAdapter<Film, RecyclerView.ViewHolder>(Comparator()) {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder.itemViewType == ITEM_TYPE_THIS_MONTH && position < itemsThisMonth.size) {
             val viewHolder = holder as MoreViewHolderComingThisMonth
-            viewHolder.bind(itemsThisMonth[position])
+            viewHolder.bind(itemsThisMonth[position], navigation)
         } else if (holder.itemViewType == ITEM_TYPE_TOP && position < items.size) {
             val viewHolder = holder as MoreViewHolderTrendingAndAwait
-            viewHolder.bind(items[position])
+            viewHolder.bind(items[position], navigation)
 
         }
     }
+    @SuppressLint("NotifyDataSetChanged")
     fun addAllTrendingAndAwait(newItems: List<Film>) {
         items.clear()
         items.addAll(newItems)
+        notifyDataSetChanged()
         }
+    @SuppressLint("NotifyDataSetChanged")
     fun addAllComingThisMonth(newItems: List<ThisMonthFilm>) {
         itemsThisMonth.clear()
         itemsThisMonth.addAll(newItems)
+        notifyDataSetChanged()
     }
 }

@@ -17,7 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.kinopedia.MAIN
+import com.example.kinopedia.MainActivity
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentNearestCinemaBinding
 import com.example.kinopedia.network.CinemaOSM
@@ -37,6 +37,7 @@ class NearestCinemaFragment : Fragment() {
     private val sharedViewModel: NearestCinemaViewModel by activityViewModels()
     private var latitude = 0.0
     private var longitude = 0.0
+    lateinit var mainActivity : MainActivity
     private var filteredElements = emptyList<CinemaOSM>()
 
     override fun onCreateView(
@@ -44,7 +45,8 @@ class NearestCinemaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentNearestCinemaBinding.inflate(inflater)
-        MAIN.bottomNavigation.isVisible = false
+        mainActivity = activity as MainActivity
+        mainActivity.bottomNavigation.isVisible = false
         mapView = binding.mapview
         rotationGestureOverlay = RotationGestureOverlay(mapView)
         bind()
@@ -180,6 +182,6 @@ class NearestCinemaFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        MAIN.bottomNavigation.isVisible = true
+        mainActivity.bottomNavigation.isVisible = true
     }
 }

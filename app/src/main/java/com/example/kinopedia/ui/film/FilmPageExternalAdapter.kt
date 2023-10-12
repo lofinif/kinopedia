@@ -3,13 +3,11 @@ package com.example.kinopedia.ui.film
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.MAIN
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.ExternalSourceItemBinding
 import com.example.kinopedia.network.ExternalSource
@@ -33,7 +31,7 @@ class FilmPageExternalAdapter(val context: Context) :
             } else {
                 GlideToVectorYou
                     .init()
-                    .with(MAIN)
+                    .with(context)
                     .load(Uri.parse(externalSource.logoUrl), binding.logo)
             }
         }

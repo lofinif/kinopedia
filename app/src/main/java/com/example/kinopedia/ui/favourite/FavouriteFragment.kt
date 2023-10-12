@@ -8,21 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.FavouriteApplication
 import com.example.kinopedia.ItemOffsetDecoration
-import com.example.kinopedia.MAIN
-import com.example.kinopedia.data.FavouriteDatabase
+import com.example.kinopedia.MainActivity
+import com.example.kinopedia.NavigationActionListener
+import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentFavouriteBinding
 import kotlinx.coroutines.launch
 
-class FavouriteFragment : Fragment() {
-    val db = FavouriteDatabase.getDatabase(MAIN)
+class FavouriteFragment : Fragment(), NavigationActionListener {
     var filmId = -1
     var adapterPosition = -1
     private lateinit var  itemTouchHelper : ItemTouchHelper
-
+    lateinit var mainActivity : MainActivity
     private val sharedViewModel: FavouriteViewModel by activityViewModels{
         FavouriteViewModel.FavouriteFactory((requireContext().applicationContext
                 as FavouriteApplication).database.favouriteDao())
@@ -35,6 +36,7 @@ class FavouriteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        mainActivity = activity as MainActivity
         binding = FragmentFavouriteBinding.inflate(inflater)
         return binding.root
     }
@@ -71,10 +73,14 @@ class FavouriteFragment : Fragment() {
                 sharedViewModel.updateData()
                 adapter.notifyDataSetChanged()
                 lifecycleScope.launch {
-                    db.favouriteDao().deleteById(filmId)
+                    mainActivity.db.favouriteDao().deleteById(filmId)
                 }
 
             }
         }
+    }
+
+    override fun navigateToFilmPage(bundle: Bundle) {
+        findNavController().navigate(R.id.action_navigation_favorite_to_filmPageFragment, bundle)
     }
 }

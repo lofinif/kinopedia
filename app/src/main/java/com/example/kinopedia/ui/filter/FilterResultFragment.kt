@@ -9,16 +9,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.ItemOffsetDecoration
-import com.example.kinopedia.MAIN
+import com.example.kinopedia.NavigationActionListener
+import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentFilterResultBinding
 
-class FilterResultFragment : Fragment() {
+class FilterResultFragment : Fragment(), NavigationActionListener {
     private lateinit var binding: FragmentFilterResultBinding
     private val sharedViewModel: FilterViewModel by activityViewModels()
-    private val adapter = FilterResultAdapter()
+    private val adapter = FilterResultAdapter(this)
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 0, 30, 0)
     private var isLoaded = false
     private var page = 1
@@ -34,7 +36,7 @@ class FilterResultFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFilterResultBinding.inflate(inflater)
 
         return binding.root
@@ -47,7 +49,6 @@ class FilterResultFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun bind(){
-        MAIN.supportActionBar?.title = "Результаты поиска"
         binding.apply {
             viewModel = sharedViewModel
             lifecycleOwner = viewLifecycleOwner
@@ -61,7 +62,6 @@ class FilterResultFragment : Fragment() {
             }
         }
         getArgs()
-
     }
 
     private fun getArgs(){
@@ -117,6 +117,12 @@ class FilterResultFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun navigateToFilmPage(bundle: Bundle) {
+        findNavController().navigate(
+            R.id.action_filterResultFragment_to_filmPageFragment,
+            bundle)
     }
 }
 

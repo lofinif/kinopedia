@@ -15,30 +15,31 @@ import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kinopedia.NavigationActionListener
+import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentSearchResultBinding
 
 
-class SearchResultFragment : Fragment() {
+class SearchResultFragment : Fragment(), NavigationActionListener {
 
     private val sharedViewModel: SearchViewModel by viewModels()
     private lateinit var binding: FragmentSearchResultBinding
-    private var adapter = SearchResultAdapter()
+    private var adapter = SearchResultAdapter(this)
     private var page = 1
     private var keyWord = ""
     private var isLoaded = false
-    private var fragmentCreated = false
 
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         (activity as AppCompatActivity).supportActionBar
         binding = FragmentSearchResultBinding.inflate(inflater, container, false)
-        Log.e("1", sharedViewModel.dataFilmsByFilter.value.toString())
         if (sharedViewModel.dataFilmsByFilter.value.isNullOrEmpty()){
             val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
                     as InputMethodManager
@@ -72,7 +73,7 @@ class SearchResultFragment : Fragment() {
     fun bind() {
       val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
             as InputMethodManager
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = sharedViewModel
         binding.recyclerViewSearch.addOnScrollListener(listener)
         binding.backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
@@ -99,9 +100,7 @@ class SearchResultFragment : Fragment() {
         }
         binding.searchButton.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.e("query", query.toString())
                 if (query != null) {
-                    Log.e("searchRes", "onQueryTextSubmit")
                     keyWord = query
                     sharedViewModel.getFilmsByKeyWord(
                         null,
@@ -125,22 +124,19 @@ class SearchResultFragment : Fragment() {
             }
         })
 
-        binding.searchButton.setOnQueryTextFocusChangeListener(object : View.OnFocusChangeListener {
-            override fun onFocusChange(view: View?, hasFocus: Boolean) {
-                if (hasFocus) {
-                    val imm =requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                    imm?.showSoftInput(view, 0)
-                }
+        binding.searchButton.setOnQueryTextFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                val imm =
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                imm?.showSoftInput(view, 0)
             }
-        })
+        }
         sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
             adapter.submitList(it)
 
         }
     }
-    @SuppressLint("NotifyDataSetChanged")
     private fun loadNextItems(page: Int) {
-        Log.e("searchRes", "loadNext")
         sharedViewModel.loadNextItems(
             null,
             null,
@@ -154,9 +150,8 @@ class SearchResultFragment : Fragment() {
             page
         )
         sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
-            sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
-            binding.recyclerViewSearch.post{
-                adapter.notifyDataSetChanged()
+            binding.recyclerViewSearch.post {
+                sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
             }
         }
         Handler(Looper.getMainLooper()).postDelayed({
@@ -172,14 +167,17 @@ class SearchResultFragment : Fragment() {
             val totalItemCount = layoutManager.itemCount
             val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
             if (!isLoaded) {
-                Log.e("listner", "page: $page, pageCount: ${sharedViewModel.pageCount}")
                 if (lastVisibleItemPosition == totalItemCount - 5 && page < sharedViewModel.pageCount) {
-                    Log.e("listner", "listener2")
                     isLoaded = true
                     page++
                     loadNextItems(page)
+                    Log.e("12", "12")
                 }
             }
         }
+    }
+
+    override fun navigateToFilmPage(bundle: Bundle) {
+        findNavController().navigate(R.id.action_searchResultFragment_to_filmPageFragment, bundle)
     }
 }
