@@ -3,15 +3,12 @@ package com.example.kinopedia.ui.genre
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.kinopedia.network.FilmApi
 import com.example.kinopedia.network.KinopoiskFilm
 import com.example.kinopedia.network.LoadingStatus
-import com.example.kinopedia.network.interceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.logging.HttpLoggingInterceptor
 
 class GenreViewModel: ViewModel() {
     var pageCount = 1

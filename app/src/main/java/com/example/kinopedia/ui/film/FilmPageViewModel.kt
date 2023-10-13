@@ -1,12 +1,9 @@
 package com.example.kinopedia.ui.film
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.kinopedia.data.FavouriteEntity
 import com.example.kinopedia.data.FavouriteRepository
@@ -16,12 +13,8 @@ import com.example.kinopedia.network.Film
 import com.example.kinopedia.network.FilmApi
 import com.example.kinopedia.network.KinopoiskFilm
 import com.example.kinopedia.network.LoadingStatus
-import com.example.kinopedia.network.interceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.logging.HttpLoggingInterceptor
-import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy
 
 class FilmPageViewModel(private val repository: FavouriteRepository) : ViewModel() {
 
@@ -43,6 +36,7 @@ class FilmPageViewModel(private val repository: FavouriteRepository) : ViewModel
 
     private val liveDataExternalSources = MutableLiveData<List<ExternalSource>>()
     val dataExternalSources: LiveData<List<ExternalSource>> = liveDataExternalSources
+
 
     fun getDataKinopoiskFilm(): KinopoiskFilm {
         return liveDataFilm.value ?: KinopoiskFilm(0, null, null,

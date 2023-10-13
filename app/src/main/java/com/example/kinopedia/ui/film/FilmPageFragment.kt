@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -131,7 +130,6 @@ class FilmPageFragment : Fragment() {
                 titleStuff.isGone = true
                 titleActors.isGone = true
                 dataStaff.observe(viewLifecycleOwner) {
-                    Log.e("dataStaff", dataStaff.value.toString())
                     if (!dataStaff.value.isNullOrEmpty()) {
                         titleStuff.isGone = false
                         titleActors.isGone = false

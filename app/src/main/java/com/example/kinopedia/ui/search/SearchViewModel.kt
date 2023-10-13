@@ -3,18 +3,13 @@ package com.example.kinopedia.ui.search
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.example.kinopedia.network.Film
 import com.example.kinopedia.network.FilmApi
 import com.example.kinopedia.network.KinopoiskFilm
 import com.example.kinopedia.network.LoadingStatus
-import com.example.kinopedia.network.Persons
-import com.example.kinopedia.network.interceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.logging.HttpLoggingInterceptor
-import java.util.logging.Level
 
 class SearchViewModel: ViewModel() {
     var pageCount = 1
@@ -31,9 +26,6 @@ class SearchViewModel: ViewModel() {
     private val liveDataTopFilms = MutableLiveData<List<Film>>()
     val dataTopFilms: LiveData<List<Film>> = liveDataTopFilms
 
-    init {
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-    }
     fun getFilmsByKeyWord(countries: Array<Int>?, genres: Array<Int>?, order: String, type: String,
                           keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
                           yearTo: Int, page: Int) =
