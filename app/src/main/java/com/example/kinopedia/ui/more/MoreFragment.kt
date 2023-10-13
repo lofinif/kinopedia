@@ -1,6 +1,5 @@
 package com.example.kinopedia.ui.more
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -56,7 +55,6 @@ class MoreFragment : Fragment(), NavigationActionListener {
                 adapter.addAllComingThisMonth(it)
             }
         }
-
     }
 
     private fun trending() {
@@ -90,7 +88,6 @@ class MoreFragment : Fragment(), NavigationActionListener {
                     adapter.addAllTrendingAndAwait(it)
                 }
             }
-
         }
         Handler(Looper.getMainLooper()).postDelayed({
           isLoaded = false
