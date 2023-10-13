@@ -57,6 +57,7 @@
     <string name="title_fragment_filter_result">Результаты поиска</string>
     <string name="to_favourite">В избранное</string>
     <string name="premiere_took_place">Премьера состоялась %1s</string>
+    <string name="search_movies">Поиск фильмов</string>
 
 
 </resources>
