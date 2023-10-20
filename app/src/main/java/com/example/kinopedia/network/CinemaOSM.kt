@@ -1,7 +1,5 @@
 package com.example.kinopedia.network
 
-import com.yandex.mapkit.geometry.Geometry
-
 data class CinemaOSM(
     val id: Long?,
     val lat: Double?,
