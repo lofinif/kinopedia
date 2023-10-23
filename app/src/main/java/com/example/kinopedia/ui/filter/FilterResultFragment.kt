@@ -119,7 +119,7 @@ class FilterResultFragment : Fragment(), NavigationActionListener {
         }
     }
 
-    override fun navigateToFilmPage(bundle: Bundle) {
+    override fun navigate(bundle: Bundle) {
         findNavController().navigate(
             R.id.action_filterResultFragment_to_filmPageFragment,
             bundle)

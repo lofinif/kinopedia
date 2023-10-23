@@ -31,7 +31,7 @@ class FilterResultAdapter(private val navigation: NavigationActionListener): Lis
             binding.nameMovieOriginal.text = film.displayOriginalName
             binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.kinopoiskId)
-                navigation.navigateToFilmPage(bundle)
+                navigation.navigate(bundle)
             }
         }
     }

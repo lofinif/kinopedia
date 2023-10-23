@@ -22,7 +22,7 @@ class SearchAdapter(private val navigation: NavigationActionListener): ListAdapt
             if(film.genres?.size == 0) binding.genreMovie.text = dash else binding.genreMovie.text = film.genres?.get(0)?.genre
             binding.poster.setOnClickListener {
                 bundle.putInt("filmId", film.filmId)
-                navigation.navigateToFilmPage(bundle)
+                navigation.navigate(bundle)
             }
         }
     }

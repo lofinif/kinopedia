@@ -103,7 +103,7 @@ class SearchFragment : Fragment(), NavigationActionListener {
         }
     }
 
-    override fun navigateToFilmPage(bundle: Bundle) {
+    override fun navigate(bundle: Bundle) {
         findNavController().navigate(R.id.action_navigation_search_to_filmPageFragment, bundle)
     }
 }

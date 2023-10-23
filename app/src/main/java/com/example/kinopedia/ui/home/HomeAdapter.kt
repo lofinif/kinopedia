@@ -22,7 +22,7 @@ class HomeAdapter(private val navigation: NavigationActionListener): ListAdapter
             binding.poster.setOnClickListener {
                 bundle.putInt("filmId", film.filmId)
                 bundle.putInt("personId", film.filmId)
-                navigation.navigateToFilmPage(bundle)
+                navigation.navigate(bundle)
             }
         }
     }

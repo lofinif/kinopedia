@@ -36,7 +36,7 @@ class MoreAdapter(private val navigation: NavigationActionListener) : ListAdapte
             binding.descriptionCountry.text = country
             binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.filmId)
-                    navigation.navigateToFilmPage(bundle)
+                    navigation.navigate(bundle)
             }
         }
     }
@@ -56,7 +56,7 @@ class MoreAdapter(private val navigation: NavigationActionListener) : ListAdapte
             binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.kinopoiskId)
                 bundle.putString("premier", film.premiereRu)
-                    navigation.navigateToFilmPage(bundle)
+                    navigation.navigate(bundle)
             }
         }
     }

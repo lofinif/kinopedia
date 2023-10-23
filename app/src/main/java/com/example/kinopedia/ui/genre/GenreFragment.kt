@@ -221,7 +221,7 @@ class GenreFragment : Fragment(), NavigationActionListener {
         }
     }
 
-    override fun navigateToFilmPage(bundle: Bundle) {
+    override fun navigate(bundle: Bundle) {
         findNavController().navigate(R.id.action_genreFragment_to_filmPageFragment, bundle)
     }
 }

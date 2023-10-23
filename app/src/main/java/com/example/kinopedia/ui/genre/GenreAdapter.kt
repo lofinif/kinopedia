@@ -32,7 +32,7 @@ class GenreAdapter(private val navigation: NavigationActionListener): ListAdapte
             Picasso.get().load(film.posterUrl).into(binding.poster)
             binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.kinopoiskId)
-                navigation.navigateToFilmPage(bundle)
+                navigation.navigate(bundle)
             }
         }
     }

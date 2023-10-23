@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.NavigationActionListener
-import com.example.kinopedia.R
 import com.example.kinopedia.databinding.HomeViewPagerItemBinding
 import com.example.kinopedia.network.ThisMonthFilm
 import com.squareup.picasso.Picasso
@@ -24,7 +23,7 @@ class HomeViewPagerAdapter(private val navigation: NavigationActionListener) : R
             binding.poster.setOnClickListener {
                 bundle.putInt("filmId", film.kinopoiskId)
                 bundle.putString("premier", film.premiereRu)
-                navigation.navigateToFilmPage(bundle)
+                navigation.navigate(bundle)
             }
         }
     }

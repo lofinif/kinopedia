@@ -30,7 +30,7 @@ class SearchResultAdapter(private val navigation: NavigationActionListener): Lis
             binding.ratingImdb.text = film.displayRatingImdb
             binding.constraintLayout.setOnClickListener {
                 bundle.putInt("filmId", film.kinopoiskId)
-                navigation.navigateToFilmPage(bundle)
+                navigation.navigate(bundle)
             }
         }
     }

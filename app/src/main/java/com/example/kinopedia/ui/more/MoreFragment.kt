@@ -171,7 +171,7 @@ class MoreFragment : Fragment(), NavigationActionListener {
         }
     }
 
-    override fun navigateToFilmPage(bundle: Bundle) {
+    override fun navigate(bundle: Bundle) {
         findNavController().navigate(
             R.id.action_moreFragment_to_filmPageFragment,
             bundle)
