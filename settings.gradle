@@ -6,6 +6,19 @@ pluginManagement {
         jcenter()
         maven { url 'https://jitpack.io' }
     }
+    plugins{
+        id 'androidx.navigation'
+    }
+    resolutionStrategy {
+
+        eachPlugin {
+
+            if (requested.id.id == 'androidx.navigation') {
+                useModule("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.4")
+            }
+        }
+    }
+
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -15,6 +28,7 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
+
 
 rootProject.name = "Kinopedia"
 include ':app'
