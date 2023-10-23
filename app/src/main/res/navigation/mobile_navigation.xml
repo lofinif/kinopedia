@@ -24,6 +24,9 @@
                 android:name="premier"
                 android:defaultValue="unknown"
                 app:argType="string" />
+            <action
+                android:id="@+id/action_filmPageFragment_self"
+                app:destination="@id/filmPageFragment" />
 
         </fragment>
         <fragment
@@ -85,6 +88,9 @@
                 android:name="personId"
                 android:defaultValue="-1"
                 app:argType="integer" />
+            <action
+                android:id="@+id/action_filmPageFragment_self"
+                app:destination="@id/filmPageFragment" />
         </fragment>
         <fragment
             android:id="@+id/navigation_search"
@@ -187,6 +193,9 @@
                 android:name="personId"
                 android:defaultValue="-1"
                 app:argType="integer" />
+            <action
+                android:id="@+id/action_filmPageFragment_self"
+                app:destination="@id/filmPageFragment" />
         </fragment>
         <fragment
             android:id="@+id/navigation_favourite"
