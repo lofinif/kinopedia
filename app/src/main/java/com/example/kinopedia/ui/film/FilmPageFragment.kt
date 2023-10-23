@@ -29,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -142,7 +143,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack{
             }
             buttonFavourite.setOnClickListener {
                 CoroutineScope(Dispatchers.IO).launch {
-                    if (favouriteDao.checkId(sharedViewModel.data.value!!.kinopoiskId) > 0) {
+                    if (favouriteDao.checkId(sharedViewModel.data.value!!.kinopoiskId).first() > 0) {
                         deleteFavourite(sharedViewModel.data.value!!.kinopoiskId)
                         buttonUnpressed()
                     } else {
@@ -174,7 +175,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack{
 
     private fun buttonCheck(){
         CoroutineScope(Dispatchers.IO).launch {
-            if (favouriteDao.checkId(sharedViewModel.data.value!!.kinopoiskId) > 0) {
+            if (favouriteDao.checkId(sharedViewModel.data.value!!.kinopoiskId).first() > 0) {
                 buttonPressed()
             } else  {
                 buttonUnpressed()
@@ -208,7 +209,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack{
         }
     }
 
-    fun updateFilm(kinopoiskId: Int) {
+    private fun updateFilm(kinopoiskId: Int) {
         val bundle = Bundle()
         bundle.putInt("filmId", kinopoiskId)
         findNavController().navigate(R.id.action_filmPageFragment_self, bundle)
@@ -256,7 +257,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack{
     }
 
     private fun deleteFavourite(filmId: Int) {
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             favouriteDao.deleteById(filmId)
         }
     }

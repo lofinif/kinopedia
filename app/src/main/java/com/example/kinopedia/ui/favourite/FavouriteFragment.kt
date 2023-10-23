@@ -17,14 +17,19 @@ import com.example.kinopedia.ItemOffsetDecoration
 import com.example.kinopedia.MainActivity
 import com.example.kinopedia.NavigationActionListener
 import com.example.kinopedia.R
+import com.example.kinopedia.data.FavouriteDatabase
 import com.example.kinopedia.databinding.FragmentFavouriteBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
+import javax.inject.Inject
+@AndroidEntryPoint
 class FavouriteFragment : Fragment(), NavigationActionListener, FavouriteAdapterCallback {
     var filmId = -1
     private var adapterPosition = -1
     private lateinit var  itemTouchHelper : ItemTouchHelper
-    lateinit var mainActivity : MainActivity
+    @Inject
+    lateinit var db : FavouriteDatabase
     private val sharedViewModel: FavouriteViewModel by activityViewModels()
     private val adapter = FavouriteAdapter(this, this)
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 0, 15, 15)
@@ -34,7 +39,6 @@ class FavouriteFragment : Fragment(), NavigationActionListener, FavouriteAdapter
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mainActivity = activity as MainActivity
         binding = FragmentFavouriteBinding.inflate(inflater)
         return binding.root
     }
@@ -70,8 +74,8 @@ class FavouriteFragment : Fragment(), NavigationActionListener, FavouriteAdapter
                 sharedViewModel.updatedList?.removeAt(position)
                 sharedViewModel.updateData()
                 adapter.notifyDataSetChanged()
-                lifecycleScope.launch {
-                    mainActivity.db.favouriteDao().deleteById(filmId)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    db.favouriteDao().deleteById(filmId)
                 }
 
             }

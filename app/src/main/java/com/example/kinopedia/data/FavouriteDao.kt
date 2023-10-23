@@ -17,20 +17,20 @@ interface FavouriteDao {
     fun getFavourite(id: Long): Flow<FavouriteEntity>
 
     @Query("SELECT COUNT(*) FROM favourite_database WHERE filmId = :id")
-    fun checkId(id: Int): Int
+    fun checkId(id: Int): Flow<Int>
 
     @Query("SELECT * FROM favourite_database ORDER BY dateAdded DESC")
     fun getLatestItem(): Flow<List<FavouriteEntity>>
 
     @Query("DELETE FROM favourite_database WHERE filmId = :id")
-    suspend fun deleteById(id: Int)
+    fun deleteById(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(favourite: FavouriteEntity)
+    fun insert(favourite: FavouriteEntity)
 
     @Update
-    suspend fun update(favourite: FavouriteEntity)
+    fun update(favourite: FavouriteEntity)
 
     @Delete
-    suspend fun delete(favourite: FavouriteEntity)
+    fun delete(favourite: FavouriteEntity)
 }
