@@ -13,11 +13,14 @@ import com.example.kinopedia.network.Film
 import com.example.kinopedia.network.FilmApi
 import com.example.kinopedia.network.KinopoiskFilm
 import com.example.kinopedia.network.LoadingStatus
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FilmPageViewModel(private val repository: FavouriteRepository) : ViewModel() {
-
+@HiltViewModel
+class FilmPageViewModel @Inject constructor(
+    private val repository: FavouriteRepository) : ViewModel() {
 
     private val liveDataFilm = MutableLiveData<KinopoiskFilm>()
     val data: LiveData<KinopoiskFilm> = liveDataFilm
@@ -43,7 +46,7 @@ class FilmPageViewModel(private val repository: FavouriteRepository) : ViewModel
             null, null, null, "", 0,"", "", emptyList(), emptyList(), 0.0, 0.0)
     }
 
-     suspend fun getFilmById(kinopoiskId: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun getFilmById(kinopoiskId: Int) = viewModelScope.launch(Dispatchers.IO) {
              _status.postValue(LoadingStatus.LOADING)
              try {
                  val list = FilmApi.retrofitService.getFilmById(kinopoiskId)
@@ -124,6 +127,7 @@ class FilmPageViewModel(private val repository: FavouriteRepository) : ViewModel
         }
      }
 
+/*
     class FilmPageFactory(private val repository: FavouriteRepository): ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(FilmPageViewModel::class.java)) {
@@ -133,6 +137,7 @@ class FilmPageViewModel(private val repository: FavouriteRepository) : ViewModel
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
+*/
 
 
 }
