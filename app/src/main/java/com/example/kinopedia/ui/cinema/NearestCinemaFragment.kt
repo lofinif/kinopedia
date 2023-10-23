@@ -37,7 +37,6 @@ class NearestCinemaFragment : Fragment() {
     private val sharedViewModel: NearestCinemaViewModel by activityViewModels()
     private var latitude = 0.0
     private var longitude = 0.0
-    lateinit var mainActivity : MainActivity
     private var filteredElements = emptyList<CinemaOSM>()
 
     override fun onCreateView(
@@ -45,8 +44,7 @@ class NearestCinemaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentNearestCinemaBinding.inflate(inflater)
-        mainActivity = activity as MainActivity
-        mainActivity.bottomNavigation.isVisible = false
+        (activity as MainActivity).bottomNavigation.isVisible = false
         mapView = binding.mapview
         rotationGestureOverlay = RotationGestureOverlay(mapView)
         bind()
@@ -182,6 +180,6 @@ class NearestCinemaFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mainActivity.bottomNavigation.isVisible = true
+        (activity as MainActivity).bottomNavigation.isVisible = true
     }
 }
