@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,15 +16,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
-import com.example.kinopedia.FavouriteApplication
 import com.example.kinopedia.ItemOffsetDecoration
 import com.example.kinopedia.R
+import com.example.kinopedia.UpdateFilmCallBack
 import com.example.kinopedia.data.FavouriteDao
-import com.example.kinopedia.data.FavouriteDatabase
 import com.example.kinopedia.databinding.FragmentFilmPageBinding
 import com.squareup.picasso.Picasso
+import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.picasso.transformations.BlurTransformation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,19 +34,18 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
-
-class FilmPageFragment : Fragment() {
-    private val sharedViewModel: FilmPageViewModel by viewModels() {
-        FilmPageViewModel.FilmPageFactory((requireActivity().application
-                as FavouriteApplication).repository)
-    }
+@AndroidEntryPoint
+class FilmPageFragment : Fragment(), UpdateFilmCallBack{
+    private val sharedViewModel: FilmPageViewModel by viewModels()
     private lateinit var binding: FragmentFilmPageBinding
     private val adapter = FilmPageSimilarAdapter(this)
     private val currentDate =
         LocalDateTime.now().format(DateTimeFormatter
             .ofPattern("d MMMM yyyy", Locale("ru", "ru")))
-    private lateinit var favouriteDao: FavouriteDao
+    @Inject
+    lateinit var favouriteDao: FavouriteDao
     private var filmId = 0
     private val itemOffsetDecoration = ItemOffsetDecoration(30, 0, 30, 0)
     private val handler = android.os.Handler(Looper.getMainLooper())
@@ -61,10 +62,10 @@ class FilmPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        favouriteDao = FavouriteDatabase.getDatabase(requireContext()).favouriteDao()
         filmId = arguments?.getInt("filmId")!!
         if (sharedViewModel.data.value?.kinopoiskId == null) {
             getFilm(filmId)
+            Log.e("Get", filmId.toString())
         }
         bind()
         hidePremier()
@@ -83,7 +84,7 @@ class FilmPageFragment : Fragment() {
             recyclerViewSimilar.adapter = adapter
             recyclerViewActors.adapter = FilmPageAdapter()
             recyclerViewStaff.adapter = FilmPageAdapter()
-            recyclerViewExternalSources.adapter = FilmPageExternalAdapter(requireContext())
+            recyclerViewExternalSources.adapter = FilmPageExternalAdapter()
             recyclerViewSimilar.addItemDecoration(itemOffsetDecoration)
             recyclerViewActors.addItemDecoration(itemOffsetDecoration)
             recyclerViewStaff.addItemDecoration(itemOffsetDecoration)
@@ -208,16 +209,10 @@ class FilmPageFragment : Fragment() {
     }
 
     fun updateFilm(kinopoiskId: Int) {
-        getFilm(kinopoiskId)
-        binding.scroll.scrollTo(0, 0)
-        filmId = kinopoiskId
-        CoroutineScope(Dispatchers.IO).launch {
-            if (favouriteDao.checkId(kinopoiskId) > 0){
-                buttonPressed()
-            } else  {
-                buttonUnpressed()
-            }
-        }
+        val bundle = Bundle()
+        bundle.putInt("filmId", kinopoiskId)
+        findNavController().navigate(R.id.action_filmPageFragment_self, bundle)
+        Log.e("kim", kinopoiskId.toString())
     }
 
 
@@ -266,6 +261,9 @@ class FilmPageFragment : Fragment() {
         }
     }
 
+    override fun update(filmId: Int) {
+        updateFilm(filmId)
+    }
 }
 
 private fun compareDates(dateString1: String, dateString2: String): Int {

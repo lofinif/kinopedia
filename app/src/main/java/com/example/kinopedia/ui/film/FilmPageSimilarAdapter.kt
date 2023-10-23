@@ -6,19 +6,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kinopedia.UpdateFilmCallBack
 import com.example.kinopedia.databinding.FilmItemBinding
 import com.example.kinopedia.network.Film
 import com.squareup.picasso.Picasso
 
-class FilmPageSimilarAdapter(private val filmPageFragment: FilmPageFragment): ListAdapter<Film, FilmPageSimilarAdapter.FilmViewHolder>(Comparator()) {
+class FilmPageSimilarAdapter(private val updateFilmCallBack: UpdateFilmCallBack): ListAdapter<Film, FilmPageSimilarAdapter.FilmViewHolder>(Comparator()) {
 
-    class FilmViewHolder(private var binding: FilmItemBinding, private val filmPageFragment: FilmPageFragment ): RecyclerView.ViewHolder(binding.root) {
+    class FilmViewHolder(private var binding: FilmItemBinding, private val updateFilmCallBack: UpdateFilmCallBack): RecyclerView.ViewHolder(binding.root) {
         fun bind(film: Film) {
             Picasso.get().load(film.posterUrl).into(binding.poster)
             binding.nameMovie.text = film.displayName
             binding.poster.setOnClickListener {
-                val id = film.filmId
-                filmPageFragment.updateFilm(id)
+                updateFilmCallBack.update(film.filmId)
             }
         }
     }
@@ -32,7 +32,7 @@ class FilmPageSimilarAdapter(private val filmPageFragment: FilmPageFragment): Li
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
-        return FilmViewHolder(FilmItemBinding.inflate(LayoutInflater.from(parent.context)), filmPageFragment)
+        return FilmViewHolder(FilmItemBinding.inflate(LayoutInflater.from(parent.context)), updateFilmCallBack)
     }
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
         holder.bind(getItem(position))
