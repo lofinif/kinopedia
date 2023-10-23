@@ -2,6 +2,7 @@ package com.example.kinopedia.ui.favourite
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.FavouriteApplication
+import com.example.kinopedia.FavouriteAdapterCallback
 import com.example.kinopedia.ItemOffsetDecoration
 import com.example.kinopedia.MainActivity
 import com.example.kinopedia.NavigationActionListener
@@ -19,16 +20,13 @@ import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentFavouriteBinding
 import kotlinx.coroutines.launch
 
-class FavouriteFragment : Fragment(), NavigationActionListener {
+class FavouriteFragment : Fragment(), NavigationActionListener, FavouriteAdapterCallback {
     var filmId = -1
-    var adapterPosition = -1
+    private var adapterPosition = -1
     private lateinit var  itemTouchHelper : ItemTouchHelper
     lateinit var mainActivity : MainActivity
-    private val sharedViewModel: FavouriteViewModel by activityViewModels{
-        FavouriteViewModel.FavouriteFactory((requireContext().applicationContext
-                as FavouriteApplication).database.favouriteDao())
-    }
-    private val adapter = FavouriteAdapter(this)
+    private val sharedViewModel: FavouriteViewModel by activityViewModels()
+    private val adapter = FavouriteAdapter(this, this)
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 0, 15, 15)
     private lateinit var binding: FragmentFavouriteBinding
 
@@ -80,7 +78,15 @@ class FavouriteFragment : Fragment(), NavigationActionListener {
         }
     }
 
-    override fun navigateToFilmPage(bundle: Bundle) {
+    override fun navigate(bundle: Bundle) {
         findNavController().navigate(R.id.action_navigation_favorite_to_filmPageFragment, bundle)
+    }
+
+    override fun updateFilmId(filmId: Int) {
+        this.filmId = filmId
+    }
+
+    override fun updateAdapterPosition(adapterPosition: Int) {
+        this.adapterPosition = adapterPosition
     }
 }

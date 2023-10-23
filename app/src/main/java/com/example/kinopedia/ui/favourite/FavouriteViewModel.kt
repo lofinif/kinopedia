@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import com.example.kinopedia.data.FavouriteDao
 import com.example.kinopedia.data.FavouriteEntity
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-
-class FavouriteViewModel(favouriteDao: FavouriteDao): ViewModel() {
+@HiltViewModel
+class FavouriteViewModel @Inject constructor(favouriteDao: FavouriteDao): ViewModel() {
 
     val allFilms: MutableLiveData<List<FavouriteEntity>> = favouriteDao.getLatestItem().asLiveData() as MutableLiveData<List<FavouriteEntity>>
 
@@ -17,16 +19,4 @@ class FavouriteViewModel(favouriteDao: FavouriteDao): ViewModel() {
     fun updateData(){
         allFilms.value = updatedList
     }
-
-
-    class FavouriteFactory(private val favouriteDao: FavouriteDao): ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(FavouriteViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return FavouriteViewModel(favouriteDao) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-    }
-
 }
