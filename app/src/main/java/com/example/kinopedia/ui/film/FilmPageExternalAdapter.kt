@@ -14,7 +14,7 @@ import com.example.kinopedia.network.ExternalSource
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 
 
-class FilmPageExternalAdapter(val context: Context) :
+class FilmPageExternalAdapter() :
     ListAdapter<ExternalSource, FilmPageExternalAdapter.FilmViewHolder>(Comparator()) {
 
     class FilmViewHolder(
@@ -57,7 +57,7 @@ class FilmPageExternalAdapter(val context: Context) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmViewHolder {
         return FilmViewHolder(
             ExternalSourceItemBinding.inflate(LayoutInflater.from(parent.context)),
-            context
+            parent.context
         )
     }
 
