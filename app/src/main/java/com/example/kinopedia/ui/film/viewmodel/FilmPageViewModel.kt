@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.kinopedia.data.dao.FavouriteDao
 import com.example.kinopedia.data.entities.FavouriteEntity
 import com.example.kinopedia.data.repositories.FavouriteRepository
 import com.example.kinopedia.network.models.ActorFilmPage
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilmPageViewModel @Inject constructor(
-    private val repository: FavouriteRepository
+    private val repository: FavouriteRepository, private val favouriteDao: FavouriteDao
 ) : ViewModel() {
 
     private val liveDataFilm = MutableLiveData<KinopoiskFilm>()
@@ -94,7 +95,7 @@ class FilmPageViewModel @Inject constructor(
         }
     }
 
-     fun saveRepository  (
+     fun saveFavourite  (
          filmId: Int,
          posterUrl: String,
          nameRu: String,
@@ -127,17 +128,14 @@ class FilmPageViewModel @Inject constructor(
         }
      }
 
-/*
-    class FilmPageFactory(private val repository: FavouriteRepository): ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(FilmPageViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return FilmPageViewModel(repository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
+    fun deleteFavourite(filmId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            favouriteDao.deleteById(filmId)
         }
+
     }
-*/
+
+
 
 
 }

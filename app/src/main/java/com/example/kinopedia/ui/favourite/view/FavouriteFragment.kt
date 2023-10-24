@@ -27,8 +27,6 @@ class FavouriteFragment : Fragment(), NavigationActionListener, FavouriteAdapter
     var filmId = -1
     private var adapterPosition = -1
     private lateinit var  itemTouchHelper : ItemTouchHelper
-    @Inject
-    lateinit var db : FavouriteDatabase
     private val sharedViewModel: FavouriteViewModel by activityViewModels()
     private val adapter = FavouriteAdapter(this, this)
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 0, 15, 15)
@@ -74,7 +72,7 @@ class FavouriteFragment : Fragment(), NavigationActionListener, FavouriteAdapter
                 sharedViewModel.updateData()
                 adapter.notifyDataSetChanged()
                 lifecycleScope.launch(Dispatchers.IO) {
-                    db.favouriteDao().deleteById(filmId)
+                    sharedViewModel.deleteFavourite(filmId)
                 }
 
             }

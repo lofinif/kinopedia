@@ -239,7 +239,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
         val formattedDateTime = dateAdded.format(formatter)
 
         sharedViewModel.data.value?.apply {
-                sharedViewModel.saveRepository(
+                sharedViewModel.saveFavourite(
                     kinopoiskId,
                     posterUrl,
                     displayName,
@@ -256,9 +256,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
     }
 
     private fun deleteFavourite(filmId: Int) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            favouriteDao.deleteById(filmId)
-        }
+        sharedViewModel.deleteFavourite(filmId)
     }
 
     override fun update(filmId: Int) {
