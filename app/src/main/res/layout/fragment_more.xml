@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.more.MoreFragment">
+    tools:context=".ui.more.view.MoreFragment">
 
     <data>
 
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.more.MoreViewModel" />
+            type="com.example.kinopedia.ui.more.viewmodel.MoreViewModel" />
     </data>
 
     <LinearLayout

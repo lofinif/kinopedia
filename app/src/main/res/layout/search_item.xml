@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.genre.GenreViewModel"/>
+            type="com.example.kinopedia.ui.genre.viewmodel.GenreViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

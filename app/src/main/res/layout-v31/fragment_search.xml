@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.search.SearchViewModel" />
+            type="com.example.kinopedia.ui.search.viewmodel.SearchViewModel" />
     </data>
 
     <ScrollView

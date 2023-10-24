@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.genre.GenreFragment">
+    tools:context=".ui.genre.view.GenreFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.genre.GenreViewModel"/>
+            type="com.example.kinopedia.ui.genre.viewmodel.GenreViewModel"/>
     </data>
     <FrameLayout
         android:layout_width="match_parent"

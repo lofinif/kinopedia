@@ -2,11 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.filter.FilterResultFragment">
+    tools:context=".ui.filter.view.FilterResultFragment">
     <data>
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.filter.FilterViewModel" />
+            type="com.example.kinopedia.ui.filter.viewmodel.FilterViewModel" />
     </data>
 
     <LinearLayout

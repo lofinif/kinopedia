@@ -6,7 +6,7 @@
     <data>
         <variable
             name="poster_network"
-            type="com.example.kinopedia.network.Film" />
+            type="com.example.kinopedia.network.models.Film" />
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout

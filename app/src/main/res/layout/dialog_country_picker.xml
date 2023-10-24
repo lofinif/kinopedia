@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.filter.FilterViewModel" />
+            type="com.example.kinopedia.ui.filter.viewmodel.FilterViewModel" />
     </data>
 
 <androidx.cardview.widget.CardView

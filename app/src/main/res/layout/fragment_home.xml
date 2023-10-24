@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.home.HomeViewModel"/>
+            type="com.example.kinopedia.ui.home.viewmodel.HomeViewModel"/>
     </data>
 
     <FrameLayout

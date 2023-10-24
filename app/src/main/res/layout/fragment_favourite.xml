@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.favourite.FavouriteViewModel"/>
+            type="com.example.kinopedia.ui.favourite.viewmodel.FavouriteViewModel"/>
     </data>
 
         <androidx.constraintlayout.widget.ConstraintLayout

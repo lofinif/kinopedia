@@ -2,10 +2,10 @@ package com.example.kinopedia.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.kinopedia.data.FavouriteDao
-import com.example.kinopedia.data.FavouriteDatabase
-import com.example.kinopedia.data.FavouriteDatabase.Companion.INSTANCE
-import com.example.kinopedia.data.FavouriteRepository
+import com.example.kinopedia.data.dao.FavouriteDao
+import com.example.kinopedia.data.database.FavouriteDatabase
+import com.example.kinopedia.data.database.FavouriteDatabase.Companion.INSTANCE
+import com.example.kinopedia.data.repositories.FavouriteRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

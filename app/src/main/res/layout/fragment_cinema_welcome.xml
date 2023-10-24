@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.cinema.CinemaWelcomeFragment">
+    tools:context=".ui.cinema.view.CinemaWelcomeFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.cinema.NearestCinemaViewModel" />
+            type="com.example.kinopedia.ui.cinema.viewmodel.NearestCinemaViewModel" />
     </data>
 
 

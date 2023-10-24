@@ -6,7 +6,7 @@
     <data>
         <variable
             name="external"
-            type="com.example.kinopedia.network.ExternalSource" />
+            type="com.example.kinopedia.network.models.ExternalSource" />
     </data>
 <FrameLayout
     android:layout_width="wrap_content"

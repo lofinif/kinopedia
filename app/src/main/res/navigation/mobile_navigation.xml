@@ -10,7 +10,7 @@
         app:startDestination="@id/navigation_home">
         <fragment
             android:id="@+id/filmPageFragment"
-            android:name="com.example.kinopedia.ui.film.FilmPageFragment"
+            android:name="com.example.kinopedia.ui.film.view.FilmPageFragment"
             android:label="FilmPageFragment">
             <argument
                 android:name="FilmId"
@@ -31,7 +31,7 @@
         </fragment>
         <fragment
             android:id="@+id/navigation_home"
-            android:name="com.example.kinopedia.ui.home.HomeFragment"
+            android:name="com.example.kinopedia.ui.home.view.HomeFragment"
             android:label="@string/title_home"
             tools:layout="@layout/fragment_home">
             <action
@@ -49,7 +49,7 @@
         </fragment>
         <fragment
             android:id="@+id/moreFragment"
-            android:name="com.example.kinopedia.ui.more.MoreFragment"
+            android:name="com.example.kinopedia.ui.more.view.MoreFragment"
             android:label="fragment_more"
             tools:layout="@layout/fragment_more">
             <action
@@ -59,12 +59,12 @@
         </fragment>
         <fragment
             android:id="@+id/nearestCinemaFragment"
-            android:name="com.example.kinopedia.ui.cinema.NearestCinemaFragment"
+            android:name="com.example.kinopedia.ui.cinema.view.NearestCinemaFragment"
             android:label="fragment_nearest_cinema"
             tools:layout="@layout/fragment_nearest_cinema" />
         <fragment
             android:id="@+id/cinemaWelcomeFragment"
-            android:name="com.example.kinopedia.ui.cinema.CinemaWelcomeFragment"
+            android:name="com.example.kinopedia.ui.cinema.view.CinemaWelcomeFragment"
             android:label="fragment_cinema_welcome"
             tools:layout="@layout/fragment_cinema_welcome">
 
@@ -72,13 +72,16 @@
                 android:id="@+id/action_cinemaWelcomeFragment_to_nearestCinemaFragment"
                 app:destination="@id/nearestCinemaFragment" />
         </fragment>
+        <action
+            android:id="@+id/action_global_navigation_search_graph"
+            app:destination="@id/navigation_search_graph" />
     </navigation>
     <navigation
         android:id="@+id/navigation_search_graph"
         app:startDestination="@id/navigation_search">
         <fragment
             android:id="@+id/filmPageFragment"
-            android:name="com.example.kinopedia.ui.film.FilmPageFragment"
+            android:name="com.example.kinopedia.ui.film.view.FilmPageFragment"
             android:label="FilmPageFragment">
             <argument
                 android:name="FilmId"
@@ -94,7 +97,7 @@
         </fragment>
         <fragment
             android:id="@+id/navigation_search"
-            android:name="com.example.kinopedia.ui.search.SearchFragment"
+            android:name="com.example.kinopedia.ui.search.view.SearchFragment"
             android:label="Поиск"
             tools:layout="@layout/fragment_search">
 
@@ -117,7 +120,7 @@
         </fragment>
         <fragment
             android:id="@+id/searchResultFragment"
-            android:name="com.example.kinopedia.ui.search.SearchResultFragment"
+            android:name="com.example.kinopedia.ui.search.view.SearchResultFragment"
             android:label="fragment_search_result"
             tools:layout="@layout/fragment_search_result">
             <action
@@ -126,7 +129,7 @@
         </fragment>
         <fragment
             android:id="@+id/filterFragment"
-            android:name="com.example.kinopedia.ui.filter.FilterFragment"
+            android:name="com.example.kinopedia.ui.filter.view.FilterFragment"
             android:label="Поиск по фильтрам"
             tools:layout="@layout/fragment_filter">
             <action
@@ -135,7 +138,7 @@
         </fragment>
         <fragment
             android:id="@+id/filterResultFragment"
-            android:name="com.example.kinopedia.ui.filter.FilterResultFragment"
+            android:name="com.example.kinopedia.ui.filter.view.FilterResultFragment"
             android:label="fragment_filter_result"
             tools:layout="@layout/fragment_filter_result">
 
@@ -171,19 +174,22 @@
         </fragment>
         <fragment
             android:id="@+id/genreFragment"
-            android:name="com.example.kinopedia.ui.genre.GenreFragment"
+            android:name="com.example.kinopedia.ui.genre.view.GenreFragment"
             android:label="fragment_genre"
             tools:layout="@layout/fragment_genre" >
             <action
                 android:id="@+id/action_genreFragment_to_filmPageFragment"
                 app:destination="@id/filmPageFragment" />
         </fragment>
+        <action
+            android:id="@+id/action_global_navigation_favourite_graph"
+            app:destination="@id/navigation_favourite_graph" />
     </navigation>
     <navigation android:id="@+id/navigation_favourite_graph"
         app:startDestination="@id/navigation_favourite">
         <fragment
             android:id="@+id/filmPageFragment"
-            android:name="com.example.kinopedia.ui.film.FilmPageFragment"
+            android:name="com.example.kinopedia.ui.film.view.FilmPageFragment"
             android:label="FilmPageFragment">
             <argument
                 android:name="FilmId"
@@ -199,13 +205,14 @@
         </fragment>
         <fragment
             android:id="@+id/navigation_favourite"
-            android:name="com.example.kinopedia.ui.favourite.FavouriteFragment"
+            android:name="com.example.kinopedia.ui.favourite.view.FavouriteFragment"
             android:label="Избранное" >
             <action
                 android:id="@+id/action_navigation_favorite_to_filmPageFragment"
-                app:destination="@id/filmPageFragment"
-
-                />
+                app:destination="@id/filmPageFragment" />
         </fragment>
+        <action
+            android:id="@+id/action_global_navigation_home_graph"
+            app:destination="@id/navigation_home_graph" />
     </navigation>
 </navigation>
