@@ -37,7 +37,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
-
 @AndroidEntryPoint
 class FilmPageFragment : Fragment(), UpdateFilmCallBack {
     private val sharedViewModel: FilmPageViewModel by viewModels()
@@ -45,12 +44,9 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
     private val adapter = FilmPageSimilarAdapter(this)
     private val currentDate =
         LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("ru", "ru")))
-    @Inject
-    lateinit var favouriteDao: FavouriteDao
     private var filmId = 0
     private val itemOffsetDecoration = ItemOffsetDecoration(30, 0, 30, 0)
     private val handler = android.os.Handler(Looper.getMainLooper())
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -144,9 +140,10 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
                 }
             }
             buttonFavourite.setOnClickListener {
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (favouriteDao.checkId(sharedViewModel.data.value!!.kinopoiskId).first() > 0) {
-                        deleteFavourite(sharedViewModel.data.value!!.kinopoiskId)
+                sharedViewModel.checkAdd(filmId)
+                sharedViewModel.isAdded.observe(viewLifecycleOwner) {
+                    if (it) {
+                        deleteFavourite(filmId)
                         buttonUnpressed()
                     } else {
                         saveFavourite()
@@ -154,6 +151,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
                     }
                 }
             }
+
         }
     }
 
@@ -175,13 +173,14 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
         }
     }
     private fun buttonCheck(){
-        CoroutineScope(Dispatchers.IO).launch {
-            if (favouriteDao.checkId(sharedViewModel.data.value!!.kinopoiskId).first() > 0) {
-                buttonPressed()
-            } else  {
-                buttonUnpressed()
-            }
-        }
+        sharedViewModel.checkButtonState(filmId)
+        sharedViewModel.isFavourite.observe(viewLifecycleOwner) {
+           if (it) {
+               buttonPressed()
+           } else {
+               buttonUnpressed()
+           }
+       }
     }
     private fun hidePremier() {
         binding.premier.isVisible = false
@@ -212,7 +211,6 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
         val bundle = Bundle()
         bundle.putInt("filmId", kinopoiskId)
         findNavController().navigate(R.id.action_filmPageFragment_self, bundle)
-        Log.e("kim", kinopoiskId.toString())
     }
 
 
