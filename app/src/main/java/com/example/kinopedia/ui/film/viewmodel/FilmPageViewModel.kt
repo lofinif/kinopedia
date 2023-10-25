@@ -15,13 +15,18 @@ import com.example.kinopedia.network.models.KinopoiskFilm
 import com.example.kinopedia.network.services.LoadingStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FilmPageViewModel @Inject constructor(
-    private val repository: FavouriteRepository, private val favouriteDao: FavouriteDao
+    private val repository: FavouriteRepository
 ) : ViewModel() {
+
+    val isFavourite: MutableLiveData<Boolean> = MutableLiveData()
+
+    val isAdded: MutableLiveData<Boolean> = MutableLiveData()
 
     private val liveDataFilm = MutableLiveData<KinopoiskFilm>()
     val data: LiveData<KinopoiskFilm> = liveDataFilm
@@ -130,12 +135,21 @@ class FilmPageViewModel @Inject constructor(
 
     fun deleteFavourite(filmId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            favouriteDao.deleteById(filmId)
+            repository.delete(filmId)
         }
 
     }
 
-
-
-
+    fun checkButtonState(kinopoiskId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val exists = repository.checkId(kinopoiskId) > 0
+            isFavourite.postValue(exists)
+        }
+    }
+    fun checkAdd(kinopoiskId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val exists = repository.checkId(kinopoiskId) > 0
+            isAdded.postValue(exists)
+        }
+    }
 }

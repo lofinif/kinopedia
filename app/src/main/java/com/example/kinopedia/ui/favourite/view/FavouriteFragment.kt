@@ -2,6 +2,9 @@ package com.example.kinopedia.ui.favourite.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.kinopedia.utils.FavouriteAdapterCallback
 import com.example.kinopedia.utils.ItemOffsetDecoration
 import com.example.kinopedia.utils.NavigationActionListener
@@ -45,17 +49,17 @@ class FavouriteFragment : Fragment(), NavigationActionListener, FavouriteAdapter
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun bind(){
+    private fun bind() {
         itemTouchHelper = ItemTouchHelper(simpleCallback)
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewFavourite)
+        binding.recyclerViewFavourite.itemAnimator = null
         binding.apply {
             recyclerViewFavourite.adapter = adapter
             lifecycleOwner = viewLifecycleOwner
             recyclerViewFavourite.addItemDecoration(itemOffsetDecoration)
         }
         sharedViewModel.allFilms.observe(viewLifecycleOwner) {
-            sharedViewModel.updatedList = sharedViewModel.allFilms.value?.toMutableList()
-            adapter.submitList(sharedViewModel.updatedList)
+            adapter.submitList(sharedViewModel.allFilms.value)
         }
     }
 
@@ -66,15 +70,10 @@ class FavouriteFragment : Fragment(), NavigationActionListener, FavouriteAdapter
         }
         @SuppressLint("NotifyDataSetChanged")
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            val position = viewHolder.adapterPosition
             if (direction == ItemTouchHelper.LEFT) {
-                sharedViewModel.updatedList?.removeAt(position)
-                sharedViewModel.updateData()
-                adapter.notifyDataSetChanged()
                 lifecycleScope.launch(Dispatchers.IO) {
                     sharedViewModel.deleteFavourite(filmId)
                 }
-
             }
         }
     }
