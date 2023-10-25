@@ -21,16 +21,15 @@ import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentCinemaWelcomeBinding
 import com.example.kinopedia.network.services.LoadingStatus
 import com.example.kinopedia.ui.cinema.viewmodel.NearestCinemaViewModel
+import com.example.kinopedia.utils.LocationProvider
 
 
 class CinemaWelcomeFragment : Fragment() {
     private lateinit var binding: FragmentCinemaWelcomeBinding
     val sharedViewModel: NearestCinemaViewModel by activityViewModels()
     val adapter = CinemaAdapter()
-    var latitude = 0.0
-    var longitude = 0.0
-    private var currentCity = ""
-    var data = ""
+    val bundle = Bundle()
+    private val locationProvider by lazy { LocationProvider(requireContext(), ::onLocationReceived) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +38,6 @@ class CinemaWelcomeFragment : Fragment() {
         binding = FragmentCinemaWelcomeBinding.inflate(inflater)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         bind()
         checkPermissions()
@@ -53,10 +51,10 @@ class CinemaWelcomeFragment : Fragment() {
             recyclerViewCinemas.adapter = adapter
             map.isVisible = false
             map.setOnClickListener {
-                findNavController().navigate(R.id.action_cinemaWelcomeFragment_to_nearestCinemaFragment)
+                findNavController().navigate(R.id.action_cinemaWelcomeFragment_to_nearestCinemaFragment, bundle)
             }
             backButton.setOnClickListener {
-                requireActivity().onBackPressedDispatcher.onBackPressed()
+                findNavController().popBackStack()
             }
         }
         sharedViewModel.apply {
@@ -66,12 +64,8 @@ class CinemaWelcomeFragment : Fragment() {
                 }
             }
             city.observe(viewLifecycleOwner) {
-                currentCity = it.address.displayCity.toString()
-                Log.e("city", currentCity)
-                binding.currentCity.text = currentCity
-                data =
-                    "[out:json];area[name=\"$currentCity\"](around:1000.0);nwr[amenity=cinema](area);out geom;"
-                getCinemas(data)
+                binding.currentCity.text = it.address.displayCity.toString()
+                getCinemas()
             }
             cinemas.observe(viewLifecycleOwner) { it ->
                 val filteredElements = it.elements.filter {
@@ -81,40 +75,41 @@ class CinemaWelcomeFragment : Fragment() {
             }
         }
     }
-
+    private fun onLocationReceived(location: Location) {
+        sharedViewModel.getCity(location.latitude, location.longitude)
+        bundle.putDouble("latitude", location.latitude)
+        bundle.putDouble("longitude", location.longitude)
+    }
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if(requestCode == 100 && grantResults[0]  == PackageManager.PERMISSION_GRANTED){
-            checkPermissions()
-        } else {
-            Toast.makeText(requireContext(), "Нет разрешения на использование GPS", Toast.LENGTH_LONG).show()
+        when (requestCode) {
+            100 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationProvider.requestLocationUpdates()
+                } else {
+                    Toast.makeText(requireContext(), "Нет разрешения на использование GPS", Toast.LENGTH_LONG).show()
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
-    private fun checkPermissions(){
-        val locationManager: LocationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if(ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-           requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), 100)
-        } else  {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                60,
-                100f,
-                object : LocationListener {
-                    override fun onLocationChanged(location: Location) {
-                        latitude = location.latitude
-                        longitude = location.longitude
-                        sharedViewModel.getCity(latitude, longitude)
-                        locationManager.removeUpdates(this)
-                    }
-                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-                })
+    private fun checkPermissions() {
+        if (hasLocationPermissions()) {
+            locationProvider.requestLocationUpdates()
+        } else {
+            requestLocationPermissions()
         }
-
+    }
+    private fun hasLocationPermissions(): Boolean {
+        return ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+    private fun requestLocationPermissions() {
+        requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), 100)
     }
 }

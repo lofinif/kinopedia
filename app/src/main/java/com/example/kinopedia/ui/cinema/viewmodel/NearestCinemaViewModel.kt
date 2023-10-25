@@ -42,8 +42,10 @@ class NearestCinemaViewModel : ViewModel() {
         }
     }
 
-    fun getCinemas(data: String) {
+    fun getCinemas() {
         if (_cinemas.value == null) {
+           val data =
+                "[out:json];area[name=\"${city.value?.address?.displayCity.toString()}\"](around:1000.0);nwr[amenity=cinema](area);out geom;"
             viewModelScope.launch(Dispatchers.IO) {
                 _status.postValue(LoadingStatus.LOADING)
                 try {

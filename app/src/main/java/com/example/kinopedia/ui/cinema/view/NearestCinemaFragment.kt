@@ -17,6 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentNearestCinemaBinding
 import com.example.kinopedia.network.models.CinemaOSM
@@ -31,9 +32,9 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 
 class NearestCinemaFragment : Fragment() {
     private lateinit var binding: FragmentNearestCinemaBinding
-    private lateinit var mapView: MapView
-    private lateinit var rotationGestureOverlay: RotationGestureOverlay
-    private lateinit var mapController: IMapController
+    private val mapView by lazy { binding.mapview }
+    private val rotationGestureOverlay by lazy { RotationGestureOverlay(mapView) }
+    private val mapController by lazy { mapView.controller }
     private val sharedViewModel: NearestCinemaViewModel by activityViewModels()
     private var latitude = 0.0
     private var longitude = 0.0
@@ -42,138 +43,91 @@ class NearestCinemaFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         binding = FragmentNearestCinemaBinding.inflate(inflater)
-        mapView = binding.mapview
-        rotationGestureOverlay = RotationGestureOverlay(mapView)
-        bind()
-        requestLocationUpdates()
-        createMap()
-        markers()
-        mapView.invalidate()
+        arguments?.let {
+            latitude = it.getDouble("latitude", 0.0)
+            longitude = it.getDouble("longitude", 0.0)
+        }
+        setupUI()
         return binding.root
     }
 
-    private fun markers(){
+    private fun setupUI() {
+        bind()
+        configureMap()
+        displayUserLocation()
+        observeCinemas()
+    }
+
+    private fun bind() {
+        binding.apply {
+            infoCinema.isVisible = false
+            backButton.setOnClickListener { findNavController().popBackStack() }
+            lifecycleOwner = viewLifecycleOwner
+        }
+    }
+
+    private fun configureMap() {
+        mapController.setZoom(14.5)
+        mapView.apply {
+            setBuiltInZoomControls(false)
+            rotationGestureOverlay.isEnabled = true
+            setMultiTouchControls(true)
+            overlays.add(rotationGestureOverlay)
+            setTileSource(TileSourceFactory.MAPNIK)
+            isClickable = true
+        }
+    }
+
+    private fun displayUserLocation() {
+        mapView.overlays.add(createUserMarker())
+        mapController.setCenter(GeoPoint(latitude, longitude))
+    }
+
+    private fun createUserMarker(): Marker {
+        return Marker(mapView).apply {
+            position = GeoPoint(latitude, longitude)
+            icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_my_location_24, null)
+            setOnMarkerClickListener { _, _ -> true }
+        }
+    }
+
+    private fun observeCinemas() {
         sharedViewModel.cinemas.observe(viewLifecycleOwner) { it ->
-            filteredElements =
-                it.elements.filter { it.tags?.name != null && it.tags.street != null && it.tags.housenumber != null}
-            for (i in filteredElements) {
-                val markerMap = Marker(mapView)
-                if (i.latitude != null && i.longitude != null) {
-                    markerMap.position = GeoPoint(i.latitude, i.longitude)
-                    markerMap.title = i.tags?.name
-                    markerMap.icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_location_on_24_blue, null)
-                    markerMap.snippet = i.tags?.address
-                    markerMap.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                    mapView.overlays.add(markerMap)
-                    markerMap.setOnMarkerClickListener { marker, _ ->
-                        binding.infoCinema.isVisible = true
-                        binding.nameCinema.text = marker.title
-                        binding.descriptionCinema.text = marker.snippet
+            filteredElements = it.elements.filterNotNull()
+                .filter { cinema ->
+                    cinema.tags?.name != null && cinema.tags.street != null && cinema.tags.housenumber != null
+                }
+            displayCinemaMarkers()
+        }
+    }
+
+    private fun displayCinemaMarkers() {
+        filteredElements.forEach { cinema ->
+            mapView.overlays.add(createCinemaMarker(cinema))
+        }
+    }
+
+    private fun createCinemaMarker(cinema: CinemaOSM): Marker {
+        return Marker(mapView).apply {
+            cinema.latitude?.let { lat ->
+                cinema.longitude?.let { lon ->
+                    position = GeoPoint(lat, lon)
+                    title = cinema.tags?.name
+                    snippet = cinema.tags?.address
+                    icon = ResourcesCompat.getDrawable(resources, R.drawable.baseline_location_on_24_blue, null)
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    setOnMarkerClickListener { marker, _ ->
+                        binding.apply {
+                            infoCinema.isVisible = true
+                            nameCinema.text = marker.title
+                            descriptionCinema.text = marker.snippet
+                        }
                         true
                     }
                 }
             }
         }
     }
-
-    private fun createMap(){
-
-        mapController = mapView.controller
-        mapController.setZoom(14.5)
-        mapView.setBuiltInZoomControls(false)
-
-        rotationGestureOverlay.isEnabled
-        mapView.setMultiTouchControls(true)
-        mapView.overlays.add(rotationGestureOverlay)
-
-        getInstance().load(requireContext(), PreferenceManager.getDefaultSharedPreferences(requireContext()))
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
-        mapView.isClickable = true
-    }
-    private fun bind(){
-        binding.apply {
-            infoCinema.isVisible = false
-            backButton.setOnClickListener {
-                requireActivity().onBackPressedDispatcher.onBackPressed()
-            }
-            lifecycleOwner = viewLifecycleOwner
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if(requestCode == 100 && grantResults[0]  == PackageManager.PERMISSION_GRANTED){
-            requestLocationUpdates()
-        } else {
-            Toast.makeText(requireContext(), "Нет разрешения на использование GPS", Toast.LENGTH_LONG).show()
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-     private fun requestLocationUpdates() {
-         val marker = Marker(mapView)
-         marker.position = GeoPoint(latitude, longitude)
-         marker.icon = ResourcesCompat.getDrawable(
-             resources,
-             R.drawable.baseline_my_location_24,
-             null
-         )
-         val locationManager: LocationManager =
-             requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-         if (ActivityCompat.checkSelfPermission(
-                 requireContext(),
-                 Manifest.permission.ACCESS_COARSE_LOCATION
-             ) != PackageManager.PERMISSION_GRANTED
-             && ActivityCompat.checkSelfPermission(
-                 requireContext(),
-                 Manifest.permission.ACCESS_FINE_LOCATION
-             ) != PackageManager.PERMISSION_GRANTED
-         ) {
-             requestPermissions(
-                 arrayOf(
-                     Manifest.permission.ACCESS_COARSE_LOCATION,
-                     Manifest.permission.ACCESS_FINE_LOCATION
-                 ), 100
-             )
-         } else {
-
-             locationManager.requestLocationUpdates(
-                 LocationManager.NETWORK_PROVIDER,
-                 1,
-                 0f,
-                 object : LocationListener {
-                     override fun onLocationChanged(location: Location) {
-                         latitude = location.latitude
-                         longitude = location.longitude
-                         if (context != null) {
-                             val startPoint = GeoPoint(latitude, longitude)
-                             marker.position = GeoPoint(latitude, longitude)
-                             marker.icon = ResourcesCompat.getDrawable(
-                                 resources,
-                                 R.drawable.baseline_my_location_24,
-                                 null
-                             )
-                             marker.setOnMarkerClickListener { _, _ ->
-                                 true
-                             }
-                             mapView.overlays.add(marker)
-                             mapController.setCenter(startPoint)
-                         }
-                         locationManager.removeUpdates(this)
-                     }
-
-                     override fun onStatusChanged(
-                         provider: String?,
-                         status: Int,
-                         extras: Bundle?
-                     ) {
-                     }
-                 })
-         }
-     }
 }
