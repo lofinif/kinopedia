@@ -64,8 +64,6 @@ class FilterFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-
         resetButton()
         bind()
         super.onViewCreated(view, savedInstanceState)
@@ -370,7 +368,7 @@ class FilterFragment : Fragment() {
             sortBy.setOnClickListener{ showPopupMenu() }
             titleSortBy.setOnClickListener{ showPopupMenu() }
             titleToolbarReset.setOnClickListener{ reset() }
-            backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            backButton.setOnClickListener { findNavController().popBackStack() }
         }
         binding.sendFilters.setOnClickListener {
             sendFilters()

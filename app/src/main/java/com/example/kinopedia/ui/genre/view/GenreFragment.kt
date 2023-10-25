@@ -167,7 +167,7 @@ class GenreFragment : Fragment(), NavigationActionListener {
             recyclerViewGenre.adapter = adapter
             lifecycleOwner = viewLifecycleOwner
             viewModel = sharedViewModel
-            backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            backButton.setOnClickListener { findNavController().popBackStack() }
             recyclerViewGenre.addOnScrollListener(listener)
             recyclerViewGenre.addItemDecoration(itemOffsetDecoration)
         }

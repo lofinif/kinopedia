@@ -55,7 +55,7 @@ class FilterResultFragment : Fragment(), NavigationActionListener {
             lifecycleOwner = viewLifecycleOwner
             recyclerViewFilterResult.adapter = adapter
             recyclerViewFilterResult.addOnScrollListener(listener)
-            backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            backButton.setOnClickListener { findNavController().popBackStack() }
             recyclerViewFilterResult.addItemDecoration(itemOffsetDecoration)
             sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
                 adapter.submitList(it)

@@ -162,7 +162,7 @@ class MoreFragment : Fragment(), NavigationActionListener {
             lifecycleOwner = viewLifecycleOwner
             viewModel = sharedViewModel
             recyclerViewMore.adapter = adapter
-            backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            backButton.setOnClickListener { findNavController().popBackStack() }
             recyclerViewMore.addItemDecoration(itemOffsetDecoration)
         }
         when (arguments?.getString("more_type")) {

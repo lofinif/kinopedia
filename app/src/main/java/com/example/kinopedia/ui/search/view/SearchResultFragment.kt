@@ -77,7 +77,7 @@ class SearchResultFragment : Fragment(), NavigationActionListener {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = sharedViewModel
         binding.recyclerViewSearch.addOnScrollListener(listener)
-        binding.backButton.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        binding.backButton.setOnClickListener { findNavController().popBackStack() }
         binding.apply {
             recyclerViewSearch.adapter = adapter
             addItemDecoration(recyclerViewSearch)
