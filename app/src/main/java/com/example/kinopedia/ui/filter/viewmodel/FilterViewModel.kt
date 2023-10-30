@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 class FilterViewModel: ViewModel (){
     var pageCount = 1
 
-    private val liveDataFilmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
-    val dataFilmsByFilter: LiveData<List<KinopoiskFilm>> = liveDataFilmsByFilter
+    private val _filmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
+    val filmsByFilter: LiveData<List<KinopoiskFilm>> = _filmsByFilter
 
     private val _status = MutableLiveData(LoadingStatus.DEFAULT)
     val status: LiveData<LoadingStatus> = _status
@@ -48,7 +48,7 @@ class FilterViewModel: ViewModel (){
             ratingFrom, ratingTo, yearFrom, yearTo, page
         )
             pageCount = list.totalPages
-        liveDataFilmsByFilter.postValue(list.items)
+        _filmsByFilter.postValue(list.items)
             _status.postValue(LoadingStatus.DONE)
         } catch (e: Exception) {
             _status.postValue(LoadingStatus.ERROR)
@@ -60,12 +60,12 @@ class FilterViewModel: ViewModel (){
         val list = FilmApi.retrofitService.getFilmByFilters(
             countries, genres, order, type, keyword,
             ratingFrom, ratingTo, yearFrom, yearTo, page)
-        val currentList = liveDataFilmsByFilter.value?.toMutableList() ?: mutableListOf()
+        val currentList = _filmsByFilter.value?.toMutableList() ?: mutableListOf()
         currentList.addAll(list.items)
-        liveDataFilmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
+        _filmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
     }
 
     fun clearList(){
-        liveDataFilmsByFilter.value = emptyList()
+        _filmsByFilter.value = emptyList()
     }
 }

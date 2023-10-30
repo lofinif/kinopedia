@@ -11,7 +11,8 @@ import com.example.kinopedia.databinding.SearchItemBinding
 import com.example.kinopedia.network.models.KinopoiskFilm
 import com.squareup.picasso.Picasso
 
-class FilterResultAdapter(private val navigation: NavigationActionListener): ListAdapter<KinopoiskFilm, FilterResultAdapter.FilterResultViewHolder>(
+class FilterResultAdapter(private val navigation: NavigationActionListener):
+    ListAdapter<KinopoiskFilm, FilterResultAdapter.FilterResultViewHolder>(
     Comparator()
 ) {
     private val items = mutableListOf<KinopoiskFilm>()

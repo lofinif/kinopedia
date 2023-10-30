@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kinopedia.data.dao.FavouriteDao
 import com.example.kinopedia.data.entities.FavouriteEntity
 import com.example.kinopedia.data.repositories.FavouriteRepository
 import com.example.kinopedia.network.models.ActorFilmPage
@@ -15,7 +14,6 @@ import com.example.kinopedia.network.models.KinopoiskFilm
 import com.example.kinopedia.network.services.LoadingStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,27 +26,27 @@ class FilmPageViewModel @Inject constructor(
 
     val isAdded: MutableLiveData<Boolean> = MutableLiveData()
 
-    private val liveDataFilm = MutableLiveData<KinopoiskFilm>()
-    val data: LiveData<KinopoiskFilm> = liveDataFilm
+    private val _film = MutableLiveData<KinopoiskFilm>()
+    val film: LiveData<KinopoiskFilm> = _film
 
     private val _status = MutableLiveData(LoadingStatus.DEFAULT)
     val status: LiveData<LoadingStatus> = _status
 
-    private val liveDataSimilar = MutableLiveData<List<Film>>()
-    val dataSimilar: LiveData<List<Film>> = liveDataSimilar
+    private val _similar = MutableLiveData<List<Film>>()
+    val similar: LiveData<List<Film>> = _similar
 
-    private val liveDataActorFilmPage = MutableLiveData<List<ActorFilmPage>>()
-    val dataActorFilmPage: LiveData<List<ActorFilmPage>> = liveDataActorFilmPage
+    private val _actorFilmPage = MutableLiveData<List<ActorFilmPage>>()
+    val actorFilmPage: LiveData<List<ActorFilmPage>> = _actorFilmPage
 
-    private val liveDataStaff = MutableLiveData<List<ActorFilmPage>>()
-    val dataStaff: LiveData<List<ActorFilmPage>> = liveDataStaff
+    private val _staff = MutableLiveData<List<ActorFilmPage>>()
+    val staff: LiveData<List<ActorFilmPage>> = _staff
 
-    private val liveDataExternalSources = MutableLiveData<List<ExternalSource>>()
-    val dataExternalSources: LiveData<List<ExternalSource>> = liveDataExternalSources
+    private val _externalSources = MutableLiveData<List<ExternalSource>>()
+    val externalSources: LiveData<List<ExternalSource>> = _externalSources
 
 
     fun getDataKinopoiskFilm(): KinopoiskFilm {
-        return liveDataFilm.value ?: KinopoiskFilm(0, null, null,
+        return _film.value ?: KinopoiskFilm(0, null, null,
             null, null, null, "", 0,"", "", emptyList(), emptyList(), 0.0, 0.0)
     }
 
@@ -56,7 +54,7 @@ class FilmPageViewModel @Inject constructor(
              _status.postValue(LoadingStatus.LOADING)
              try {
                  val list = FilmApi.retrofitService.getFilmById(kinopoiskId)
-                 liveDataFilm.postValue(list)
+                 _film.postValue(list)
                  _status.postValue(LoadingStatus.DONE)
 
          } catch (e: Exception) {
@@ -70,8 +68,8 @@ class FilmPageViewModel @Inject constructor(
              val list = FilmApi.retrofitService.getActorsAndStaff(kinopoiskId)
             val filteredListActor = list.filter { it.professionKey == "ACTOR" }
             val filteredListStaff = list.filter { it.professionKey != "ACTOR" }
-            liveDataActorFilmPage.postValue(filteredListActor)
-            liveDataStaff.postValue(filteredListStaff)
+            _actorFilmPage.postValue(filteredListActor)
+            _staff.postValue(filteredListStaff)
             _status.postValue(LoadingStatus.DONE)
         } catch (e: Exception) {
             _status.postValue(LoadingStatus.ERROR)
@@ -82,7 +80,7 @@ class FilmPageViewModel @Inject constructor(
          _status.postValue(LoadingStatus.LOADING)
          try {
              val list = FilmApi.retrofitService.getSimilarFilms(kinopoiskId)
-             liveDataSimilar.postValue(list.items)
+             _similar.postValue(list.items)
              _status.postValue(LoadingStatus.DONE)
          } catch (e: Exception) {
              _status.postValue(LoadingStatus.ERROR)
@@ -93,7 +91,7 @@ class FilmPageViewModel @Inject constructor(
         _status.postValue(LoadingStatus.LOADING)
         try {
             val list = FilmApi.retrofitService.getExternalSources(kinopoiskId)
-            liveDataExternalSources.postValue(list.items)
+            _externalSources.postValue(list.items)
             _status.postValue(LoadingStatus.DONE)
         } catch (e: Exception) {
             _status.postValue(LoadingStatus.ERROR)

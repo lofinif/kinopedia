@@ -55,7 +55,7 @@
         android:clipToPadding="false"
         android:clipToOutline="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        listDataFilmsByGenre="@{viewModel.dataFilmsByFilter}"
+        listDataFilmsByGenre="@{viewModel.filmsByFilter}"
         tools:listitem="@layout/search_item" />
     </FrameLayout>
 </layout>

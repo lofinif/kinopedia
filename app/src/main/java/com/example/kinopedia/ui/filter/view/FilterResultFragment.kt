@@ -57,7 +57,7 @@ class FilterResultFragment : Fragment(), NavigationActionListener {
             recyclerViewFilterResult.addOnScrollListener(listener)
             backButton.setOnClickListener { findNavController().popBackStack() }
             recyclerViewFilterResult.addItemDecoration(itemOffsetDecoration)
-            sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+            sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
                 adapter.submitList(it)
                 adapter.notifyDataSetChanged()
             }
@@ -92,8 +92,9 @@ class FilterResultFragment : Fragment(), NavigationActionListener {
             selectedYearTo,
             page
         )
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
-            sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+           // sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
             binding.recyclerViewFilterResult.post{
                 adapter.notifyDataSetChanged()
             }

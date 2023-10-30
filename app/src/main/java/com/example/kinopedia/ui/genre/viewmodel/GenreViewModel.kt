@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 class GenreViewModel: ViewModel() {
     var pageCount = 1
 
-    private val liveDataFilmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
-    val dataFilmsByFilter: LiveData<List<KinopoiskFilm>> = liveDataFilmsByFilter
+    private val _filmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
+    val filmsByFilter: LiveData<List<KinopoiskFilm>> = _filmsByFilter
 
     private val _status = MutableLiveData(LoadingStatus.DEFAULT)
     val status: LiveData<LoadingStatus> = _status
@@ -24,7 +24,7 @@ class GenreViewModel: ViewModel() {
         keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
         yearTo: Int, page: Int
     ) {
-        if (liveDataFilmsByFilter.value.isNullOrEmpty()) {
+        if (_filmsByFilter.value.isNullOrEmpty()) {
         viewModelScope.launch(Dispatchers.IO) {
                 _status.postValue(LoadingStatus.LOADING)
                 try {
@@ -33,7 +33,7 @@ class GenreViewModel: ViewModel() {
                         ratingFrom, ratingTo, yearFrom, yearTo, page
                     )
                     pageCount = list.totalPages
-                    liveDataFilmsByFilter.postValue(list.items)
+                    _filmsByFilter.postValue(list.items)
                     _status.postValue(LoadingStatus.DONE)
                 } catch (e: Exception) {
                     _status.postValue(LoadingStatus.ERROR)
@@ -48,8 +48,8 @@ class GenreViewModel: ViewModel() {
             countries, genres, order, type, keyword,
             ratingFrom, ratingTo, yearFrom, yearTo, page
         )
-        val currentList = liveDataFilmsByFilter.value?.toMutableList() ?: mutableListOf()
+        val currentList = _filmsByFilter.value?.toMutableList() ?: mutableListOf()
         currentList.addAll(list.items)
-        liveDataFilmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
+        _filmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
     }
 }

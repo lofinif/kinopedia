@@ -22,7 +22,7 @@ class HomeFragment : Fragment(), NavigationActionListener {
     private val itemOffsetDecorationViewPager = ItemOffsetDecoration(30, 30, 0, 0)
     private val homeAdapterTrending = HomeAdapter(this)
     private val homeAdapterComingSoon = HomeAdapter(this)
-    private val bundle =  Bundle()
+    private val bundle = Bundle()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,32 +39,32 @@ class HomeFragment : Fragment(), NavigationActionListener {
 
     private fun bind() {
         binding.apply {
-        lifecycleOwner = viewLifecycleOwner
-        viewModel = sharedViewModel
+            lifecycleOwner = viewLifecycleOwner
+            viewModel = sharedViewModel
             recyclerViewComingSoon.adapter = homeAdapterComingSoon
             recyclerViewTrending.adapter = homeAdapterTrending
             viewPager.adapter = homeViewPagerAdapter
             viewPager.addItemDecoration(itemOffsetDecorationViewPager)
             recyclerViewComingSoon.addItemDecoration(itemOffsetDecoration)
             recyclerViewTrending.addItemDecoration(itemOffsetDecoration)
-        viewAllComingSoon.setOnClickListener {
-            bundle.putString("more_type", "Coming soon")
-            findNavController().navigate(R.id.action_navigation_home_to_moreFragment, bundle)
-        }
+            viewAllComingSoon.setOnClickListener {
+                bundle.putString("more_type", "Coming soon")
+                findNavController().navigate(R.id.action_navigation_home_to_moreFragment, bundle)
+            }
 
-        viewAllTrending.setOnClickListener {
-            bundle.putString("more_type", "Trending")
-            findNavController().navigate(R.id.action_navigation_home_to_moreFragment, bundle)
-        }
+            viewAllTrending.setOnClickListener {
+                bundle.putString("more_type", "Trending")
+                findNavController().navigate(R.id.action_navigation_home_to_moreFragment, bundle)
+            }
 
-        viewAllThisMonth.setOnClickListener {
-            bundle.putString("more_type", "Coming this month")
-            findNavController().navigate(R.id.action_navigation_home_to_moreFragment, bundle)
+            viewAllThisMonth.setOnClickListener {
+                bundle.putString("more_type", "Coming this month")
+                findNavController().navigate(R.id.action_navigation_home_to_moreFragment, bundle)
+            }
+            nearestCinemaButton.setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_home_to_cinemaWelcomeFragment)
+            }
         }
-        nearestCinemaButton.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_home_to_cinemaWelcomeFragment)
-        }
-    }
         sharedViewModel.apply {
             getAwaitFilms()
             getPopularFilms()

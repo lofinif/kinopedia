@@ -41,7 +41,7 @@ class SearchResultFragment : Fragment(), NavigationActionListener {
     ): View {
         (activity as AppCompatActivity).supportActionBar
         binding = FragmentSearchResultBinding.inflate(inflater, container, false)
-        if (sharedViewModel.dataFilmsByFilter.value.isNullOrEmpty()){
+        if (sharedViewModel.filmsByFilter.value.isNullOrEmpty()){
             val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
                     as InputMethodManager
            binding.searchButton.requestFocus()
@@ -96,7 +96,7 @@ class SearchResultFragment : Fragment(), NavigationActionListener {
     }
 
     private fun search() {
-        if (!sharedViewModel.dataFilmsByFilter.value.isNullOrEmpty()){
+        if (!sharedViewModel.filmsByFilter.value.isNullOrEmpty()){
             binding.searchButton.clearFocus()
         }
         binding.searchButton.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -132,7 +132,7 @@ class SearchResultFragment : Fragment(), NavigationActionListener {
                 imm?.showSoftInput(view, 0)
             }
         }
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
             adapter.submitList(it)
 
         }
@@ -150,9 +150,9 @@ class SearchResultFragment : Fragment(), NavigationActionListener {
             9999,
             page
         )
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
             binding.recyclerViewSearch.post {
-                sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
+                sharedViewModel.filmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
             }
         }
         Handler(Looper.getMainLooper()).postDelayed({

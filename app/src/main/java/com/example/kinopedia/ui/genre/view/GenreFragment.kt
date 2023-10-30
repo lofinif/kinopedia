@@ -59,7 +59,7 @@ class GenreFragment : Fragment(), NavigationActionListener {
                 2023,
                 page
             )
-            sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+            sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
                 adapter.submitList(it)
             }
 
@@ -80,7 +80,7 @@ class GenreFragment : Fragment(), NavigationActionListener {
             2023,
             page
         )
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }
@@ -99,7 +99,7 @@ class GenreFragment : Fragment(), NavigationActionListener {
             2023,
             page
         )
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }
@@ -118,7 +118,7 @@ class GenreFragment : Fragment(), NavigationActionListener {
             2023,
             page
         )
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }
@@ -137,7 +137,7 @@ class GenreFragment : Fragment(), NavigationActionListener {
             2023,
             page
         )
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }
@@ -156,7 +156,7 @@ class GenreFragment : Fragment(), NavigationActionListener {
             2023,
             page
         )
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }
@@ -195,9 +195,9 @@ class GenreFragment : Fragment(), NavigationActionListener {
             2023,
             page
         )
-        sharedViewModel.dataFilmsByFilter.observe(viewLifecycleOwner) {
+        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
             binding.recyclerViewGenre.post{
-                sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
+                sharedViewModel.filmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
             }
         }
         Handler(Looper.getMainLooper()).postDelayed({

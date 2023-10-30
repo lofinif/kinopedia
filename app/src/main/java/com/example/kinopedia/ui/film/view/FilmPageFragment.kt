@@ -14,13 +14,11 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import com.example.kinopedia.R
-import com.example.kinopedia.data.dao.FavouriteDao
 import com.example.kinopedia.databinding.FragmentFilmPageBinding
 import com.example.kinopedia.ui.film.viewmodel.FilmPageViewModel
 import com.example.kinopedia.utils.ItemOffsetDecoration
@@ -28,15 +26,12 @@ import com.example.kinopedia.utils.UpdateFilmCallBack
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.picasso.transformations.BlurTransformation
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-import javax.inject.Inject
+
 @AndroidEntryPoint
 class FilmPageFragment : Fragment(), UpdateFilmCallBack {
     private val sharedViewModel: FilmPageViewModel by viewModels()
@@ -60,7 +55,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         filmId = arguments?.getInt("filmId")!!
-        if (sharedViewModel.data.value?.kinopoiskId == null) {
+        if (sharedViewModel.film.value?.kinopoiskId == null) {
             getFilm(filmId)
             Log.e("Get", filmId.toString())
         }
@@ -94,12 +89,12 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
                 ).show()
             }
             sharedViewModel.apply {
-                data.observe(viewLifecycleOwner) {
+                film.observe(viewLifecycleOwner) {
                     val formattedString = getString(
-                        R.string.text_view_details_film, "${data.value?.displayYear}",
-                        "${data.value?.displayGenres}", "${data.value?.displayFilmLength}", "${data.value?.displayCountry}")
-                    ratingImdb.text = data.value?.displayRatingImdb
-                    ratingKinopoisk.text = data.value?.displayRatingKinopoisk
+                        R.string.text_view_details_film, "${film.value?.displayYear}",
+                        "${film.value?.displayGenres}", "${film.value?.displayFilmLength}", "${film.value?.displayCountry}")
+                    ratingImdb.text = film.value?.displayRatingImdb
+                    ratingKinopoisk.text = film.value?.displayRatingKinopoisk
                     yearMovie.text = formattedString
                     Picasso.get().load(getDataKinopoiskFilm().posterUrl).into(poster)
                     Picasso.get()
@@ -117,25 +112,25 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
                         } else descriptionMovieMore.maxLines = 4
                     }
                 }
-                dataSimilar.observe(viewLifecycleOwner) {
-                    if (dataSimilar.value.isNullOrEmpty()) {
+                similar.observe(viewLifecycleOwner) {
+                    if (similar.value.isNullOrEmpty()) {
                         titleSimilarFilms.isGone = true
                     }
                     adapter.notifyDataSetChanged()
                 }
-                dataExternalSources.observe(viewLifecycleOwner) {
-                    if (dataExternalSources.value.isNullOrEmpty())
+                externalSources.observe(viewLifecycleOwner) {
+                    if (externalSources.value.isNullOrEmpty())
                         titleExternal.isGone = true
                 }
                 titleStuff.isGone = true
                 titleActors.isGone = true
-                dataStaff.observe(viewLifecycleOwner) {
-                    if (!dataStaff.value.isNullOrEmpty()) {
+                staff.observe(viewLifecycleOwner) {
+                    if (!staff.value.isNullOrEmpty()) {
                         titleStuff.isGone = false
                         titleActors.isGone = false
                     }
                 }
-                data.observe(viewLifecycleOwner){
+                film.observe(viewLifecycleOwner){
                     buttonCheck()
                 }
             }
@@ -195,7 +190,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
             getActors(kinopoiskId)
             getSimilarFilms(kinopoiskId)
             getExternalSources(kinopoiskId)
-            dataSimilar.observe(viewLifecycleOwner){
+            similar.observe(viewLifecycleOwner){
                 handler.postDelayed({
                     binding.apply {
                         recyclerViewSimilar.smoothScrollToPosition(0)
@@ -236,7 +231,7 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
         val formattedDateTime = dateAdded.format(formatter)
 
-        sharedViewModel.data.value?.apply {
+        sharedViewModel.film.value?.apply {
                 sharedViewModel.saveFavourite(
                     kinopoiskId,
                     posterUrl,

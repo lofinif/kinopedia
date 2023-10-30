@@ -34,7 +34,7 @@ class SearchFragment : Fragment(), NavigationActionListener {
         binding.viewModel = sharedViewModel
         binding.lifecycleOwner = this
         sharedViewModel.getTopFilms()
-        sharedViewModel.dataTopFilms.observe(viewLifecycleOwner) {
+        sharedViewModel.topFilms.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
 

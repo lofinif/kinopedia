@@ -11,9 +11,8 @@ import com.example.kinopedia.databinding.FilmItemBinding
 import com.example.kinopedia.network.models.Film
 import com.squareup.picasso.Picasso
 
-class FilmPageSimilarAdapter(private val updateFilmCallBack: UpdateFilmCallBack): ListAdapter<Film, FilmPageSimilarAdapter.FilmViewHolder>(
-    Comparator()
-) {
+class FilmPageSimilarAdapter(private val updateFilmCallBack: UpdateFilmCallBack):
+    ListAdapter<Film, FilmPageSimilarAdapter.FilmViewHolder>(Comparator()) {
 
     class FilmViewHolder(private var binding: FilmItemBinding, private val updateFilmCallBack: UpdateFilmCallBack): RecyclerView.ViewHolder(binding.root) {
         fun bind(film: Film) {

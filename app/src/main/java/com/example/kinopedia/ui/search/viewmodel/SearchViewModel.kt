@@ -14,8 +14,8 @@ import kotlinx.coroutines.launch
 class SearchViewModel: ViewModel() {
     var pageCount = 1
 
-    private val liveDataFilmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
-    val dataFilmsByFilter: LiveData<List<KinopoiskFilm>> = liveDataFilmsByFilter
+    private val _filmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
+    val filmsByFilter: LiveData<List<KinopoiskFilm>> = _filmsByFilter
 
     private val _statusTopFilm = MutableLiveData(LoadingStatus.DEFAULT)
     val statusTopFilm: LiveData<LoadingStatus> = _statusTopFilm
@@ -23,8 +23,8 @@ class SearchViewModel: ViewModel() {
     private val _statusSearchKeyWord = MutableLiveData(LoadingStatus.DONE)
     val statusSearchKeyWord: LiveData<LoadingStatus> = _statusSearchKeyWord
 
-    private val liveDataTopFilms = MutableLiveData<List<Film>>()
-    val dataTopFilms: LiveData<List<Film>> = liveDataTopFilms
+    private val _topFilms = MutableLiveData<List<Film>>()
+    val topFilms: LiveData<List<Film>> = _topFilms
 
     fun getFilmsByKeyWord(countries: Array<Int>?, genres: Array<Int>?, order: String, type: String,
                           keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
@@ -35,7 +35,7 @@ class SearchViewModel: ViewModel() {
             val list = FilmApi.retrofitService.getFilmByFilters(
                 countries, genres, order, type, keyword,
                 ratingFrom, ratingTo, yearFrom, yearTo, page)
-            liveDataFilmsByFilter.postValue(list.items)
+            _filmsByFilter.postValue(list.items)
             pageCount = list.totalPages
             _statusSearchKeyWord.postValue(LoadingStatus.DONE)
            } catch (e: Exception){
@@ -44,12 +44,12 @@ class SearchViewModel: ViewModel() {
     }
 
     fun getTopFilms() {
-        if (liveDataTopFilms.value.isNullOrEmpty()) {
+        if (_topFilms.value.isNullOrEmpty()) {
         viewModelScope.launch(Dispatchers.IO) {
                 _statusTopFilm.postValue(LoadingStatus.LOADING)
                 try {
                     val list = FilmApi.retrofitService.getTopFilms()
-                    liveDataTopFilms.postValue(list.films)
+                    _topFilms.postValue(list.films)
                     pageCount = list.pagesCount
                     _statusTopFilm.postValue(LoadingStatus.DONE)
                 } catch (e: Exception) {
@@ -64,8 +64,8 @@ class SearchViewModel: ViewModel() {
         val list = FilmApi.retrofitService.getFilmByFilters(
             countries, genres, order, type, keyword,
             ratingFrom, ratingTo, yearFrom, yearTo, page)
-        val currentList = liveDataFilmsByFilter.value?.toMutableList() ?: mutableListOf()
+        val currentList = _filmsByFilter.value?.toMutableList() ?: mutableListOf()
         currentList.addAll(list.items)
-        liveDataFilmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
+        _filmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
     }
 }

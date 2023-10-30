@@ -147,7 +147,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
-                android:text="@{viewModel.data.displayName}"
+                android:text="@{viewModel.film.displayName}"
                 android:textAppearance="@style/name_movie_film_page"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/name_end_line"
@@ -163,7 +163,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:text="@{viewModel.data.displayOriginalName}"
+                android:text="@{viewModel.film.displayOriginalName}"
                 android:textAppearance="@style/name_original_movie_film_page"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/name_end_line"
@@ -190,7 +190,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/description_film_page"
                 android:layout_marginTop="10dp"
-                android:text="@{viewModel.data.displayDescription}"
+                android:text="@{viewModel.film.displayDescription}"
                 android:maxLines="4"
                 android:ellipsize="end"
                 app:layout_constrainedWidth="true"
@@ -227,7 +227,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title_actors"
                 app:spanCount="4"
-                listDataActorAndStaff="@{viewModel.dataActorFilmPage}"
+                listDataActorAndStaff="@{viewModel.actorFilmPage}"
                 />
 
           <TextView
@@ -258,7 +258,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title_stuff"
-                listDataActorAndStaff="@{viewModel.dataStaff}"
+                listDataActorAndStaff="@{viewModel.staff}"
                 />
 
             <TextView
@@ -287,7 +287,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title_similar_films"
-                listDataSimilar="@{viewModel.dataSimilar}"
+                listDataSimilar="@{viewModel.similar}"
                 />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -305,7 +305,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/title_external"
-                listDataExternal="@{viewModel.dataExternalSources}"
+                listDataExternal="@{viewModel.externalSources}"
                 />
 
             <Button
