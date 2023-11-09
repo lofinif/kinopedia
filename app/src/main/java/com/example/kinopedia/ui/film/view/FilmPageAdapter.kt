@@ -6,14 +6,19 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.databinding.FilmPageItemBinding
-import com.example.kinopedia.network.models.ActorFilmPage
+import com.example.kinopedia.data.film.dto.ActorFilmPage
+import com.example.kinopedia.ui.BaseMapper
+import com.example.kinopedia.ui.film.mapper.ActorFilmPageToActorFilmPageMapper
+import com.example.kinopedia.ui.film.model.ActorFilmPageModel
 import com.squareup.picasso.Picasso
 
 
-class FilmPageAdapter: ListAdapter<ActorFilmPage, FilmPageAdapter.FilmViewHolder>(Comparator()) {
+class FilmPageAdapter(
+    private val mapper: BaseMapper<ActorFilmPage, ActorFilmPageModel>
+): ListAdapter<ActorFilmPage, FilmPageAdapter.FilmViewHolder>(Comparator()) {
 
     class FilmViewHolder(private var binding: FilmPageItemBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(actorFilmPage: ActorFilmPage) {
+        fun bind(actorFilmPage: ActorFilmPageModel) {
                 binding.nameActor.text = actorFilmPage.displayName
                 binding.roleActor.text = actorFilmPage.displayDescription
                 Picasso.get().load(actorFilmPage.posterUrl).into(binding.avatarActor)
@@ -36,6 +41,8 @@ class FilmPageAdapter: ListAdapter<ActorFilmPage, FilmPageAdapter.FilmViewHolder
     }
 
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
-        holder.bind(getItem(position))
-    }
+        val item = getItem(position)
+        item?.let {
+            holder.bind(mapper.map(it))
+        }    }
 }
