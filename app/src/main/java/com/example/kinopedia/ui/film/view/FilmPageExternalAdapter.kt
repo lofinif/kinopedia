@@ -3,6 +3,7 @@ package com.example.kinopedia.ui.film.view
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,29 +11,32 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.ExternalSourceItemBinding
-import com.example.kinopedia.network.models.ExternalSource
+import com.example.kinopedia.data.film.ExternalSource
+import com.example.kinopedia.ui.BaseMapper
+import com.example.kinopedia.ui.film.model.ExternalSourceModel
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 
 
-class FilmPageExternalAdapter() :
+class FilmPageExternalAdapter(private val mapper: BaseMapper <ExternalSource, ExternalSourceModel>) :
     ListAdapter<ExternalSource, FilmPageExternalAdapter.FilmViewHolder>(Comparator()) {
 
     class FilmViewHolder(
         private var binding: ExternalSourceItemBinding,
         private val context: Context
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(externalSource: ExternalSource) {
-            binding.platform.text = externalSource.platform
+        fun bind(externalSource: ExternalSourceModel) {
+            Log.e("bind", "bind")
+            binding.platform.text = externalSource.displayPlatform
             binding.logo.setOnClickListener {
                 openWebPage(externalSource.url)
             }
-            if (externalSource.platform == "Wink" || externalSource.platform == "Кинотеатр Wink") {
+            if (externalSource.displayPlatform == "Wink" || externalSource.displayPlatform == "Кинотеатр Wink") {
                 binding.logo.setImageResource(R.drawable.logo_wink)
             } else {
                 GlideToVectorYou
                     .init()
                     .with(context)
-                    .load(Uri.parse(externalSource.logoUrl), binding.logo)
+                    .load(Uri.parse(externalSource.displayLogoUrl), binding.logo)
             }
         }
 
@@ -62,6 +66,9 @@ class FilmPageExternalAdapter() :
     }
 
     override fun onBindViewHolder(holder: FilmViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val item = getItem(position)
+        item?.let {
+            holder.bind(mapper.map(it))
+        }
     }
 }
