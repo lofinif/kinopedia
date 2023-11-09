@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kinopedia.network.models.Film
+import com.example.kinopedia.data.film.dto.FilmForAdapter
 import com.example.kinopedia.network.services.FilmApi
 import com.example.kinopedia.network.services.LoadingStatus
 import com.example.kinopedia.network.models.ThisMonthFilm
@@ -25,11 +25,11 @@ class HomeViewModel : ViewModel() {
     private val _statusMonth = MutableLiveData(LoadingStatus.DEFAULT)
     val statusMonth: LiveData<LoadingStatus> = _statusMonth
 
-    private val _coming = MutableLiveData<List<Film>>()
-    val coming: LiveData<List<Film>> = _coming
+    private val _coming = MutableLiveData<List<FilmForAdapter>>()
+    val coming: LiveData<List<FilmForAdapter>> = _coming
 
-    private val _trending = MutableLiveData<List<Film>>()
-    val trending: LiveData<List<Film>> = _trending
+    private val _trending = MutableLiveData<List<FilmForAdapter>>()
+    val trending: LiveData<List<FilmForAdapter>> = _trending
 
     private val _thisMonth = MutableLiveData<List<ThisMonthFilm>>()
     val thisMonth: LiveData<List<ThisMonthFilm>> = _thisMonth
@@ -39,7 +39,7 @@ class HomeViewModel : ViewModel() {
                 _statusAwait.postValue(LoadingStatus.LOADING)
                 try {
                     val list = FilmApi.retrofitService.getAwaitFilms(1)
-                    _coming.postValue(list.films)
+                    _coming.postValue(list.filmForAdapters)
                     _statusAwait.postValue(LoadingStatus.DONE)
                 } catch (e: Exception) {
                     _coming.postValue(emptyList())
@@ -54,7 +54,7 @@ class HomeViewModel : ViewModel() {
                     _statusPopular.postValue(LoadingStatus.LOADING)
                     try {
                         val list = FilmApi.retrofitService.getPopularFilms(1)
-                        _trending.postValue(list.films)
+                        _trending.postValue(list.filmForAdapters)
                         _statusPopular.postValue(LoadingStatus.DONE)
                     } catch (e: Exception) {
                         _trending.postValue(emptyList())

@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kinopedia.network.models.Film
+import com.example.kinopedia.data.film.dto.FilmForAdapter
 import com.example.kinopedia.network.services.FilmApi
 import com.example.kinopedia.network.services.LoadingStatus
 import com.example.kinopedia.network.models.ThisMonthFilm
@@ -24,14 +24,14 @@ class MoreViewModel : ViewModel() {
     private val month = monthFormat.format(calendar)
     var titleFragment = ""
 
-    private val _coming = MutableLiveData<List<Film>>()
-    val coming: LiveData<List<Film>> = _coming
+    private val _coming = MutableLiveData<List<FilmForAdapter>>()
+    val coming: LiveData<List<FilmForAdapter>> = _coming
 
     private val _status = MutableLiveData(LoadingStatus.DEFAULT)
     val status: LiveData<LoadingStatus> = _status
 
-    private val _trending = MutableLiveData<List<Film>>()
-    val trending: LiveData<List<Film>> = _trending
+    private val _trending = MutableLiveData<List<FilmForAdapter>>()
+    val trending: LiveData<List<FilmForAdapter>> = _trending
 
     private val _thisMonth = MutableLiveData<List<ThisMonthFilm>>()
     val thisMonth: LiveData<List<ThisMonthFilm>> = _thisMonth
@@ -43,7 +43,7 @@ class MoreViewModel : ViewModel() {
                 _status.postValue(LoadingStatus.LOADING)
                 try {
                     val list = FilmApi.retrofitService.getAwaitFilms(page)
-                    _coming.postValue(list.films)
+                    _coming.postValue(list.filmForAdapters)
                     pageCountTrendingAndAwait = list.pagesCount
                     _status.postValue(LoadingStatus.DONE)
                 } catch (e: Exception) {
@@ -60,7 +60,7 @@ class MoreViewModel : ViewModel() {
                 _status.postValue(LoadingStatus.LOADING)
                 try {
                     val list = FilmApi.retrofitService.getPopularFilms(page)
-                    _trending.postValue(list.films)
+                    _trending.postValue(list.filmForAdapters)
                     pageCountTrendingAndAwait = list.pagesCount
                     _status.postValue(LoadingStatus.DONE)
                 } catch (e: Exception) {
@@ -90,7 +90,7 @@ class MoreViewModel : ViewModel() {
     fun loadNextTrending(page: Int) = viewModelScope.launch(Dispatchers.IO) {
         val list = FilmApi.retrofitService.getPopularFilms(page)
         val currentList = _trending.value?.toMutableList() ?: mutableListOf()
-        currentList.addAll(list.films)
+        currentList.addAll(list.filmForAdapters)
         _trending.postValue(currentList.distinctBy{it.filmId})
     }
 

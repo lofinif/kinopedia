@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.utils.NavigationActionListener
 import com.example.kinopedia.databinding.SearchItemBinding
-import com.example.kinopedia.network.models.KinopoiskFilm
+import com.example.kinopedia.data.film.dto.KinopoiskFilm
 import com.squareup.picasso.Picasso
 
 

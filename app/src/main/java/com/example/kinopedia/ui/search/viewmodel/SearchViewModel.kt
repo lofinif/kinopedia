@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kinopedia.network.models.Film
+import com.example.kinopedia.data.film.dto.FilmForAdapter
 import com.example.kinopedia.network.services.FilmApi
-import com.example.kinopedia.network.models.KinopoiskFilm
+import com.example.kinopedia.data.film.dto.KinopoiskFilm
 import com.example.kinopedia.network.services.LoadingStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,8 +23,8 @@ class SearchViewModel: ViewModel() {
     private val _statusSearchKeyWord = MutableLiveData(LoadingStatus.DONE)
     val statusSearchKeyWord: LiveData<LoadingStatus> = _statusSearchKeyWord
 
-    private val _topFilms = MutableLiveData<List<Film>>()
-    val topFilms: LiveData<List<Film>> = _topFilms
+    private val _topFilms = MutableLiveData<List<FilmForAdapter>>()
+    val topFilms: LiveData<List<FilmForAdapter>> = _topFilms
 
     fun getFilmsByKeyWord(countries: Array<Int>?, genres: Array<Int>?, order: String, type: String,
                           keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
@@ -49,7 +49,7 @@ class SearchViewModel: ViewModel() {
                 _statusTopFilm.postValue(LoadingStatus.LOADING)
                 try {
                     val list = FilmApi.retrofitService.getTopFilms()
-                    _topFilms.postValue(list.films)
+                    _topFilms.postValue(list.filmForAdapters)
                     pageCount = list.pagesCount
                     _statusTopFilm.postValue(LoadingStatus.DONE)
                 } catch (e: Exception) {

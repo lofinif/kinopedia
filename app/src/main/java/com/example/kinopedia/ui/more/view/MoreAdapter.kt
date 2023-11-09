@@ -11,33 +11,33 @@ import com.example.kinopedia.utils.ITEM_TYPE_THIS_MONTH
 import com.example.kinopedia.utils.ITEM_TYPE_TOP
 import com.example.kinopedia.utils.NavigationActionListener
 import com.example.kinopedia.databinding.SearchItemBinding
-import com.example.kinopedia.network.models.Film
+import com.example.kinopedia.data.film.dto.FilmForAdapter
 import com.example.kinopedia.network.models.ThisMonthFilm
 import com.squareup.picasso.Picasso
 
-class MoreAdapter(private val navigation: NavigationActionListener) : ListAdapter<Film, RecyclerView.ViewHolder>(
+class MoreAdapter(private val navigation: NavigationActionListener) : ListAdapter<FilmForAdapter, RecyclerView.ViewHolder>(
     Comparator()
 ) {
 
-    private val items = mutableListOf<Film>()
+    private val items = mutableListOf<FilmForAdapter>()
     private val itemsThisMonth = mutableListOf<ThisMonthFilm>()
 
     class MoreViewHolderTrendingAndAwait(private var binding: SearchItemBinding): RecyclerView.ViewHolder(binding.root) {
         private val bundle = Bundle()
         private val dash = "\u2014"
-        fun bind(film: Film, navigation: NavigationActionListener) {
-            val genre = if(film.genres?.isEmpty() == true)  dash else film.genres?.get(0)?.genre
-            val country = if(film.countries?.isEmpty() == true)  dash else film.countries?.get(0)?.country
-            Picasso.get().load(film.posterUrl).into(binding.poster)
-            binding.ratingKinopoisk.text = film.displayRatingKinopoisk
-            binding.nameMovie.text = film.displayName
-            binding.nameMovieOriginal.text = film.displayOriginalName
-            binding.ratingImdb.text = film.dash
-            binding.descriptionYear.text = film.displayYear
+        fun bind(filmForAdapter: FilmForAdapter, navigation: NavigationActionListener) {
+            val genre = if(filmForAdapter.genres?.isEmpty() == true)  dash else filmForAdapter.genres?.get(0)?.genre
+            val country = if(filmForAdapter.countries?.isEmpty() == true)  dash else filmForAdapter.countries?.get(0)?.country
+            Picasso.get().load(filmForAdapter.posterUrl).into(binding.poster)
+            binding.ratingKinopoisk.text = filmForAdapter.displayRatingKinopoisk
+            binding.nameMovie.text = filmForAdapter.displayName
+            binding.nameMovieOriginal.text = filmForAdapter.displayOriginalName
+            binding.ratingImdb.text = filmForAdapter.dash
+            binding.descriptionYear.text = filmForAdapter.displayYear
             binding.descriptionGenre.text = genre
             binding.descriptionCountry.text = country
             binding.constraintLayout.setOnClickListener {
-                bundle.putInt("filmId", film.filmId)
+                bundle.putInt("filmId", filmForAdapter.filmId)
                     navigation.navigate(bundle)
             }
         }
@@ -77,11 +77,11 @@ class MoreAdapter(private val navigation: NavigationActionListener) : ListAdapte
         }
     }
 
-    class Comparator: DiffUtil.ItemCallback<Film>() {
-        override fun areItemsTheSame(oldItem: Film, newItem: Film): Boolean {
+    class Comparator: DiffUtil.ItemCallback<FilmForAdapter>() {
+        override fun areItemsTheSame(oldItem: FilmForAdapter, newItem: FilmForAdapter): Boolean {
             return oldItem.filmId == newItem.filmId
         }
-        override fun areContentsTheSame(oldItem: Film, newItem: Film): Boolean {
+        override fun areContentsTheSame(oldItem: FilmForAdapter, newItem: FilmForAdapter): Boolean {
             return oldItem == newItem
         }
     }
@@ -103,7 +103,7 @@ class MoreAdapter(private val navigation: NavigationActionListener) : ListAdapte
         }
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun addAllTrendingAndAwait(newItems: List<Film>) {
+    fun addAllTrendingAndAwait(newItems: List<FilmForAdapter>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
