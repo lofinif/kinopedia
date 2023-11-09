@@ -99,6 +99,12 @@
         <item name="android:textColor">@color/light_blue</item>
     </style>
 
+    <style name="try_again">
+        <item name="android:textSize">22sp</item>
+        <item name="android:letterSpacing">-0.03</item>
+        <item name="android:textColor">@color/light_blue</item>
+    </style>
+
     <style name="description_movie_search_result">
         <item name="android:textSize">13sp</item>
         <item name="android:letterSpacing">-0.03</item>
@@ -185,6 +191,11 @@
 
     <style name="title_film_page">
         <item name="android:textSize">24sp</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="error_message">
+        <item name="android:textSize">20sp</item>
         <item name="android:letterSpacing">0.03</item>
         <item name="android:textColor">@color/white</item>
     </style>
