@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kinopedia.network.services.FilmApi
-import com.example.kinopedia.network.models.KinopoiskFilm
+import com.example.kinopedia.data.film.dto.KinopoiskFilm
 import com.example.kinopedia.network.services.LoadingStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

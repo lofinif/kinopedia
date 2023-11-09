@@ -6,7 +6,7 @@
     <data>
         <variable
             name="actor"
-            type="com.example.kinopedia.network.models.ActorFilmPage" />
+            type="com.example.kinopedia.data.film.dto.ActorFilmPage" />
     </data>
 
         <com.google.android.material.card.MaterialCardView

@@ -1,4 +1,7 @@
-package com.example.kinopedia.network.models
+package com.example.kinopedia.data.film.dto
+
+import com.example.kinopedia.network.models.Countries
+import com.example.kinopedia.network.models.Genre
 
 data class KinopoiskFilm(
     val kinopoiskId: Int,

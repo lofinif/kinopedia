@@ -1,6 +1,9 @@
-package com.example.kinopedia.network.models
+package com.example.kinopedia.data.film.dto
 
-data class Film(
+import com.example.kinopedia.network.models.Countries
+import com.example.kinopedia.network.models.Genre
+
+data class FilmForAdapter(
     val filmId: Int,
     val nameRu: String?,
     val nameEn: String?,

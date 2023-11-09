@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.kinopedia.R
 import com.example.kinopedia.data.entities.FavouriteEntity
-import com.example.kinopedia.network.models.ActorFilmPage
-import com.example.kinopedia.network.models.ExternalSource
-import com.example.kinopedia.network.models.Film
-import com.example.kinopedia.network.models.KinopoiskFilm
+import com.example.kinopedia.data.film.dto.ActorFilmPage
+import com.example.kinopedia.data.film.ExternalSource
+import com.example.kinopedia.data.film.dto.FilmForAdapter
+import com.example.kinopedia.data.film.dto.KinopoiskFilm
 import com.example.kinopedia.network.services.LoadingStatus
 import com.example.kinopedia.ui.favourite.view.FavouriteAdapter
 import com.example.kinopedia.ui.film.view.FilmPageAdapter
@@ -24,7 +24,7 @@ import com.example.kinopedia.ui.search.view.SearchAdapter
 import com.example.kinopedia.ui.search.view.SearchResultAdapter
 
 @BindingAdapter("listData")
-fun bindRecyclerView(recyclerView: RecyclerView, data: List<Film>?) {
+fun bindRecyclerView(recyclerView: RecyclerView, data: List<FilmForAdapter>?) {
     val adapterRecommend = recyclerView.adapter as HomeAdapter
     adapterRecommend.submitList(data)
 }
@@ -35,13 +35,13 @@ fun bindRecyclerViewFavouriteFilms(recyclerView: RecyclerView, data: List<Favour
     adapter.submitList(data)
 }
 @BindingAdapter("listDataTopFilms")
-fun bindRecyclerViewTopFilms(recyclerView: RecyclerView, data: List<Film>?) {
+fun bindRecyclerViewTopFilms(recyclerView: RecyclerView, data: List<FilmForAdapter>?) {
     val adapter = recyclerView.adapter as SearchAdapter
     adapter.submitList(data)
 }
 
 @BindingAdapter("listDataSimilar")
-fun bindRecyclerViewSimilar(recyclerView: RecyclerView, data: List<Film>?) {
+fun bindRecyclerViewSimilar(recyclerView: RecyclerView, data: List<FilmForAdapter>?) {
     val adapter = recyclerView.adapter as FilmPageSimilarAdapter
     adapter.submitList(data)
 }

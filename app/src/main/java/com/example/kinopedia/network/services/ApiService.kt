@@ -1,11 +1,11 @@
 package com.example.kinopedia.network.services
 
 import com.example.kinopedia.utils.BASE_URL
-import com.example.kinopedia.network.models.ActorFilmPage
+import com.example.kinopedia.data.film.dto.ActorFilmPage
 import com.example.kinopedia.network.models.ExternalSources
 import com.example.kinopedia.network.models.FilmsByGenre
 import com.example.kinopedia.network.models.Filters
-import com.example.kinopedia.network.models.KinopoiskFilm
+import com.example.kinopedia.data.film.dto.KinopoiskFilm
 import com.example.kinopedia.network.models.KinopoiskSimilarFilms
 import com.example.kinopedia.network.models.ThisMonthFilms
 import com.example.kinopedia.network.models.TopFilms
@@ -91,9 +91,12 @@ interface ApiService {
     @GET("/api/v2.2/films/{id}/external_sources")
     suspend fun getExternalSources(
         @Path("id") id: Int): ExternalSources
-
+    companion object FilmApi{
+        fun create(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+    }
 }
-
 object FilmApi{
     val retrofitService: ApiService by lazy { retrofit.create(ApiService::class.java) }
 }
+
+

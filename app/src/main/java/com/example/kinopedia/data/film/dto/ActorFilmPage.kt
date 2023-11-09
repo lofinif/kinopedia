@@ -1,4 +1,4 @@
-package com.example.kinopedia.network.models
+package com.example.kinopedia.data.film.dto
 
 data class ActorFilmPage(
     val staffId: Int,
