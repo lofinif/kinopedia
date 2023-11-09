@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:shimmer_auto_start="true"
+    app:shimmer_highlight_color="@color/gentian_blue"
+    android:background="@drawable/gradient_home_background"
+    app:shimmer_base_color="@color/dark_blue"
+    app:shimmer_width_ratio="@integer/material_motion_duration_long_2"
+    >
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/poster_shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="550dp"
+        android:src="@drawable/gray_rectangle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/name_movie_shimmer"
+        android:layout_width="75dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/deep_grey"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/poster_shimmer" />
+
+    <View
+        android:id="@+id/name_movie_original_shimmer"
+        android:layout_width="100dp"
+        android:layout_height="14dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/deep_grey"
+        android:layout_marginStart="24dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_movie_shimmer" />
+
+    <View
+        android:id="@+id/year_movie_shimmer"
+        android:layout_width="30dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/deep_grey"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_movie_original_shimmer" />
+
+    <TextView
+        android:id="@+id/title_premier_shimmer"
+        android:layout_width="150dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/deep_grey"
+        android:textAppearance="@style/name_original_movie_film_page"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/year_movie_shimmer" />
+
+    <View
+        android:id="@+id/button_favourite_shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/button_like_film_page_shimmer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_premier_shimmer" />
+
+    <ImageView
+        android:id="@+id/kinopoisk_logo_shimmer"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="24dp"
+        android:scaleType="fitXY"
+        android:layout_marginEnd="6dp"
+        android:src="@drawable/gray_circle"
+        app:layout_constraintEnd_toStartOf="@+id/rating_kinopoisk_shimmer"
+        app:layout_constraintTop_toBottomOf="@+id/poster_shimmer" />
+
+    <ImageView
+        android:id="@+id/imdb_logo_shimmer"
+        android:layout_width="35dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="13dp"
+        android:src="@drawable/gray_rectangle"
+        app:layout_constraintEnd_toStartOf="@+id/rating_imdb_shimmer"
+        app:layout_constraintTop_toBottomOf="@id/kinopoisk_logo_shimmer" />
+
+    <View
+        android:id="@+id/rating_kinopoisk_shimmer"
+        android:layout_width="25dp"
+        android:layout_height="15dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="31dp"
+        android:background="@drawable/gray_rectangle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/poster_shimmer"
+        app:layout_constraintVertical_bias="0.0" />
+    <View
+        android:id="@+id/rating_imdb_shimmer"
+        android:layout_width="25dp"
+        android:layout_height="15dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="27dp"
+        android:background="@drawable/gray_rectangle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rating_kinopoisk_shimmer"
+        app:layout_constraintVertical_bias="0.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.facebook.shimmer.ShimmerFrameLayout>
