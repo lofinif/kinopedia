@@ -4,13 +4,11 @@ import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ScrollView
 import android.widget.Toast
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,7 +17,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import com.example.kinopedia.R
+import com.example.kinopedia.data.film.ExternalSource
+import com.example.kinopedia.data.film.dto.ActorFilmPage
+import com.example.kinopedia.data.film.dto.FilmForAdapter
 import com.example.kinopedia.databinding.FragmentFilmPageBinding
+import com.example.kinopedia.ui.BaseMapper
+import com.example.kinopedia.ui.film.model.ActorFilmPageModel
+import com.example.kinopedia.ui.film.model.ExternalSourceModel
+import com.example.kinopedia.ui.film.model.FilmForAdapterModel
+import com.example.kinopedia.ui.film.model.KinopoiskFilmModel
+import com.example.kinopedia.ui.film.state.FilmScreenState
 import com.example.kinopedia.ui.film.viewmodel.FilmPageViewModel
 import com.example.kinopedia.utils.ItemOffsetDecoration
 import com.example.kinopedia.utils.UpdateFilmCallBack
@@ -31,12 +38,25 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FilmPageFragment : Fragment(), UpdateFilmCallBack {
+    @Inject
+    lateinit var similarMapper: BaseMapper<FilmForAdapter, FilmForAdapterModel>
+    @Inject
+    lateinit var actorAndStaffMapper: BaseMapper<ActorFilmPage, ActorFilmPageModel>
+    @Inject
+    lateinit var externalSourceMapper: BaseMapper<ExternalSource, ExternalSourceModel>
+
     private val sharedViewModel: FilmPageViewModel by viewModels()
+
     private lateinit var binding: FragmentFilmPageBinding
-    private val adapter = FilmPageSimilarAdapter(this)
+    private lateinit var similarAdapter : FilmPageSimilarAdapter
+    private lateinit var actorAdapter : FilmPageAdapter
+    private lateinit var staffAdapter : FilmPageAdapter
+    private lateinit var externalAdapter : FilmPageExternalAdapter
+
     private val currentDate =
         LocalDateTime.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale("ru", "ru")))
     private var filmId = 0
@@ -48,6 +68,10 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFilmPageBinding.inflate(inflater)
+        similarAdapter = FilmPageSimilarAdapter(this, similarMapper)
+        actorAdapter = FilmPageAdapter(actorAndStaffMapper)
+        staffAdapter = FilmPageAdapter(actorAndStaffMapper)
+        externalAdapter = FilmPageExternalAdapter(externalSourceMapper)
         return binding.root
     }
 
@@ -57,26 +81,62 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
         filmId = arguments?.getInt("filmId")!!
         if (sharedViewModel.film.value?.kinopoiskId == null) {
             getFilm(filmId)
-            Log.e("Get", filmId.toString())
         }
         bind()
+        observeViewModel()
         hidePremier()
         showPremierButton()
     }
+    private fun observeViewModel() {
+        sharedViewModel.screenState.observe(viewLifecycleOwner) { state ->
+            binding.filmError.root.isVisible = state is FilmScreenState.Error
+            binding.filmLoading.root.isVisible = state is FilmScreenState.Loading
+            binding.filmContent.root.isVisible = state is FilmScreenState.Loaded
+
+            if (state is FilmScreenState.Loaded) {
+                bindModel(state.filmModel)
+                actorAdapter.submitList(sharedViewModel.actorFilmPage.value)
+                staffAdapter.submitList(sharedViewModel.staff.value)
+                externalAdapter.submitList(sharedViewModel.externalSources.value)
+                similarAdapter.submitList(sharedViewModel.similar.value?.items)
+            }
+        }
+    }
+
+    private fun bindModel(model: KinopoiskFilmModel){
+        binding.filmContent.let {
+           Picasso.get().load(model.posterUrl).into(it.poster)
+            Picasso.get()
+                .load(model.posterUrl)
+                .transform(BlurTransformation(requireContext(), 25, 3))
+                .into(it.posterBackground)
+
+            it.nameMovie.text = model.displayName
+            it.nameMovieOriginal.text = model.displayNameOriginal
+            it.detailsMovie.text = model.displayDetails
+            it.descriptionMovie.text = model.displayDescription
+            it.ratingKinopoisk.text = model.displayRatingKinopoisk
+            it.ratingImdb.text = model.displayRatingImdb
+
+            it.titleExternal.isVisible = !sharedViewModel.externalSources.value.isNullOrEmpty()
+            it.titleSimilarFilms.isVisible = !sharedViewModel.similar.value?.items?.isEmpty()!!
+            it.titleActors.isVisible = !sharedViewModel.actorFilmPage.value.isNullOrEmpty()
+            it.titleStuff.isVisible = !sharedViewModel.staff.value.isNullOrEmpty()
+        }
+    }
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun bind() {
         handler.postDelayed( {
-            binding.scroll.fullScroll(ScrollView.FOCUS_UP)
+            binding.filmContent.scroll.fullScroll(ScrollView.FOCUS_UP)
         } ,5)
 
-        binding.apply {
-            lifecycleOwner = viewLifecycleOwner
-            viewModel = sharedViewModel
-            recyclerViewSimilar.adapter = adapter
-            recyclerViewActors.adapter = FilmPageAdapter()
-            recyclerViewStaff.adapter = FilmPageAdapter()
-            recyclerViewExternalSources.adapter = FilmPageExternalAdapter()
+        binding.filmContent.apply {
+            recyclerViewSimilar.adapter = similarAdapter
+            recyclerViewActors.adapter = actorAdapter
+            recyclerViewStaff.adapter = staffAdapter
+            recyclerViewExternalSources.adapter = externalAdapter
             recyclerViewSimilar.addItemDecoration(itemOffsetDecoration)
             recyclerViewActors.addItemDecoration(itemOffsetDecoration)
             recyclerViewStaff.addItemDecoration(itemOffsetDecoration)
@@ -84,52 +144,22 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
             notificationPremier.setOnClickListener {
                 Toast.makeText(
                     requireContext(),
-                    "Вы начали отслеживать: ${binding.nameMovie.text}",
+                    "Вы начали отслеживать: ${binding.filmContent.nameMovie.text}",
                     Toast.LENGTH_LONG
                 ).show()
             }
+            descriptionMovie.setOnClickListener {
+                if (descriptionMovie.maxLines == 4) {
+                    descriptionMovie.maxLines = Integer.MAX_VALUE
+                    TransitionManager.beginDelayedTransition(
+                        descriptionMovie.parent as ViewGroup,
+                        TransitionInflater.from(requireContext())
+                            .inflateTransition(R.transition.expand_animation)
+                    )
+                } else descriptionMovie.maxLines = 4
+            }
             sharedViewModel.apply {
-                film.observe(viewLifecycleOwner) {
-                    val formattedString = getString(
-                        R.string.text_view_details_film, "${film.value?.displayYear}",
-                        "${film.value?.displayGenres}", "${film.value?.displayFilmLength}", "${film.value?.displayCountry}")
-                    ratingImdb.text = film.value?.displayRatingImdb
-                    ratingKinopoisk.text = film.value?.displayRatingKinopoisk
-                    yearMovie.text = formattedString
-                    Picasso.get().load(getDataKinopoiskFilm().posterUrl).into(poster)
-                    Picasso.get()
-                        .load(getDataKinopoiskFilm().posterUrl)
-                        .transform(BlurTransformation(requireContext(), 25, 3))
-                        .into(posterBackground)
-                    descriptionMovieMore.setOnClickListener {
-                        if (descriptionMovieMore.maxLines == 4) {
-                            descriptionMovieMore.maxLines = Integer.MAX_VALUE
-                            TransitionManager.beginDelayedTransition(
-                                descriptionMovieMore.parent as ViewGroup,
-                                TransitionInflater.from(requireContext())
-                                    .inflateTransition(R.transition.expand_animation)
-                            )
-                        } else descriptionMovieMore.maxLines = 4
-                    }
-                }
-                similar.observe(viewLifecycleOwner) {
-                    if (similar.value.isNullOrEmpty()) {
-                        titleSimilarFilms.isGone = true
-                    }
-                    adapter.notifyDataSetChanged()
-                }
-                externalSources.observe(viewLifecycleOwner) {
-                    if (externalSources.value.isNullOrEmpty())
-                        titleExternal.isGone = true
-                }
-                titleStuff.isGone = true
-                titleActors.isGone = true
-                staff.observe(viewLifecycleOwner) {
-                    if (!staff.value.isNullOrEmpty()) {
-                        titleStuff.isGone = false
-                        titleActors.isGone = false
-                    }
-                }
+
                 film.observe(viewLifecycleOwner){
                     buttonCheck()
                 }
@@ -155,14 +185,14 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
         binding.apply {
             if (premier != "unknown" && premier != null) {
                 val premierDate = formatDate(premier)
-                binding.premier.isVisible = true
-                titlePremier.isVisible = true
-                notificationPremier.isVisible = true
-                binding.premier.text = premierDate
+                filmContent.notificationPremier.isVisible = true
+                filmContent.titlePremier.isVisible = true
+                filmContent.notificationPremier.isVisible = true
+                filmContent.premier.text = premierDate
                 if (compareDates(currentDate, premierDate) == 1) {
                     hidePremier()
-                    titlePremier.isVisible = true
-                    titlePremier.text = getString(R.string.premiere_took_place, premierDate)
+                    filmContent.titlePremier.isVisible = true
+                    filmContent.titlePremier.text = getString(R.string.premiere_took_place, premierDate)
                 }
             }
         }
@@ -178,25 +208,22 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
        }
     }
     private fun hidePremier() {
-        binding.premier.isVisible = false
-        binding.titlePremier.isVisible = false
-        binding.notificationPremier.isVisible = false
+        binding.filmContent.premier.isVisible = false
+        binding.filmContent.titlePremier.isVisible = false
+        binding.filmContent.notificationPremier.isVisible = false
     }
     private fun getFilm(kinopoiskId: Int) {
         sharedViewModel.apply {
             viewModelScope.launch {
-                getFilmById(kinopoiskId)
+                fetchFilm(kinopoiskId)
             }
-            getActors(kinopoiskId)
-            getSimilarFilms(kinopoiskId)
-            getExternalSources(kinopoiskId)
             similar.observe(viewLifecycleOwner){
                 handler.postDelayed({
                     binding.apply {
-                        recyclerViewSimilar.smoothScrollToPosition(0)
-                        recyclerViewActors.smoothScrollToPosition(0)
-                        recyclerViewStaff.smoothScrollToPosition(0)
-                        recyclerViewExternalSources.smoothScrollToPosition(0)
+                        filmContent.recyclerViewSimilar.smoothScrollToPosition(0)
+                        filmContent.recyclerViewActors.smoothScrollToPosition(0)
+                        filmContent.recyclerViewStaff.smoothScrollToPosition(0)
+                        filmContent.recyclerViewExternalSources.smoothScrollToPosition(0)
                     }
                                     }, 75)
             }
@@ -210,13 +237,13 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
 
 
     private fun buttonPressed(){
-        binding.buttonFavourite.setBackgroundResource(R.drawable.button_pressed)
-        binding.buttonFavourite.text = "Удалить из избранного"
+        binding.filmContent.buttonFavourite.setBackgroundResource(R.drawable.button_pressed)
+        binding.filmContent.buttonFavourite.text = "Удалить из избранного"
     }
 
     private fun buttonUnpressed(){
-        binding.buttonFavourite.setBackgroundResource(R.drawable.button_unpressed)
-        binding.buttonFavourite.text = "В избранное"
+        binding.filmContent.buttonFavourite.setBackgroundResource(R.drawable.button_unpressed)
+        binding.filmContent.buttonFavourite.text = "В избранное"
     }
 
     private fun formatDate(dateString: String): String {

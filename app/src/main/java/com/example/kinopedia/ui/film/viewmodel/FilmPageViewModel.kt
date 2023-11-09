@@ -4,14 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.kinopedia.data.CallResult
 import com.example.kinopedia.data.entities.FavouriteEntity
+import com.example.kinopedia.data.film.ExternalSource
+import com.example.kinopedia.data.film.dto.ActorFilmPage
+import com.example.kinopedia.data.film.dto.KinopoiskFilm
 import com.example.kinopedia.data.repositories.FavouriteRepository
-import com.example.kinopedia.network.models.ActorFilmPage
-import com.example.kinopedia.network.models.ExternalSource
-import com.example.kinopedia.network.models.Film
-import com.example.kinopedia.network.services.FilmApi
-import com.example.kinopedia.network.models.KinopoiskFilm
-import com.example.kinopedia.network.services.LoadingStatus
+import com.example.kinopedia.domain.interactors.GetFilmsInteractor
+import com.example.kinopedia.network.models.KinopoiskSimilarFilms
+import com.example.kinopedia.ui.BaseMapper
+import com.example.kinopedia.ui.film.model.KinopoiskFilmModel
+import com.example.kinopedia.ui.film.state.FilmScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,82 +22,50 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilmPageViewModel @Inject constructor(
-    private val repository: FavouriteRepository
+    private val repository: FavouriteRepository,
+    private val filmMapper: BaseMapper<KinopoiskFilm, KinopoiskFilmModel>,
+    private val getFilmsInteractor: GetFilmsInteractor
 ) : ViewModel() {
 
     val isFavourite: MutableLiveData<Boolean> = MutableLiveData()
 
     val isAdded: MutableLiveData<Boolean> = MutableLiveData()
 
-    private val _film = MutableLiveData<KinopoiskFilm>()
-    val film: LiveData<KinopoiskFilm> = _film
+    private val _screenState = MutableLiveData<FilmScreenState>()
+    val screenState: LiveData<FilmScreenState> = _screenState
 
-    private val _status = MutableLiveData(LoadingStatus.DEFAULT)
-    val status: LiveData<LoadingStatus> = _status
+    private val _film = MutableLiveData<KinopoiskFilm?>()
+    val film: LiveData<KinopoiskFilm?> = _film
 
-    private val _similar = MutableLiveData<List<Film>>()
-    val similar: LiveData<List<Film>> = _similar
+    private val _similar = MutableLiveData<KinopoiskSimilarFilms?>()
+    val similar: LiveData<KinopoiskSimilarFilms?> = _similar
 
-    private val _actorFilmPage = MutableLiveData<List<ActorFilmPage>>()
-    val actorFilmPage: LiveData<List<ActorFilmPage>> = _actorFilmPage
+    private val _actorFilmPage = MutableLiveData<List<ActorFilmPage>?>()
+    val actorFilmPage: LiveData<List<ActorFilmPage>?> = _actorFilmPage
 
-    private val _staff = MutableLiveData<List<ActorFilmPage>>()
-    val staff: LiveData<List<ActorFilmPage>> = _staff
+    private val _staff = MutableLiveData<List<ActorFilmPage>?>()
+    val staff: LiveData<List<ActorFilmPage>?> = _staff
 
-    private val _externalSources = MutableLiveData<List<ExternalSource>>()
-    val externalSources: LiveData<List<ExternalSource>> = _externalSources
+    private val _externalSources = MutableLiveData<List<ExternalSource>?>()
+    val externalSources: LiveData<List<ExternalSource>?> = _externalSources
 
-
-    fun getDataKinopoiskFilm(): KinopoiskFilm {
-        return _film.value ?: KinopoiskFilm(0, null, null,
-            null, null, null, "", 0,"", "", emptyList(), emptyList(), 0.0, 0.0)
-    }
-
-    fun getFilmById(kinopoiskId: Int) = viewModelScope.launch(Dispatchers.IO) {
-             _status.postValue(LoadingStatus.LOADING)
-             try {
-                 val list = FilmApi.retrofitService.getFilmById(kinopoiskId)
-                 _film.postValue(list)
-                 _status.postValue(LoadingStatus.DONE)
-
-         } catch (e: Exception) {
-             _status.postValue(LoadingStatus.ERROR)
-         }
-    }
-
-     fun getActors(kinopoiskId: Int) = viewModelScope.launch(Dispatchers.IO) {
-             _status.postValue(LoadingStatus.LOADING)
-         try {
-             val list = FilmApi.retrofitService.getActorsAndStaff(kinopoiskId)
-            val filteredListActor = list.filter { it.professionKey == "ACTOR" }
-            val filteredListStaff = list.filter { it.professionKey != "ACTOR" }
-            _actorFilmPage.postValue(filteredListActor)
-            _staff.postValue(filteredListStaff)
-            _status.postValue(LoadingStatus.DONE)
-        } catch (e: Exception) {
-            _status.postValue(LoadingStatus.ERROR)
-    }
-     }
-
-     fun getSimilarFilms(kinopoiskId: Int) = viewModelScope.launch(Dispatchers.IO){
-         _status.postValue(LoadingStatus.LOADING)
-         try {
-             val list = FilmApi.retrofitService.getSimilarFilms(kinopoiskId)
-             _similar.postValue(list.items)
-             _status.postValue(LoadingStatus.DONE)
-         } catch (e: Exception) {
-             _status.postValue(LoadingStatus.ERROR)
-    }
-     }
-
-    fun getExternalSources(kinopoiskId: Int) = viewModelScope.launch(Dispatchers.IO) {
-        _status.postValue(LoadingStatus.LOADING)
-        try {
-            val list = FilmApi.retrofitService.getExternalSources(kinopoiskId)
-            _externalSources.postValue(list.items)
-            _status.postValue(LoadingStatus.DONE)
-        } catch (e: Exception) {
-            _status.postValue(LoadingStatus.ERROR)
+    fun fetchFilm(kinopoiskId: Int){
+        _screenState.value = FilmScreenState.Loading
+        viewModelScope.launch {
+            val film = getFilmsInteractor.getFilmById(kinopoiskId)
+            val similarFilms = getFilmsInteractor.getSimilarFilms(kinopoiskId)
+            val actorsAndStaff = getFilmsInteractor.getActors(kinopoiskId)
+            val externalSources = getFilmsInteractor.getExternalSources(kinopoiskId)
+            if (film is CallResult.Success && similarFilms is CallResult.Success
+                && actorsAndStaff is CallResult.Success && externalSources is CallResult.Success) {
+                val filmModel = filmMapper.map(film.value)
+                _actorFilmPage.value = actorsAndStaff.value.filter { it.professionKey == "ACTOR" }
+                _staff.value = actorsAndStaff.value.filter { it.professionKey != "ACTOR" }
+                _similar.value = similarFilms.value
+                _externalSources.value = externalSources.value.items
+                _screenState.value = FilmScreenState.Loaded(filmModel)
+            } else
+                _screenState.value = FilmScreenState.Error
         }
     }
 
