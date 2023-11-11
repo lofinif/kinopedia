@@ -1,14 +1,14 @@
 package com.example.kinopedia.network.services
 
-import com.example.kinopedia.utils.BASE_URL
 import com.example.kinopedia.data.film.dto.ActorFilmPage
+import com.example.kinopedia.data.film.dto.KinopoiskFilm
+import com.example.kinopedia.data.home.dto.TopFilms
 import com.example.kinopedia.network.models.ExternalSources
 import com.example.kinopedia.network.models.FilmsByGenre
 import com.example.kinopedia.network.models.Filters
-import com.example.kinopedia.data.film.dto.KinopoiskFilm
 import com.example.kinopedia.network.models.KinopoiskSimilarFilms
 import com.example.kinopedia.network.models.ThisMonthFilms
-import com.example.kinopedia.network.models.TopFilms
+import com.example.kinopedia.utils.BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Interceptor

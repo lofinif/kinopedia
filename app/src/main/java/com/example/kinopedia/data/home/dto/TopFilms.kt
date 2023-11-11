@@ -1,8 +1,8 @@
-package com.example.kinopedia.network.models
+package com.example.kinopedia.data.home.dto
 
 import com.example.kinopedia.data.film.dto.FilmForAdapter
 
 data class TopFilms(
     val pagesCount: Int,
-    val filmForAdapters: List<FilmForAdapter>
+    val films: List<FilmForAdapter>
 )

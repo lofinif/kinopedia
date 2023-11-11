@@ -11,7 +11,10 @@ import com.example.kinopedia.data.film.FilmRepositoryImpl
 import com.example.kinopedia.data.film.dto.ActorFilmPage
 import com.example.kinopedia.data.film.dto.FilmForAdapter
 import com.example.kinopedia.data.film.dto.KinopoiskFilm
+import com.example.kinopedia.data.home.HomeRepositoryImpl
 import com.example.kinopedia.domain.repository.FilmRepository
+import com.example.kinopedia.domain.repository.HomeRepository
+import com.example.kinopedia.network.models.ThisMonthFilm
 import com.example.kinopedia.network.services.ApiService
 import com.example.kinopedia.network.services.client
 import com.example.kinopedia.ui.BaseMapper
@@ -23,6 +26,10 @@ import com.example.kinopedia.ui.film.model.ActorFilmPageModel
 import com.example.kinopedia.ui.film.model.ExternalSourceModel
 import com.example.kinopedia.ui.film.model.FilmForAdapterModel
 import com.example.kinopedia.ui.film.model.KinopoiskFilmModel
+import com.example.kinopedia.ui.home.mapper.FilmForAdapterToFilmForAdapterModelMapperHome
+import com.example.kinopedia.ui.home.mapper.ThisMonthFilmToThisMonthFilmModelMapper
+import com.example.kinopedia.ui.home.model.FilmForAdapterModelHome
+import com.example.kinopedia.ui.home.model.ThisMonthFilmModel
 import com.example.kinopedia.utils.BASE_URL
 import com.example.kinopedia.utils.LocationProvider
 import com.squareup.moshi.Moshi
@@ -51,6 +58,10 @@ abstract class MapperModule {
         mapper: FilmForAdapterToFilmForAdapterModelMapper
     ): BaseMapper<FilmForAdapter, FilmForAdapterModel>
     @Binds
+    abstract fun provideFilmForAdapterModuleMapperHome(
+        mapper: FilmForAdapterToFilmForAdapterModelMapperHome
+    ): BaseMapper<FilmForAdapter, FilmForAdapterModelHome>
+    @Binds
     abstract fun provideActorFilmPageToActorFilmPageMapper(
         mapper: ActorFilmPageToActorFilmPageMapper
     ): BaseMapper<ActorFilmPage, ActorFilmPageModel>
@@ -58,12 +69,16 @@ abstract class MapperModule {
     abstract fun provideExternalSourceToExternalSourceModelMapper(
         mapper: ExternalSourceToExternalSourceModelMapper
     ): BaseMapper<ExternalSource, ExternalSourceModel>
+    @Binds
+    abstract fun provideThisMonthFilmToThisMonthFilmModelMapper(
+        mapper: ThisMonthFilmToThisMonthFilmModelMapper
+    ): BaseMapper<ThisMonthFilm, ThisMonthFilmModel>
 }
+
+
 @Module
 @InstallIn(SingletonComponent::class)
 class DataModule {
-
-
 
     @Provides
     @Singleton
@@ -75,8 +90,6 @@ class DataModule {
             instance
         }
     }
-
-
 
     @Provides
     @Singleton
@@ -101,7 +114,13 @@ class DataModule {
 abstract class RepositoryModule{
     @Binds
     abstract fun provideSimilarFilmsRepo(similarFilmsRepositoryImpl: FilmRepositoryImpl): FilmRepository
+
+    @Binds
+    abstract fun provideHomeRepository(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
 }
+
+
+
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModule {

@@ -5,24 +5,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.utils.NavigationActionListener
 import com.example.kinopedia.databinding.HomeViewPagerItemBinding
-import com.example.kinopedia.network.models.ThisMonthFilm
+import com.example.kinopedia.ui.home.model.ThisMonthFilmModel
+import com.example.kinopedia.utils.NavigationActionListener
 import com.squareup.picasso.Picasso
 
 class HomeViewPagerAdapter(private val navigation: NavigationActionListener) : RecyclerView.Adapter<HomeViewPagerAdapter.HomeViewHolder>() {
-    private val films = mutableListOf<ThisMonthFilm>()
+    private val films = mutableListOf<ThisMonthFilmModel>()
 
      class HomeViewHolder(private val binding: HomeViewPagerItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(film: ThisMonthFilm, navigation: NavigationActionListener) {
+        fun bind(film: ThisMonthFilmModel, navigation: NavigationActionListener) {
             Picasso.get().load(film.posterUrl).into(binding.poster)
             binding.nameMovie.text = film.displayName
-            if (film.genres?.isNotEmpty() == true) binding.genreMovie.text = film.genres[0].genre
-            if (film.countries?.isNotEmpty() == true) binding.countryMovie.text = film.countries[0].country
+            binding.genreMovie.text = film.displayGenre
+            binding.countryMovie.text = film.displayCountry
             val bundle = Bundle()
             binding.poster.setOnClickListener {
-                bundle.putInt("filmId", film.kinopoiskId)
-                bundle.putString("premier", film.premiereRu)
+                bundle.putInt("filmId", film.filmId)
                 navigation.navigate(bundle)
             }
         }
@@ -42,7 +41,7 @@ class HomeViewPagerAdapter(private val navigation: NavigationActionListener) : R
         return films.size
     }
     @SuppressLint("NotifyDataSetChanged")
-    fun addAllComingThisMonth(newItems: List<ThisMonthFilm>) {
+    fun addAllComingThisMonth(newItems: List<ThisMonthFilmModel>) {
         films.clear()
         films.addAll(newItems)
         notifyDataSetChanged()
