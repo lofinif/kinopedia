@@ -1,61 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_home_background"
     tools:context=".ui.genre.view.GenreFragment">
 
-    <data>
-        <variable
-            name="viewModel"
-            type="com.example.kinopedia.ui.genre.viewmodel.GenreViewModel"/>
-    </data>
-    <FrameLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_genre"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient_home_background"
-        >
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_genre"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/prussian_blue">
+        android:layout_height="50dp"
+        android:background="@color/prussian_blue">
 
-            <ImageButton
-                android:id="@+id/back_button"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/empty_background"
-                android:src="@drawable/baseline_arrow_back_24" />
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/empty_background"
+            android:src="@drawable/baseline_arrow_back_24" />
 
-            <TextView
-                android:id="@+id/title_toolbar_genre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:textAppearance="@style/toolbar_title"
-                android:text=""
-                />
-        </androidx.appcompat.widget.Toolbar>
-
-        <ImageView
-            android:id="@+id/status_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="center"
-            app:loadingStatusElement="@{viewModel.status}" />
+        <TextView
+            android:id="@+id/title_toolbar_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:text=""
+            android:textAppearance="@style/toolbar_title" />
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_genre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="51dp"
+        android:clipToOutline="true"
+        android:clipToPadding="false"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:paddingBottom="12dp"
-        android:layout_marginTop="51dp"
-        android:clipToPadding="false"
-        android:clipToOutline="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        listDataFilmsByGenre="@{viewModel.filmsByFilter}"
         tools:listitem="@layout/search_item" />
-    </FrameLayout>
-</layout>
+
+    <include android:id="@+id/genre_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        layout="@layout/layout_loading_error"
+        />
+
+    <include android:id="@+id/genre_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        layout="@layout/layout_films_list_loading_vertical"/>
+</FrameLayout>
+
