@@ -1,4 +1,6 @@
-package com.example.kinopedia.network.models
+package com.example.kinopedia.data.cinema.dto
+
+import com.example.kinopedia.network.models.AddressOSM
 
 data class CityOSM(
     val place_id: Int,

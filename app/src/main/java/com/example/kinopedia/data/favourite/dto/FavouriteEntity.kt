@@ -1,8 +1,7 @@
-package com.example.kinopedia.data.entities
+package com.example.kinopedia.data.favourite.dto
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
 
 
 @Entity(tableName = "favourite_database")

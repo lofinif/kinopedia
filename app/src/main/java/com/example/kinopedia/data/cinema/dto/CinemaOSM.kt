@@ -1,4 +1,7 @@
-package com.example.kinopedia.network.models
+package com.example.kinopedia.data.cinema.dto
+
+import com.example.kinopedia.network.models.GeometryOverpass
+import com.example.kinopedia.network.models.TagsOverpass
 
 data class CinemaOSM(
     val id: Long?,
@@ -7,7 +10,4 @@ data class CinemaOSM(
     val type: String?,
     val tags: TagsOverpass?,
     val geometry: List<GeometryOverpass>?
-){
-    val latitude = lat ?: geometry?.get(0)?.lat
-    val longitude = lon ?: geometry?.get(0)?.lon
-}
+)

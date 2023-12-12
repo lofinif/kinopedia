@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.kinopedia.data.entities.FavouriteEntity
+import com.example.kinopedia.data.favourite.dto.FavouriteEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

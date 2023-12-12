@@ -13,19 +13,4 @@ data class FilmForAdapter(
     val posterUrlPreview: String?,
     val genres: List<Genre>?,
     val countries: List<Countries>?
-) {
-    val dash = "\u2014"
-
-    val displayName: String
-        get() = nameRu ?: nameEn ?: dash
-
-    val displayYear: String
-        get() = year?.toString() ?: dash
-
-    val displayOriginalName: String
-        get() = nameEn ?: nameRu ?: dash
-
-    val displayRatingKinopoisk: String = rating ?: dash
-
-
-}
+)
