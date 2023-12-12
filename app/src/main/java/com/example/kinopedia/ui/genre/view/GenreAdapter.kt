@@ -1,65 +1,66 @@
 package com.example.kinopedia.ui.genre.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.utils.NavigationActionListener
 import com.example.kinopedia.databinding.SearchItemBinding
-import com.example.kinopedia.data.film.dto.KinopoiskFilm
+import com.example.kinopedia.ui.film.model.KinopoiskFilmModel
+import com.example.kinopedia.utils.NavigationActionListener
 import com.squareup.picasso.Picasso
 
-class GenreAdapter(private val navigation: NavigationActionListener): ListAdapter<KinopoiskFilm, GenreAdapter.GenreViewHolder>(
-    Comparator()
-) {
-    private val items = mutableListOf<KinopoiskFilm>()
-
-
-    class GenreViewHolder(private var binding: SearchItemBinding): RecyclerView.ViewHolder(binding.root) {
+class GenreAdapter(private val navigation: NavigationActionListener) :
+    PagingDataAdapter<KinopoiskFilmModel, GenreAdapter.GenreViewHolder>(
+        Comparator()
+    ) {
+    class GenreViewHolder(private var binding: SearchItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         private val bundle = Bundle()
-        private val dash = "\u2014"
-        fun bind(film: KinopoiskFilm, navigation: NavigationActionListener) {
-            val genre = if(film.genres.isEmpty())  dash else film.genres[0].genre
-            val country = if(film.countries.isEmpty())  dash else film.countries[0].country
-            binding.nameMovie.text = film.displayName
-            binding.nameMovieOriginal.text = film.displayOriginalName
-            binding.descriptionYear.text = film.displayYear
-            binding.descriptionGenre.text = genre
-            binding.descriptionCountry.text = country
-            binding.ratingKinopoisk.text = film.displayRatingKinopoisk
-            binding.ratingImdb.text = film.displayRatingImdb
-            Picasso.get().load(film.posterUrl).into(binding.poster)
+        fun bind(film: KinopoiskFilmModel, navigation: NavigationActionListener) {
+            binding.nameMovieSearchResult.text = film.displayName
+            binding.nameMovieOriginalSearchResult.text = film.displayNameOriginal
+            binding.descriptionYearSearchResult.text = film.displayYear
+            binding.descriptionGenreSearchResult.text = film.displayGenre
+            binding.descriptionCountrySearchResult.text = film.displayCountries
+            binding.ratingKinopoiskSearchResult.text = film.displayRatingKinopoisk
+            binding.ratingImdbSearchResult.text = film.displayRatingImdb
+            Picasso.get().load(film.posterUrl).into(binding.posterSearchResult)
             binding.constraintLayout.setOnClickListener {
-                bundle.putInt("filmId", film.kinopoiskId)
+                bundle.putInt("filmId", film.filmId)
                 navigation.navigate(bundle)
             }
         }
     }
 
-    class Comparator: DiffUtil.ItemCallback<KinopoiskFilm>() {
-        override fun areItemsTheSame(oldItem: KinopoiskFilm, newItem: KinopoiskFilm): Boolean {
-            return oldItem.kinopoiskId == newItem.kinopoiskId
+    class Comparator : DiffUtil.ItemCallback<KinopoiskFilmModel>() {
+        override fun areItemsTheSame(
+            oldItem: KinopoiskFilmModel,
+            newItem: KinopoiskFilmModel
+        ): Boolean {
+            return oldItem.filmId == newItem.filmId
         }
-        override fun areContentsTheSame(oldItem: KinopoiskFilm, newItem: KinopoiskFilm): Boolean {
+
+        override fun areContentsTheSame(
+            oldItem: KinopoiskFilmModel,
+            newItem: KinopoiskFilmModel
+        ): Boolean {
             return oldItem == newItem
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
-        return GenreViewHolder(SearchItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return GenreViewHolder(
+            SearchItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
-        holder.bind(getItem(position), navigation)
-
+        getItem(position)?.let { holder.bind(it, navigation) }
     }
-    @SuppressLint("NotifyDataSetChanged")
-    fun addAll(newItems: List<KinopoiskFilm>) {
-        items.addAll(newItems)
-        notifyDataSetChanged()
-    }
-
 }
