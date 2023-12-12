@@ -4,27 +4,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentHomeBinding
+import com.example.kinopedia.ui.home.model.ThisMonthFilmModel
+import com.example.kinopedia.ui.home.state.HomeScreenState
 import com.example.kinopedia.ui.home.viewmodel.HomeViewModel
 import com.example.kinopedia.utils.ItemOffsetDecoration
 import com.example.kinopedia.utils.NavigationActionListener
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), NavigationActionListener {
 
     private val sharedViewModel: HomeViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
-    private val homeViewPagerAdapter = HomeViewPagerAdapter(this)
+    private val homeViewPagerAdapter = HomeAdapter<ThisMonthFilmModel>(this)
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 60, 0, 0)
     private val itemOffsetDecorationViewPager = ItemOffsetDecoration(30, 30, 0, 0)
-    private val homeAdapterTrending = HomeAdapter(this)
-    private val homeAdapterComingSoon = HomeAdapter(this)
+    private val homeAdapterTrending =
+        HomeAdapter<com.example.kinopedia.ui.home.model.FilmForAdapterModel>(this)
+    private val homeAdapterComingSoon =
+        HomeAdapter<com.example.kinopedia.ui.home.model.FilmForAdapterModel>(this)
     private val bundle = Bundle()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,28 +45,35 @@ class HomeFragment : Fragment(), NavigationActionListener {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun observeViewModel(){
-        viewLifecycleOwner.lifecycleScope.launch() {
-            sharedViewModel.flowComingSoon.collectLatest {
-                homeAdapterComingSoon.submitList(it)
-            }
+    private fun observeViewModel() {
+        sharedViewModel.comingSoon.observe(viewLifecycleOwner) {
+            homeAdapterComingSoon.submitList(it)
         }
-            viewLifecycleOwner.lifecycleScope.launch()  {
-            sharedViewModel.flowAwaitFilms.collectLatest {
-                homeAdapterTrending.submitList(it)
-            }
+        sharedViewModel.premier.observe(viewLifecycleOwner) {
+            homeViewPagerAdapter.submitList(it)
         }
-        viewLifecycleOwner.lifecycleScope.launch()  {
-            sharedViewModel.flowPremiers.collectLatest {
-                homeViewPagerAdapter.addAllComingThisMonth(it)
-            }
+        sharedViewModel.await.observe(viewLifecycleOwner) {
+            homeAdapterTrending.submitList(it)
+        }
+
+        sharedViewModel.screenState.observe(viewLifecycleOwner) { state ->
+            binding.homeError.root.isVisible = state is HomeScreenState.Error
+            binding.homeLoading.root.isVisible = state is HomeScreenState.Loading
+            binding.homeContent.root.isVisible = state is HomeScreenState.Loaded
         }
     }
 
     private fun bind() {
-        binding.apply {
-            lifecycleOwner = viewLifecycleOwner
-            viewModel = sharedViewModel
+        if (sharedViewModel.comingSoon.value.isNullOrEmpty()
+            || sharedViewModel.premier.value.isNullOrEmpty()
+            || sharedViewModel.await.value.isNullOrEmpty()
+        ) {
+            sharedViewModel.fetchLists()
+        }
+
+        binding.homeError.tryAgain.setOnClickListener { sharedViewModel.fetchLists() }
+
+        binding.homeContent.apply {
             recyclerViewComingSoon.adapter = homeAdapterComingSoon
             recyclerViewTrending.adapter = homeAdapterTrending
             viewPager.adapter = homeViewPagerAdapter
@@ -87,14 +98,6 @@ class HomeFragment : Fragment(), NavigationActionListener {
                 findNavController().navigate(R.id.action_navigation_home_to_cinemaWelcomeFragment)
             }
         }
-/*        sharedViewModel.apply {
-            getAwaitFilms()
-            getPopularFilms()
-            getFilmsThisMonth()
-            thisMonth.observe(viewLifecycleOwner) {
-                homeViewPagerAdapter.addAllComingThisMonth(it)
-            }
-        }*/
     }
 
     override fun navigate(bundle: Bundle) {
