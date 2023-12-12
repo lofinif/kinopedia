@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_home_background">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:shimmer_auto_start="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:id="@+id/title_premiers_shimmer"
+                android:layout_width="120dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/corner_view_shimmer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view_pager_shimmer"
+                android:layout_width="350dp"
+                android:layout_height="350dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/corner_view_shimmer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_premiers_shimmer" />
+
+            <View
+                android:id="@+id/title_coming_soon_shimmer"
+                android:layout_width="120dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/corner_view_shimmer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_pager_shimmer" />
+
+
+            <View
+                android:id="@+id/coming_soon_item_shimmer2"
+                android:layout_width="145dp"
+                android:layout_height="215dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/corner_view_shimmer"
+                app:layout_constraintStart_toEndOf="@+id/coming_soon_item_shimmer3"
+                app:layout_constraintTop_toBottomOf="@+id/title_coming_soon_shimmer" />
+
+            <View
+                android:id="@+id/coming_soon_item_shimmer3"
+                android:layout_width="145dp"
+                android:layout_height="215dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/corner_view_shimmer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_coming_soon_shimmer" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+</FrameLayout>

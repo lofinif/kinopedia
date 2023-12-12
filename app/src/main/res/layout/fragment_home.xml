@@ -1,225 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <data>
-        <variable
-            name="viewModel"
-            type="com.example.kinopedia.ui.home.viewmodel.HomeViewModel"/>
-    </data>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <ScrollView
+    <include
+        android:id="@+id/home_error"
+        layout="@layout/layout_home_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/gradient_home_background">
+        android:visibility="gone" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <include
+        android:id="@+id/home_loading"
+        layout="@layout/layout_home_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/content_start"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:orientation="vertical"
-                app:layout_constraintGuide_begin="24dp" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/content_end"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:orientation="vertical"
-                app:layout_constraintGuide_end="24dp" />
-
-            <TextView
-                android:id="@+id/premiers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/premiers"
-                android:textAppearance="@style/premiers"
-                android:layout_marginTop="24dp"
-                app:layout_constraintStart_toStartOf="@id/content_start"
-                app:layout_constraintEnd_toEndOf="@id/content_end"
-                app:layout_constraintTop_toTopOf="parent"
-                />
-
-            <TextView
-                android:id="@+id/view_all_this_month"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/list_this_month"
-                android:textAppearance="@style/view_all_this_month"
-                app:layout_constraintBaseline_toBaselineOf="@id/premiers"
-                app:layout_constraintEnd_toEndOf="@id/content_end" />
-
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp"
-                app:layout_constraintTop_toBottomOf="@id/premiers"
-                app:layout_constraintStart_toStartOf="@id/content_start"
-                app:layout_constraintEnd_toEndOf="@id/content_end"
-                />
-
-
-
-            <TextView
-                android:id="@+id/coming_soon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/coming_soon"
-                android:textAppearance="@style/title_home"
-                app:layout_constraintStart_toStartOf="@id/content_start"
-                app:layout_constraintTop_toBottomOf="@id/barrier_coming_this_month" />
-
-            <TextView
-                android:id="@+id/view_all_coming_soon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/view_all"
-                android:textAppearance="@style/view_all"
-                app:layout_constraintBaseline_toBaselineOf="@id/coming_soon"
-                app:layout_constraintEnd_toEndOf="@id/content_end"
-                app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintStart_toEndOf="@+id/coming_soon" />
-
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_coming_soon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:overScrollMode="ifContentScrolls"
-                android:paddingStart="24dp"
-                android:paddingTop="18dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="@id/content_end"
-                app:layout_constraintStart_toStartOf="@id/content_start"
-                app:layout_constraintTop_toBottomOf="@id/coming_soon"
-                app:listData="@{viewModel.coming}"
-                />
-
-            <Button
-                android:id="@+id/nearest_cinema_button"
-                style="@style/PrimaryColoredButton"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/nearest_cinema"
-                app:layout_constraintStart_toStartOf="@id/content_start"
-                app:layout_constraintTop_toBottomOf="@id/barrier_coming_soon" />
-
-            <TextView
-                android:id="@+id/trending"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:text="@string/trending"
-                android:textAppearance="@style/title_home"
-                app:layout_constraintStart_toStartOf="@id/content_start"
-                app:layout_constraintTop_toBottomOf="@id/nearest_cinema_button" />
-
-            <TextView
-                android:id="@+id/view_all_trending"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/view_all"
-                android:textAppearance="@style/view_all"
-                app:layout_constraintBaseline_toBaselineOf="@id/trending"
-                app:layout_constraintEnd_toEndOf="@id/content_end"
-                app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintStart_toEndOf="@+id/trending" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_trending"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="300dp"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                android:overScrollMode="ifContentScrolls"
-                android:paddingStart="24dp"
-                android:paddingTop="18dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="@id/content_end"
-                app:layout_constraintStart_toStartOf="@id/content_start"
-                app:layout_constraintTop_toBottomOf="@id/trending"
-                app:listData="@{viewModel.trending}" />
-
-
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_coming_soon"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="coming_soon, recyclerView_coming_soon,
-                 status_image_coming_soon, view_all_coming_soon"/>
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_trending"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="trending, recyclerView_trending,
-                 status_image_trending, view_all_trending"/>
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_coming_this_month"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="viewPager,
-                view_all_this_month, status_image_this_month"/>
-
-            <ImageView
-                android:id="@+id/status_image_coming_soon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:paddingBottom="24dp"
-                android:paddingTop="24dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/recyclerView_coming_soon"
-                app:layout_constraintBottom_toTopOf="@id/nearest_cinema_button"
-                app:loadingStatusElement="@{viewModel.statusAwait}" />
-
-            <ImageView
-                android:id="@+id/status_image_trending"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="24dp"
-                android:paddingTop="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/recyclerView_trending"
-                app:loadingStatusElement="@{viewModel.statusPopular}" />
-
-            <ImageView
-                android:id="@+id/status_image_this_month"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="24dp"
-                android:paddingTop="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/viewPager"
-                app:layout_constraintBottom_toTopOf="@id/coming_soon"
-                app:loadingStatusElement="@{viewModel.statusMonth}" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    <include
+        android:id="@+id/home_content"
+        layout="@layout/layout_home_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 </FrameLayout>
-</layout>

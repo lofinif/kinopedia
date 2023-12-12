@@ -5,27 +5,27 @@
     android:background="@drawable/gradient_home_background">
 
     <data>
+
         <variable
             name="viewModel"
-            type="com.example.kinopedia.ui.favourite.viewmodel.FavouriteViewModel"/>
+            type="com.example.kinopedia.ui.favourite.viewmodel.FavouriteViewModel" />
     </data>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:background="@drawable/gradient_home_background">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_favourite"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toTopOf="parent"
-        app:listFavouriteFilms = "@{viewModel.allFilms}" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:background="@drawable/gradient_home_background">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_favourite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

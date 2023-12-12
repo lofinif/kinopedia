@@ -1,27 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.more.view.MoreFragment">
+    tools:context=".ui.more.view.MoreFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_home_background"
+    android:orientation="vertical">
 
-    <data>
-
-        <variable
-            name="viewModel"
-            type="com.example.kinopedia.ui.more.viewmodel.MoreViewModel" />
-    </data>
-
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient_home_background"
-        android:orientation="vertical">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_more"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/prussian_blue">
+        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/back_button"
@@ -40,13 +29,6 @@
                 />
         </androidx.appcompat.widget.Toolbar>
 
-        <ImageView
-            android:id="@+id/status_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="center"
-            app:loadingStatusElement="@{viewModel.status}" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_more"
             android:layout_width="match_parent"
@@ -59,5 +41,11 @@
             android:clipToPadding="false"
             android:clipToOutline="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <include android:id="@+id/list_error"
+        layout="@layout/layout_loading_error"/>
+
+    <include android:id="@+id/list_loading"
+        layout="@layout/layout_films_list_loading_vertical"/>
+
     </LinearLayout>
-</layout>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="poster_network"
             type="com.example.kinopedia.data.film.dto.FilmForAdapter" />
@@ -19,11 +20,10 @@
             android:layout_height="140dp"
             app:cardCornerRadius="30dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/poster"
+                android:id="@+id/poster_top"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -40,9 +40,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:maxLines="2"
-            android:maxWidth="110dp"
             android:gravity="center"
+            android:maxWidth="110dp"
+            android:maxLines="2"
             android:textAppearance="@style/name_movie"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
