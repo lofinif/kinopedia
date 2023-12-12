@@ -27,7 +27,6 @@
                 android:layout_marginStart="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="4dp"
-                app:imageUrl="@{actor.posterUrl}"
                 tools:src = "@tools:sample/avatars"/>
 
             <TextView
