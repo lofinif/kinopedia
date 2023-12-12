@@ -18,7 +18,9 @@ class KinopoiskFilmToKinopoiskFilmModelMapper @Inject constructor(): BaseMapper<
         val displayLength = item.filmLength?.toString() ?: dash
         val displayDetails = "$displayYear, $displayGenre, $displayLength, $displayCountry"
 
+
         return KinopoiskFilmModel(
+            item.kinopoiskId,
             item.nameRu ?: item.nameOriginal ?: item.nameEn ?: dash,
             item.nameOriginal ?: item.nameEn ?: item.nameRu ?: dash,
             displayDetails,
@@ -28,7 +30,8 @@ class KinopoiskFilmToKinopoiskFilmModelMapper @Inject constructor(): BaseMapper<
             displayGenre,
             displayCountry,
             displayRatingKinopoisk,
-            item.ratingImdb?.toString() ?: dash
+            item.ratingImdb?.toString() ?: dash,
+            displayYear
         )
     }
 }
