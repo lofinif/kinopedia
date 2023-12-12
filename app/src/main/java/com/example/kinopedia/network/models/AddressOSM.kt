@@ -1,7 +1,7 @@
 package com.example.kinopedia.network.models
 
 data class AddressOSM(
-    val house_number: String?,
+    val houseNumber: String?,
     val road: String?,
     val city: String?,
     val village: String?,
@@ -10,7 +10,7 @@ data class AddressOSM(
     val region: String?,
     val postcode: String?,
     val country: String?,
-    val country_code: String?
+    val countryCode: String?
     ){
     val displayCity = city ?: village
 }
