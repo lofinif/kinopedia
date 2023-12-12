@@ -8,22 +8,27 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
+import javax.inject.Inject
 
-class LocationProvider(
+class LocationProvider @Inject constructor(
     private val context: Context,
-    private val onLocationReceived: (Location) -> Unit
 ) {
     private val locationManager: LocationManager =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private var onLocationReceived: ((Location) -> Unit)? = null
+
+    fun setCallback(callback: (Location) -> Unit) {
+        this.onLocationReceived = callback
+    }
 
     fun requestLocationUpdates() {
         if (hasLocationPermission()) {
             if (ActivityCompat.checkSelfPermission(
                     context,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                    Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                     context,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                    Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 return
@@ -34,7 +39,7 @@ class LocationProvider(
                 100f,
                 object : LocationListener {
                     override fun onLocationChanged(location: Location) {
-                        onLocationReceived(location)
+                        onLocationReceived?.invoke(location)
                         locationManager.removeUpdates(this)
                     }
 
@@ -44,7 +49,13 @@ class LocationProvider(
     }
 
     private fun hasLocationPermission(): Boolean {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        return ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
     }
 }
