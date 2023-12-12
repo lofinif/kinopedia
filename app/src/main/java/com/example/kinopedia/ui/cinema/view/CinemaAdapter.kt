@@ -6,29 +6,37 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kinopedia.databinding.CinemaItemBinding
-import com.example.kinopedia.network.models.CinemaOSM
+import com.example.kinopedia.ui.cinema.model.CinemaOSMModel
 
 
-class CinemaAdapter(): ListAdapter<CinemaOSM, CinemaAdapter.CinemaViewHolder>(Comparator()) {
+class CinemaAdapter : ListAdapter<CinemaOSMModel, CinemaAdapter.CinemaViewHolder>(Comparator()) {
 
-    class CinemaViewHolder(private var binding: CinemaItemBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(cinema: CinemaOSM) {
-                binding.cinemaName.text = cinema.tags?.name
-                binding.descriptionName.text = cinema.tags?.address
+    class CinemaViewHolder(private var binding: CinemaItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(cinema: CinemaOSMModel) {
+            binding.cinemaName.text = cinema.tags?.name
+            binding.descriptionName.text = cinema.tags?.address
         }
     }
 
-    class Comparator: DiffUtil.ItemCallback<CinemaOSM>() {
-        override fun areItemsTheSame(oldItem: CinemaOSM, newItem: CinemaOSM): Boolean {
+    class Comparator : DiffUtil.ItemCallback<CinemaOSMModel>() {
+        override fun areItemsTheSame(oldItem: CinemaOSMModel, newItem: CinemaOSMModel): Boolean {
             return oldItem.id == newItem.id
         }
-        override fun areContentsTheSame(oldItem: CinemaOSM, newItem: CinemaOSM): Boolean {
+
+        override fun areContentsTheSame(oldItem: CinemaOSMModel, newItem: CinemaOSMModel): Boolean {
             return oldItem == newItem
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CinemaViewHolder {
-        return CinemaViewHolder(CinemaItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return CinemaViewHolder(
+            CinemaItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: CinemaViewHolder, position: Int) {

@@ -1,64 +1,79 @@
 package com.example.kinopedia.ui.cinema.viewmodel
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kinopedia.network.models.Cinemas
-import com.example.kinopedia.network.models.CityOSM
-import com.example.kinopedia.network.services.LoadingStatus
-import com.example.kinopedia.network.services.OSMApi
-import com.example.kinopedia.network.services.OverpassApi
-import kotlinx.coroutines.Dispatchers
+import com.example.kinopedia.data.CallResult
+import com.example.kinopedia.data.cinema.dto.CinemaOSM
+import com.example.kinopedia.data.cinema.dto.CityOSM
+import com.example.kinopedia.domain.interactors.GetCinemasInteractor
+import com.example.kinopedia.ui.BaseMapper
+import com.example.kinopedia.ui.cinema.model.CinemaOSMModel
+import com.example.kinopedia.ui.cinema.model.CityOSMModel
+import com.example.kinopedia.ui.cinema.state.CinemaScreenState
+import com.example.kinopedia.utils.LocationProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.lang.Exception
+import javax.inject.Inject
 
-class NearestCinemaViewModel : ViewModel() {
+@HiltViewModel
+class NearestCinemaViewModel @Inject constructor(
+    private val getCinemasInteractor: GetCinemasInteractor,
+    val locationProvider: LocationProvider,
+    private val mapperCity: BaseMapper<CityOSM, CityOSMModel>,
+    private val mapperCinemas: BaseMapper<CinemaOSM, CinemaOSMModel>
+) : ViewModel() {
 
-    private val _city = MutableLiveData<CityOSM>()
-    val city: LiveData<CityOSM> = _city
+    companion object {
+        const val TAG = "NearestCinemaViewModel"
+    }
 
-    private val _status = MutableLiveData(LoadingStatus.DEFAULT)
-    val status: LiveData<LoadingStatus> = _status
+    var filteredElements = emptyList<CinemaOSMModel>()
 
-    private val _cinemas = MutableLiveData<Cinemas>()
-    val cinemas: LiveData<Cinemas> = _cinemas
+    var latitude = 0.0
+    var longitude = 0.0
 
+    private val _screenState = MutableLiveData<CinemaScreenState>()
+    val screenState: LiveData<CinemaScreenState> = _screenState
 
-    fun getCity(latitude: Double, longitude: Double) {
-        if (_city.value == null) {
-            viewModelScope.launch(Dispatchers.IO) {
-                _status.postValue(LoadingStatus.LOADING)
-                try {
-                    val list = OSMApi.retrofitService.getCity(latitude, longitude)
-                    _city.postValue(list)
-                    _status.postValue(LoadingStatus.DONE)
-                } catch (E: Exception) {
-                    _status.postValue(LoadingStatus.ERROR)
-                    Log.e("NearestCinemaViewModel", "getCity error")
+    private val _city = MutableLiveData<CityOSMModel?>()
+    val city: LiveData<CityOSMModel?> = _city
+
+    private val _cinemas = MutableLiveData<List<CinemaOSMModel>?>(null)
+    val cinemas: LiveData<List<CinemaOSMModel>?> = _cinemas
+
+    fun fetchCinemas(latitude: Double, longitude: Double) {
+        _screenState.value = CinemaScreenState.Loading
+        viewModelScope.launch {
+            when (val getCity = getCinemasInteractor.getCity(latitude, longitude)) {
+                is CallResult.Success -> {
+                    _city.value = getCity.value.let { mapperCity.map(it) }
+                    val city = city.value?.address?.displayCity.toString()
+                    when (val getCinemas = getCinemasInteractor.getCinemas(city)) {
+                        is CallResult.Success -> {
+                            _cinemas.value = getCinemas.value.elements.map(mapperCinemas::map)
+                            _screenState.value = CinemaScreenState.Loaded
+                        }
+
+                        else -> {
+                            Log.e(TAG, "error fetching cinema overpass api")
+                            _screenState.value = CinemaScreenState.Error
+                        }
+                    }
+                }
+
+                else -> {
+                    Log.e(TAG, "error fetching city overpass api")
+                    _screenState.value = CinemaScreenState.Error
                 }
             }
         }
     }
 
-    fun getCinemas() {
-        if (_cinemas.value == null) {
-           val data =
-                "[out:json];area[name=\"${city.value?.address?.displayCity.toString()}\"](around:1000.0);nwr[amenity=cinema](area);out geom;"
-            viewModelScope.launch(Dispatchers.IO) {
-                _status.postValue(LoadingStatus.LOADING)
-                try {
-                    viewModelScope.launch {
-                        val list = OverpassApi.retrofitService.getCinemas(data)
-                        _cinemas.postValue(list)
-                        _status.postValue(LoadingStatus.DONE)
-                    }
-                } catch (E: Exception) {
-                    _status.postValue(LoadingStatus.ERROR)
-                    Log.e("NearestCinemaViewModel", "getCinemas error")
-                }
-            }
-        }
+    fun setCallBack(callback: (Location) -> Unit) {
+        locationProvider.setCallback(callback)
     }
 }
