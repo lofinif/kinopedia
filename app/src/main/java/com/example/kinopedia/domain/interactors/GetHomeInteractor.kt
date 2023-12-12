@@ -4,8 +4,9 @@ import com.example.kinopedia.domain.repository.HomeRepository
 import javax.inject.Inject
 
 class GetHomeInteractor @Inject constructor(private val homeRepository: HomeRepository) {
-    val comingSoonFilms get() = homeRepository.comingSoonFilms
-    val awaitFilms get() = homeRepository.awaitFilms
-    val premierFilms get() = homeRepository.premierFilms
+
+    suspend fun getComingSoonFilms() = homeRepository.getComingSoonFilms()
+    suspend fun getAwaitFilms() = homeRepository.getAwaitFilms()
+    suspend fun getPremierFilms() = homeRepository.getPremierFilms()
 
 }
