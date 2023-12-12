@@ -40,8 +40,7 @@
             <argument android:name="more_type" />
             <action
                 android:id="@+id/action_navigation_home_to_filmPageFragment"
-                app:destination="@id/filmPageFragment"
-                />
+                app:destination="@id/filmPageFragment" />
 
             <action
                 android:id="@+id/action_navigation_home_to_cinemaWelcomeFragment"
@@ -54,8 +53,7 @@
             tools:layout="@layout/fragment_more">
             <action
                 android:id="@+id/action_moreFragment_to_filmPageFragment"
-                app:destination="@id/filmPageFragment"
-                />
+                app:destination="@id/filmPageFragment" />
         </fragment>
         <fragment
             android:id="@+id/nearestCinemaFragment"
@@ -117,6 +115,10 @@
             <action
                 android:id="@+id/action_navigation_search_to_genreFragment"
                 app:destination="@id/genreFragment" />
+            <argument
+                android:name="genreId"
+                android:defaultValue="0"
+                app:argType="integer" />
         </fragment>
         <fragment
             android:id="@+id/searchResultFragment"
@@ -144,11 +146,10 @@
 
             <action
                 android:id="@+id/action_filterResultFragment_to_filmPageFragment"
-                app:destination="@id/filmPageFragment"
-                />
+                app:destination="@id/filmPageFragment" />
             <argument
                 android:name="countryId"
-                app:argType="integer"/>
+                app:argType="integer" />
             <argument
                 android:name="sortType"
                 app:argType="string" />
@@ -157,35 +158,42 @@
                 app:argType="integer" />
             <argument
                 android:name="maxRating"
-                app:argType="integer"
-                />
+                app:argType="integer" />
             <argument
                 android:name="selectedYearFrom"
-                app:argType="integer"/>
+                app:argType="integer" />
             <argument
                 android:name="selectedYearTo"
                 app:argType="integer" />
             <argument
                 android:name="genreId"
-                app:argType="integer"/>
+                app:argType="integer" />
             <argument
                 android:name="type"
-                app:argType="string"/>
+                app:argType="string" />
         </fragment>
         <fragment
             android:id="@+id/genreFragment"
             android:name="com.example.kinopedia.ui.genre.view.GenreFragment"
             android:label="fragment_genre"
-            tools:layout="@layout/fragment_genre" >
+            tools:layout="@layout/fragment_genre">
             <action
                 android:id="@+id/action_genreFragment_to_filmPageFragment"
                 app:destination="@id/filmPageFragment" />
+            <argument
+                android:name="genreId"
+                android:defaultValue="0"
+                app:argType="integer" />
+            <argument
+                android:name="genre"
+                app:argType="string" />
         </fragment>
         <action
             android:id="@+id/action_global_navigation_favourite_graph"
             app:destination="@id/navigation_favourite_graph" />
     </navigation>
-    <navigation android:id="@+id/navigation_favourite_graph"
+    <navigation
+        android:id="@+id/navigation_favourite_graph"
         app:startDestination="@id/navigation_favourite">
         <fragment
             android:id="@+id/filmPageFragment"
@@ -206,7 +214,7 @@
         <fragment
             android:id="@+id/navigation_favourite"
             android:name="com.example.kinopedia.ui.favourite.view.FavouriteFragment"
-            android:label="Избранное" >
+            android:label="Избранное">
             <action
                 android:id="@+id/action_navigation_favorite_to_filmPageFragment"
                 app:destination="@id/filmPageFragment" />
