@@ -1,55 +1,35 @@
 package com.example.kinopedia.ui.genre.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kinopedia.network.services.FilmApi
-import com.example.kinopedia.data.film.dto.KinopoiskFilm
-import com.example.kinopedia.network.services.LoadingStatus
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.example.kinopedia.domain.usecase.GetFilmsForGenreUseCase
+import com.example.kinopedia.factory.PagerSourceFactoryGenreId
+import com.example.kinopedia.ui.film.model.KinopoiskFilmModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class GenreViewModel: ViewModel() {
-    var pageCount = 1
+@HiltViewModel
+class GenreViewModel @Inject constructor(
+    val factory: PagerSourceFactoryGenreId,
+    getFilmsForGenreUseCase: GetFilmsForGenreUseCase,
+) : ViewModel() {
 
-    private val _filmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
-    val filmsByFilter: LiveData<List<KinopoiskFilm>> = _filmsByFilter
+    var genreId = 0
 
-    private val _status = MutableLiveData(LoadingStatus.DEFAULT)
-    val status: LiveData<LoadingStatus> = _status
+    val pager by lazy { providePager(factory, genreId) }
 
-    fun getFilmsByFiler(
-        countries: Array<Int>?, genres: Array<Int>, order: String, type: String,
-        keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
-        yearTo: Int, page: Int
-    ) {
-        if (_filmsByFilter.value.isNullOrEmpty()) {
-        viewModelScope.launch(Dispatchers.IO) {
-                _status.postValue(LoadingStatus.LOADING)
-                try {
-                    val list = FilmApi.retrofitService.getFilmByFilters(
-                        countries, genres, order, type, keyword,
-                        ratingFrom, ratingTo, yearFrom, yearTo, page
-                    )
-                    pageCount = list.totalPages
-                    _filmsByFilter.postValue(list.items)
-                    _status.postValue(LoadingStatus.DONE)
-                } catch (e: Exception) {
-                    _status.postValue(LoadingStatus.ERROR)
-                }
-            }
+    val flowGenre by lazy { getFilmsForGenreUseCase.getPagedFlow(pager).cachedIn(viewModelScope) }
+
+    private fun providePager(
+        factory: PagerSourceFactoryGenreId,
+        genreId: Int
+    ): Pager<Int, KinopoiskFilmModel> {
+        factory.createPager(genreId)
+        return Pager(PagingConfig(20)) {
+            factory.createPager(genreId)
         }
-    }
-    fun loadNextItems( countries: Array<Int>?, genres: Array<Int>, order: String, type: String,
-                       keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
-                       yearTo: Int, page: Int) = viewModelScope.launch(Dispatchers.IO) {
-        val list = FilmApi.retrofitService.getFilmByFilters(
-            countries, genres, order, type, keyword,
-            ratingFrom, ratingTo, yearFrom, yearTo, page
-        )
-        val currentList = _filmsByFilter.value?.toMutableList() ?: mutableListOf()
-        currentList.addAll(list.items)
-        _filmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
     }
 }
