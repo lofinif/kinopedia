@@ -1,13 +1,10 @@
 package com.example.kinopedia.ui.filter.view
 
-import com.example.kinopedia.R
 import android.app.AlertDialog
 import android.content.Context
-import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.Menu
@@ -28,33 +25,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentFilterBinding
+import com.example.kinopedia.ui.filter.model.FilterSettings
 import com.example.kinopedia.ui.filter.viewmodel.FilterViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.DecimalFormat
 
-
+@AndroidEntryPoint
 class FilterFragment : Fragment() {
 
     private val sharedViewModel: FilterViewModel by activityViewModels()
     private lateinit var binding: FragmentFilterBinding
     private lateinit var dialogYearPicker: AlertDialog
-    private val currentYear = Calendar.getInstance().get(Calendar.YEAR)
-    private var countryId = -1
-    private var genreId = -1
-    private var sortType = "RATING"
-    private var type = "ALL"
-    private var minRating = 0
-    private var maxRating = 10
-    private var selectedYearFrom = currentYear - 200
-    private var selectedYearTo = currentYear
-    private var selectedCountry = ""
-    private var selectedGenre = ""
-    private var selectedYears = ""
-    private var selectedSort = ""
-    private var page = 1
-
-
-
+    private val filterSettings = FilterSettings()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,38 +53,22 @@ class FilterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun resetButton(){
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.toolbar_reset, menu)
-            }
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.reset -> {
-                        reset()
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-    }
-
-
     private fun showYearPickerDialog() {
-        val dialogView: View = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_year_picker, null)
-        val yearPickerFrom: com.shawnlin.numberpicker.NumberPicker = dialogView.findViewById(R.id.number_picker_from)
-        val yearPickerTo: com.shawnlin.numberpicker.NumberPicker = dialogView.findViewById(R.id.number_picker_to)
+        val dialogView: View =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_year_picker, null)
+        val yearPickerFrom: com.shawnlin.numberpicker.NumberPicker =
+            dialogView.findViewById(R.id.number_picker_from)
+        val yearPickerTo: com.shawnlin.numberpicker.NumberPicker =
+            dialogView.findViewById(R.id.number_picker_to)
         val title = TextView(context)
 
-        yearPickerFrom.minValue = currentYear - 100
-        yearPickerFrom.maxValue = currentYear
-        yearPickerFrom.value = currentYear
+        yearPickerFrom.minValue = filterSettings.currentYear - 100
+        yearPickerFrom.maxValue = filterSettings.currentYear
+        yearPickerFrom.value = filterSettings.currentYear
 
-        yearPickerTo.minValue = currentYear - 100
-        yearPickerTo.maxValue = currentYear
-        yearPickerTo.value = currentYear
+        yearPickerTo.minValue = filterSettings.currentYear - 100
+        yearPickerTo.maxValue = filterSettings.currentYear
+        yearPickerTo.value = filterSettings.currentYear
 
 
         title.text = "Год"
@@ -112,17 +80,18 @@ class FilterFragment : Fragment() {
             .setView(dialogView)
             .setCustomTitle(title)
             .setPositiveButton("Выбрать") { dialog, _ ->
-                selectedYearFrom = yearPickerFrom.value
-                selectedYearTo = yearPickerTo.value
-                selectedYears = "$selectedYearFrom - $selectedYearTo"
-                binding.selectedYear.text = selectedYears
+                filterSettings.selectedYearFrom = yearPickerFrom.value
+                filterSettings.selectedYearTo = yearPickerTo.value
+                filterSettings.selectedYears =
+                    "${filterSettings.selectedYearFrom} - ${filterSettings.selectedYearTo}"
+                binding.selectedYear.text = filterSettings.selectedYears
                 dialog.dismiss()
             }
             .setNegativeButton("Сбросить") { dialog, _ ->
-                selectedYearFrom = currentYear - 200
-                selectedYearTo = currentYear
+                filterSettings.selectedYearFrom = filterSettings.currentYear - 200
+                filterSettings.selectedYearTo = filterSettings.currentYear
                 binding.selectedYear.text = "любой"
-                selectedYears = ""
+                filterSettings.selectedYears = ""
                 dialog.dismiss()
             }
         dialogYearPicker = builder.create()
@@ -141,73 +110,30 @@ class FilterFragment : Fragment() {
         dialogYearPicker.window?.setBackgroundDrawableResource(R.drawable.year_picker_corner_dialog)
     }
 
-    private fun rating(){
+
+    private fun rating() {
         binding.rangeSlider.setValues(0F, 10F)
         binding.rangeSlider.addOnChangeListener { slider, _, _ ->
             val values = slider.values
-            minRating = values[0].toInt()
-            maxRating = values[1].toInt()
-            if (minRating == 0 && maxRating == 10) binding.selectedRating.text = "неважно"
-            else if (minRating == 0) binding.selectedRating.text = "до $maxRating"
-            else if (maxRating == 10) binding.selectedRating.text = "от $minRating"
-            else if (minRating == 0 && maxRating == 10) binding.selectedRating.text = "неважно"
-            else binding.selectedRating.text = "от $minRating до $maxRating"
+            filterSettings.minRating = values[0].toInt()
+            filterSettings.maxRating = values[1].toInt()
+            if (filterSettings.minRating == 0 && filterSettings.maxRating == 10) binding.selectedRating.text =
+                "неважно"
+            else if (filterSettings.minRating == 0) binding.selectedRating.text =
+                "до ${filterSettings.maxRating}"
+            else if (filterSettings.maxRating == 10) binding.selectedRating.text =
+                "от ${filterSettings.minRating}"
+            else if (filterSettings.minRating == 0 && filterSettings.maxRating == 10) binding.selectedRating.text =
+                "неважно"
+            else binding.selectedRating.text =
+                "от ${filterSettings.minRating} до ${filterSettings.maxRating}"
         }
-           binding.rangeSlider.setLabelFormatter { value ->
+        binding.rangeSlider.setLabelFormatter { value ->
             val numberFormat = DecimalFormat("#")
             numberFormat.format(value.toDouble())
         }
     }
 
-    private fun country(){
-        val countries = sharedViewModel.dataCountriesAndGenres.value?.countries
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_country_picker, null)
-        val searchEditText = dialogView.findViewById<EditText>(R.id.searchEditText)
-        val listView = dialogView.findViewById<ListView>(R.id.listView)
-        val buttonResetCountries = dialogView.findViewById<Button>(R.id.button_reset_countries)
-
-        if (countries.isNullOrEmpty()) {
-            sharedViewModel.getCountriesAndGenres()
-        }
-        sharedViewModel.dataCountriesAndGenres.observe(viewLifecycleOwner) {
-                    val countryNames = countries?.map { it.country }?.toTypedArray()
-                    val countryIds = countries?.map { it.id }?.toTypedArray()
-                    val filteredCountries = countryNames?.filter { it.isNotEmpty() }?.toTypedArray()
-                    val map: Map<Int, String> = countryIds?.zip(countries.map { it.country })?.toMap() ?: emptyMap()
-                    val sortedCountries = filteredCountries?.sorted()?.toTypedArray()
-
-            sortedCountries?.let { names ->
-                val adapter = ArrayAdapter(requireContext(), R.layout.list_view_countries_item, R.id.text_view_countries , names)
-                listView.adapter = adapter
-
-                val alertDialogBuilder = AlertDialog.Builder(requireContext())
-                alertDialogBuilder.setView(dialogView)
-
-                val alertDialog = alertDialogBuilder.create()
-
-                searchEditText.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-                    override fun afterTextChanged(s: Editable?) { adapter.filter.filter(s) } })
-                listView.setOnItemClickListener { _, _, which, _ ->
-                    selectedCountry = adapter.getItem(which).toString()
-                    val selectedId = map.entries.find { it.value == selectedCountry }?.key
-                    countryId = selectedId!!
-                    binding.selectedCountry.text = selectedCountry
-                    alertDialog.dismiss()
-                }
-                buttonResetCountries.setOnClickListener {
-                    binding.selectedCountry.text = "любая"
-                    countryId = -1
-                    selectedCountry = ""
-                    alertDialog.dismiss()
-                }
-                alertDialog.show()
-                alertDialog?.window?.setBackgroundDrawableResource(R.drawable.corner_dialog_filters)
-            }
-         }
-    }
     private fun showPopupMenu() {
         val wrapper: Context = ContextThemeWrapper(requireContext(), R.style.style_popup_menu)
         val popupMenu = PopupMenu(wrapper, binding.sortBy)
@@ -216,174 +142,243 @@ class FilterFragment : Fragment() {
             when (item.itemId) {
                 R.id.option1 -> {
                     binding.sortBy.text = "рейтингу"
-                    sortType = "RATING"
-                    selectedSort = "рейтингу"
+                    filterSettings.sortType = "RATING"
+                    filterSettings.selectedSort = "рейтингу"
                     true
                 }
+
                 R.id.option2 -> {
                     binding.sortBy.text = "дате"
-                    sortType = "YEAR"
-                    selectedSort = "дате"
+                    filterSettings.sortType = "YEAR"
+                    filterSettings.selectedSort = "дате"
                     true
                 }
+
                 R.id.option3 -> {
                     binding.sortBy.text = "популярности"
-                    sortType = "NUM_VOTE"
-                    selectedSort = "популярности"
+                    filterSettings.sortType = "NUM_VOTE"
+                    filterSettings.selectedSort = "популярности"
                     true
                 }
+
                 else -> false
             }
         }
         popupMenu.show()
     }
 
-    private fun showGenresPicker(){
-         val genres = sharedViewModel.dataCountriesAndGenres.value?.genres
-         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_country_picker, null)
-         val searchEditText = dialogView.findViewById<EditText>(R.id.searchEditText)
-         val listView = dialogView.findViewById<ListView>(R.id.listView)
-         val buttonResetGenres = dialogView.findViewById<Button>(R.id.button_reset_countries)
+    private fun showGenresPicker() {
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_country_picker, null)
+        val searchEditText = dialogView.findViewById<EditText>(R.id.searchEditText)
+        val listView = dialogView.findViewById<ListView>(R.id.listView)
+        val buttonResetGenres = dialogView.findViewById<Button>(R.id.button_reset_countries)
+        val alertDialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
+        val alertDialog = alertDialogBuilder.create()
 
-         if (genres.isNullOrEmpty()) {
-             sharedViewModel.getCountriesAndGenres()
-         }
-         sharedViewModel.dataCountriesAndGenres.observe(viewLifecycleOwner) {
-             val genre = genres?.map { it.genre }?.toTypedArray()
-             val genreId = genres?.map { it.id }?.toTypedArray()
-             val filteredGenres = genre?.filter { it.isNotEmpty() }?.toTypedArray()
-             val map: Map<Int, String> = genreId?.zip(genres.map { it.genre })?.toMap() ?: emptyMap()
-             val sortedGenres = filteredGenres?.sorted()?.toTypedArray()
+        sharedViewModel.flowGenres.observe(viewLifecycleOwner) {
+            val genre = it?.map { it.genreName }?.toTypedArray()
+            val genreId = it?.map { it.genreId }?.toTypedArray()
+            val filteredGenres = genre?.filter { it.isNotEmpty() }?.toTypedArray()
+            val map: Map<Int, String> = genreId?.zip(it.map { it.genreName })?.toMap() ?: emptyMap()
+            val sortedGenres = filteredGenres?.sorted()?.toTypedArray()
+            sortedGenres?.let { names ->
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    R.layout.list_view_countries_item,
+                    R.id.text_view_countries,
+                    names
+                )
+                listView.adapter = adapter
 
-             sortedGenres?.let { names ->
-                 val adapter = ArrayAdapter(requireContext(), R.layout.list_view_countries_item, R.id.text_view_countries , names)
-                 listView.adapter = adapter
 
-                 val alertDialogBuilder = AlertDialog.Builder(requireContext())
-                 alertDialogBuilder.setView(dialogView)
 
-                 val alertDialog = alertDialogBuilder.create()
+                searchEditText.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+                    }
 
-                 searchEditText.addTextChangedListener(object : TextWatcher {
-                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                    }
 
-                     override fun afterTextChanged(s: Editable?) { adapter.filter.filter(s) } })
-                 listView.setOnItemClickListener { _, _, which, _ ->
-                     selectedGenre = adapter.getItem(which).toString()
-                     val selectedId = map.entries.find { it.value == selectedGenre }?.key
-                     this.genreId = selectedId!!
-                     binding.moreGenres.text = selectedGenre
-                     alertDialog.dismiss()
-                 }
-                 buttonResetGenres.setOnClickListener {
-                         binding.moreGenres.text = "все жанры"
-                         this.genreId = -1
-                         selectedGenre = ""
+                    override fun afterTextChanged(s: Editable?) {
+                        adapter.filter.filter(s)
+                    }
+                })
+                listView.setOnItemClickListener { _, _, which, _ ->
+                    filterSettings.selectedGenre = adapter.getItem(which).toString()
+                    val selectedId =
+                        map.entries.find { it.value == filterSettings.selectedGenre }?.key
+                    filterSettings.genreId = selectedId!!
+                    binding.moreGenres.text = filterSettings.selectedGenre
+                    alertDialog.dismiss()
+                }
+                buttonResetGenres.setOnClickListener {
+                    binding.moreGenres.text = "все жанры"
+                    filterSettings.genreId = -1
+                    filterSettings.selectedGenre = ""
 
-                     alertDialog.dismiss()
-                 }
-                 alertDialog.show()
-                 alertDialog?.window?.setBackgroundDrawableResource(R.drawable.corner_dialog_filters)
-             }
-         }
-     }
-
-    private fun moreGenres(){
-        binding.moreGenres.setOnClickListener {
-        showGenresPicker()
-        }
-        binding.titleGenre.setOnClickListener {
-        showGenresPicker()
+                    alertDialog.dismiss()
+                }
+                alertDialog?.window?.setBackgroundDrawableResource(R.drawable.corner_dialog_filters)
+                alertDialog.show()
+            }
         }
     }
-    private fun sendFilters(){
-        val countryIds = if (countryId == -1) null else arrayOf(countryId)
-        val genreIds = if(genreId == -1) null else arrayOf(genreId)
-        val bundle = Bundle().apply {
-            putInt("countryId", countryIds?.get(0) ?: -1)
-            putInt("genreId", genreIds?.get(0) ?: -1)
-            putString("sortType", sortType)
-            putString("type", type)
-            putInt("minRating", minRating)
-            putInt("maxRating", maxRating)
-            putInt("selectedYearFrom", selectedYearFrom)
-            putInt("selectedYearTo", selectedYearTo)
-            putInt("page", page)
+
+    private fun moreGenres() {
+        binding.moreGenres.setOnClickListener {
+            showGenresPicker()
         }
-        Log.i("minRT", minRating.toString())
+        binding.titleGenre.setOnClickListener {
+            showGenresPicker()
+        }
+    }
 
-            sharedViewModel.clearList()
-            sharedViewModel.getFilmsByFiler(
-                countryIds,
-                genreIds,
-                sortType,
-                type,
-                null,
-                minRating,
-                maxRating,
-                selectedYearFrom,
-                selectedYearTo,
-                page
-            )
-            findNavController().navigate(R.id.action_filterFragment_to_filterResultFragment, bundle)
+    private fun country() {
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_country_picker, null)
+        val searchEditText = dialogView.findViewById<EditText>(R.id.searchEditText)
+        val listView = dialogView.findViewById<ListView>(R.id.listView)
+        val buttonResetCountries = dialogView.findViewById<Button>(R.id.button_reset_countries)
+        val alertDialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
+        val alertDialog = alertDialogBuilder.create()
 
+        sharedViewModel.flowCountries.observe(viewLifecycleOwner) {
+            val countryNames = it?.map { it.countryName }?.toTypedArray()
+            val countryIds = it?.map { it.countryId }?.toTypedArray()
+            val filteredCountries = countryNames?.filter { it.isNotEmpty() }?.toTypedArray()
+            val map: Map<Int, String> =
+                countryIds?.zip(it.map { it.countryName })?.toMap() ?: emptyMap()
+            val sortedCountries = filteredCountries?.sorted()?.toTypedArray()
+
+            sortedCountries?.let { names ->
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    R.layout.list_view_countries_item,
+                    R.id.text_view_countries,
+                    names
+                )
+                listView.adapter = adapter
+
+                searchEditText.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+                    }
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {
+                        adapter.filter.filter(s)
+                    }
+                })
+                listView.setOnItemClickListener { _, _, which, _ ->
+                    filterSettings.selectedCountry = adapter.getItem(which).toString()
+                    val selectedId =
+                        map.entries.find { it.value == filterSettings.selectedCountry }?.key
+                    filterSettings.countryId = selectedId!!
+                    binding.selectedCountry.text = filterSettings.selectedCountry
+                    alertDialog.dismiss()
+                }
+                buttonResetCountries.setOnClickListener {
+                    binding.selectedCountry.text = "любая"
+                    filterSettings.countryId = -1
+                    filterSettings.selectedCountry = ""
+                    alertDialog.dismiss()
+                }
+                alertDialog?.window?.setBackgroundDrawableResource(R.drawable.corner_dialog_filters)
+                alertDialog.show()
+            }
+        }
+    }
+
+    private fun sendFilters() {
+        sharedViewModel.updateFilterSettings(filterSettings)
+        findNavController().navigate(R.id.action_filterFragment_to_filterResultFragment)
     }
 
     private fun reset() {
         binding.apply {
-            countryId = -1
             selectedCountry.text = "любая"
-            genreId = -1
-            sortType = "RATING"
+            filterSettings.sortType = "RATING"
             sortBy.text = "рейтингу"
-            minRating = 0
-            maxRating = 10
             selectedRating.text = "неважно"
-            selectedYearFrom = currentYear - 200
-            selectedYearTo = currentYear
             moreGenres.text = "все жанры"
             selectedYear.text = "любой"
             rangeSlider.setValues(0f, 10f)
+            filterSettings.clearFilters()
         }
-        selectedCountry = ""
-        selectedGenre = ""
-        selectedYears = ""
-        selectedSort = ""
     }
 
 
-
-    fun bind(){
-        binding.viewModel = sharedViewModel
-        binding.lifecycleOwner = this
+    fun bind() {
         moreGenres()
         rating()
-        sharedViewModel.getCountriesAndGenres()
+        binding.viewModel = sharedViewModel
+        binding.lifecycleOwner = this
         binding.apply {
             changeYear.setOnClickListener { showYearPickerDialog() }
             selectedYear.setOnClickListener { showYearPickerDialog() }
             changeCountry.setOnClickListener { country() }
             selectedCountry.setOnClickListener { country() }
-            sortBy.setOnClickListener{ showPopupMenu() }
-            titleSortBy.setOnClickListener{ showPopupMenu() }
-            titleToolbarReset.setOnClickListener{ reset() }
+            sortBy.setOnClickListener { showPopupMenu() }
+            titleSortBy.setOnClickListener { showPopupMenu() }
+            titleToolbarReset.setOnClickListener { reset() }
             backButton.setOnClickListener { findNavController().popBackStack() }
         }
         binding.sendFilters.setOnClickListener {
             sendFilters()
         }
-        if (selectedCountry.isNotEmpty()){
-            binding.selectedCountry.text = selectedCountry
+        if (filterSettings.selectedCountry.isNotEmpty()) {
+            binding.selectedCountry.text = filterSettings.selectedCountry
         }
-        if (selectedGenre.isNotEmpty()){
-            binding.moreGenres.text = selectedGenre
+        if (filterSettings.selectedGenre.isNotEmpty()) {
+            binding.moreGenres.text = filterSettings.selectedGenre
         }
-        if (selectedYears.isNotEmpty()){
-            binding.selectedYear.text = selectedYears
+        if (filterSettings.selectedYears.isNotEmpty()) {
+            binding.selectedYear.text = filterSettings.selectedYears
         }
-        if (selectedSort.isNotEmpty()){
-            binding.sortBy.text = selectedSort
+        if (filterSettings.selectedSort.isNotEmpty()) {
+            binding.sortBy.text = filterSettings.selectedSort
         }
+    }
+
+    private fun resetButton() {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.toolbar_reset, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.reset -> {
+                        reset()
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 }

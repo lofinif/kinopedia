@@ -2,129 +2,76 @@ package com.example.kinopedia.ui.filter.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.utils.ItemOffsetDecoration
-import com.example.kinopedia.utils.NavigationActionListener
+import androidx.paging.LoadState
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentFilterResultBinding
 import com.example.kinopedia.ui.filter.viewmodel.FilterViewModel
+import com.example.kinopedia.utils.ItemOffsetDecoration
+import com.example.kinopedia.utils.NavigationActionListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class FilterResultFragment : Fragment(), NavigationActionListener {
     private lateinit var binding: FragmentFilterResultBinding
     private val sharedViewModel: FilterViewModel by activityViewModels()
     private val adapter = FilterResultAdapter(this)
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 0, 30, 0)
-    private var isLoaded = false
-    private var page = 1
-    private var countryId = -1
-    private var genreId = -1
-    private var sortType = "RATING"
-    private var type = "ALL"
-    private var minRating = 0
-    private var maxRating = 10
-    private var selectedYearFrom = -1
-    private var selectedYearTo = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFilterResultBinding.inflate(inflater)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         bind()
+        observeViewModel()
         super.onViewCreated(view, savedInstanceState)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun bind(){
-        binding.apply {
-            viewModel = sharedViewModel
-            lifecycleOwner = viewLifecycleOwner
-            recyclerViewFilterResult.adapter = adapter
-            recyclerViewFilterResult.addOnScrollListener(listener)
-            backButton.setOnClickListener { findNavController().popBackStack() }
-            recyclerViewFilterResult.addItemDecoration(itemOffsetDecoration)
-            sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
-                adapter.submitList(it)
-                adapter.notifyDataSetChanged()
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            sharedViewModel.flowFilters.collectLatest {
+                adapter.submitData(it)
             }
-        }
-        getArgs()
-    }
-
-    private fun getArgs(){
-        countryId = arguments?.getInt("countryId")!!
-        genreId = arguments?.getInt("genreId")!!
-        sortType = arguments?.getString("sortType")!!
-        type = arguments?.getString("type")!!
-        minRating = arguments?.getInt("minRating")!!
-        maxRating = arguments?.getInt("maxRating")!!
-        selectedYearFrom = arguments?.getInt("selectedYearFrom")!!
-        selectedYearTo = arguments?.getInt("selectedYearTo")!!
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun loadNextItems(page: Int) {
-        val countryIds = if (countryId == -1) null else arrayOf(countryId)
-        val genreIds = if(genreId == -1) null else arrayOf(genreId)
-        sharedViewModel.loadNextItems(
-            countryIds,
-            genreIds,
-            sortType,
-            type,
-            "",
-            minRating,
-            maxRating,
-            selectedYearFrom,
-            selectedYearTo,
-            page
-        )
-        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-           // sharedViewModel.dataFilmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
-            binding.recyclerViewFilterResult.post{
-                adapter.notifyDataSetChanged()
-            }
-        }
-        Handler(Looper.getMainLooper()).postDelayed({
-            isLoaded = false
-        }, 500)
-    }
-
-    private val listener = object :
-        RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val totalItemCount = layoutManager.itemCount
-            val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-            if (!isLoaded) {
-                if (lastVisibleItemPosition == totalItemCount - 10 && page < sharedViewModel.pageCount) {
-                    isLoaded = true
-                    page++
-                    loadNextItems(page)
+            viewLifecycleOwner.lifecycleScope.launch {
+                adapter.loadStateFlow.collect {
+                    binding.listError.root.isVisible = it.refresh is LoadState.Error
+                    binding.listLoading.root.isVisible = it.refresh is LoadState.Loading
                 }
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun bind() {
+        binding.apply {
+            recyclerViewFilterResult.adapter = adapter.withLoadStateFooter(
+                FilterResultLoadingAdapter()
+            )
+            viewModel = sharedViewModel
+            lifecycleOwner = viewLifecycleOwner
+            backButton.setOnClickListener { findNavController().popBackStack() }
+            recyclerViewFilterResult.addItemDecoration(itemOffsetDecoration)
+        }
+    }
+
     override fun navigate(bundle: Bundle) {
         findNavController().navigate(
-            R.id.action_filterResultFragment_to_filmPageFragment,
-            bundle)
+            R.id.action_filterResultFragment_to_filmPageFragment, bundle
+        )
     }
 }
 
