@@ -1,71 +1,36 @@
 package com.example.kinopedia.ui.search.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.kinopedia.data.film.dto.FilmForAdapter
-import com.example.kinopedia.network.services.FilmApi
-import com.example.kinopedia.data.film.dto.KinopoiskFilm
-import com.example.kinopedia.network.services.LoadingStatus
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import com.example.kinopedia.factory.PagerSourceFactoryKeyWord
+import com.example.kinopedia.domain.usecase.GetTopFilmsSearchPageUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import javax.inject.Inject
 
-class SearchViewModel: ViewModel() {
-    var pageCount = 1
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    getTopFilmsSearchPageUseCase: GetTopFilmsSearchPageUseCase,
+    val factory: PagerSourceFactoryKeyWord
+) : ViewModel() {
 
-    private val _filmsByFilter = MutableLiveData<List<KinopoiskFilm>>()
-    val filmsByFilter: LiveData<List<KinopoiskFilm>> = _filmsByFilter
+    val flowTop = getTopFilmsSearchPageUseCase.pagedFlow.cachedIn(viewModelScope)
 
-    private val _statusTopFilm = MutableLiveData(LoadingStatus.DEFAULT)
-    val statusTopFilm: LiveData<LoadingStatus> = _statusTopFilm
+    private var keyWordFlow = MutableStateFlow("")
 
-    private val _statusSearchKeyWord = MutableLiveData(LoadingStatus.DONE)
-    val statusSearchKeyWord: LiveData<LoadingStatus> = _statusSearchKeyWord
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val flowKeyWord = keyWordFlow.flatMapLatest { newKeyWord ->
+        Pager(PagingConfig(20)) {
+            factory.create(newKeyWord)
+        }.flow
+    }.cachedIn(viewModelScope)
 
-    private val _topFilms = MutableLiveData<List<FilmForAdapter>>()
-    val topFilms: LiveData<List<FilmForAdapter>> = _topFilms
-
-    fun getFilmsByKeyWord(countries: Array<Int>?, genres: Array<Int>?, order: String, type: String,
-                          keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
-                          yearTo: Int, page: Int) =
-        viewModelScope.launch(Dispatchers.IO) {
-            _statusSearchKeyWord.postValue(LoadingStatus.LOADING)
-        try {
-            val list = FilmApi.retrofitService.getFilmByFilters(
-                countries, genres, order, type, keyword,
-                ratingFrom, ratingTo, yearFrom, yearTo, page)
-            _filmsByFilter.postValue(list.items)
-            pageCount = list.totalPages
-            _statusSearchKeyWord.postValue(LoadingStatus.DONE)
-           } catch (e: Exception){
-            _statusSearchKeyWord.postValue(LoadingStatus.ERROR)
-       }
-    }
-
-    fun getTopFilms() {
-        if (_topFilms.value.isNullOrEmpty()) {
-        viewModelScope.launch(Dispatchers.IO) {
-                _statusTopFilm.postValue(LoadingStatus.LOADING)
-                try {
-                    val list = FilmApi.retrofitService.getTopFilms()
-                    _topFilms.postValue(list.filmForAdapters)
-                    pageCount = list.pagesCount
-                    _statusTopFilm.postValue(LoadingStatus.DONE)
-                } catch (e: Exception) {
-                    _statusTopFilm.postValue(LoadingStatus.ERROR)
-                }
-            }
-        }
-    }
-    fun loadNextItems(countries: Array<Int>?, genres: Array<Int>?, order: String, type: String,
-                      keyword: String, ratingFrom: Int, ratingTo: Int, yearFrom: Int,
-                      yearTo: Int, page: Int) = viewModelScope.launch(Dispatchers.IO) {
-        val list = FilmApi.retrofitService.getFilmByFilters(
-            countries, genres, order, type, keyword,
-            ratingFrom, ratingTo, yearFrom, yearTo, page)
-        val currentList = _filmsByFilter.value?.toMutableList() ?: mutableListOf()
-        currentList.addAll(list.items)
-        _filmsByFilter.postValue(currentList.distinctBy{it.kinopoiskId})
+    fun updateKeyWord(newKeyWord: String){
+        keyWordFlow.value = newKeyWord
     }
 }

@@ -4,91 +4,100 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kinopedia.utils.NavigationActionListener
 import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentSearchResultBinding
+import com.example.kinopedia.ui.search.adapter.SearchResultAdapter
+import com.example.kinopedia.ui.search.adapter.SearchResultLoadingAdapter
 import com.example.kinopedia.ui.search.viewmodel.SearchViewModel
+import com.example.kinopedia.utils.NavigationActionListener
+import com.example.kinopedia.utils.OnRetryClickListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
+class SearchResultFragment : Fragment(), NavigationActionListener, OnRetryClickListener {
 
-class SearchResultFragment : Fragment(), NavigationActionListener {
-
-    private val sharedViewModel: SearchViewModel by viewModels()
+    private val sharedViewModel: SearchViewModel by activityViewModels()
     private lateinit var binding: FragmentSearchResultBinding
     private var adapter = SearchResultAdapter(this)
-    private var page = 1
-    private var keyWord = ""
-    private var isLoaded = false
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         (activity as AppCompatActivity).supportActionBar
+
         binding = FragmentSearchResultBinding.inflate(inflater, container, false)
-        if (sharedViewModel.filmsByFilter.value.isNullOrEmpty()){
-            val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
-                    as InputMethodManager
-           binding.searchButton.requestFocus()
-            inputMethodManager.showSoftInput(binding.searchButton, InputMethodManager.SHOW_IMPLICIT)
+        if (sharedViewModel.flowKeyWord.asLiveData().value == null) {
+            val inputMethodManager =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
+                        as InputMethodManager
+            binding.searchButtonSearchResult.requestFocus()
+            inputMethodManager.showSoftInput(
+                binding.searchButtonSearchResult,
+                InputMethodManager.SHOW_IMPLICIT
+            )
         }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         bind()
+        observeViewModel()
         search()
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun addItemDecoration(recyclerView: RecyclerView) {
-        recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
-                outRect.right = 30
-                outRect.top = 30
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            sharedViewModel.flowKeyWord.collectLatest {
+                adapter.submitData(it)
             }
-        })
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            adapter.loadStateFlow.collect {
+                binding.searchResultError.root.isVisible = it.refresh is LoadState.Error
+                binding.searchResultLoading.root.isVisible = it.refresh is LoadState.Loading
+            }
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     fun bind() {
-      val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
-            as InputMethodManager
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = sharedViewModel
-        binding.recyclerViewSearch.addOnScrollListener(listener)
+        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+        binding.recyclerViewSearch.adapter = adapter.withLoadStateFooter(
+            SearchResultLoadingAdapter(this)
+        )
         binding.backButton.setOnClickListener { findNavController().popBackStack() }
         binding.apply {
-            recyclerViewSearch.adapter = adapter
             addItemDecoration(recyclerViewSearch)
-            searchButton.isIconified = false
+            searchButtonSearchResult.isIconified = false
         }
-      binding.recyclerViewSearch.setOnTouchListener(
-
-         (View.OnTouchListener { v, event ->
+        binding.recyclerViewSearch.setOnTouchListener(
+            (View.OnTouchListener { v, event ->
                 v.performClick()
-                if(inputMethodManager.isActive){
-                    inputMethodManager.hideSoftInputFromWindow(binding.constraintLayout.windowToken, 0)
+                if (inputMethodManager.isActive) {
+                    inputMethodManager.hideSoftInputFromWindow(
+                        binding.constraintLayout.windowToken,
+                        0
+                    )
                 }
                 false
             })
@@ -96,25 +105,14 @@ class SearchResultFragment : Fragment(), NavigationActionListener {
     }
 
     private fun search() {
-        if (!sharedViewModel.filmsByFilter.value.isNullOrEmpty()){
-            binding.searchButton.clearFocus()
+        if (sharedViewModel.flowKeyWord.asLiveData().value != null) {
+            binding.searchButtonSearchResult.clearFocus()
         }
-        binding.searchButton.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.searchButtonSearchResult.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    keyWord = query
-                    sharedViewModel.getFilmsByKeyWord(
-                        null,
-                        null,
-                        "NUM_VOTE",
-                        "FILM",
-                        query,
-                        0,
-                        10,
-                        1800,
-                        9999,
-                        1
-                    )
+                    sharedViewModel.updateKeyWord(query)
                 }
                 return false
             }
@@ -125,55 +123,11 @@ class SearchResultFragment : Fragment(), NavigationActionListener {
             }
         })
 
-        binding.searchButton.setOnQueryTextFocusChangeListener { view, hasFocus ->
+        binding.searchButtonSearchResult.setOnQueryTextFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 val imm =
                     requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                 imm?.showSoftInput(view, 0)
-            }
-        }
-        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-
-        }
-    }
-    private fun loadNextItems(page: Int) {
-        sharedViewModel.loadNextItems(
-            null,
-            null,
-            "NUM_VOTE",
-            "FILM",
-            keyWord,
-            0,
-            10,
-            1800,
-            9999,
-            page
-        )
-        sharedViewModel.filmsByFilter.observe(viewLifecycleOwner) {
-            binding.recyclerViewSearch.post {
-                sharedViewModel.filmsByFilter.value?.let { it1 -> adapter.addAll(it1) }
-            }
-        }
-        Handler(Looper.getMainLooper()).postDelayed({
-            isLoaded = false
-        }, 500)
-    }
-
-    private val listener = object :
-        RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val totalItemCount = layoutManager.itemCount
-            val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-            if (!isLoaded) {
-                if (lastVisibleItemPosition == totalItemCount - 5 && page < sharedViewModel.pageCount) {
-                    isLoaded = true
-                    page++
-                    loadNextItems(page)
-                    Log.e("12", "12")
-                }
             }
         }
     }
@@ -181,4 +135,23 @@ class SearchResultFragment : Fragment(), NavigationActionListener {
     override fun navigate(bundle: Bundle) {
         findNavController().navigate(R.id.action_searchResultFragment_to_filmPageFragment, bundle)
     }
+
+    override fun retryLoading() {
+        adapter.retry()
+    }
+
+}
+
+private fun addItemDecoration(recyclerView: RecyclerView) {
+    recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+        override fun getItemOffsets(
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
+            outRect.right = 30
+            outRect.top = 30
+        }
+    })
 }
