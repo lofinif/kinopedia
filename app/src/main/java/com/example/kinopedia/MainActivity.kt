@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-    private lateinit var bottomNavigation: BottomNavigationView
+    lateinit var bottomNavigation: BottomNavigationView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +33,11 @@ class MainActivity : AppCompatActivity() {
 
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.navigation_home_graph, R.id.navigation_search_graph, R.id.navigation_favourite_graph)
+            setOf(
+                R.id.navigation_home_graph,
+                R.id.navigation_search_graph,
+                R.id.navigation_favourite_graph
+            )
         )
         navController.navigateUp(appBarConfiguration)
         NavigationUI.setupWithNavController(bottomNavigation, navController)
@@ -41,17 +45,12 @@ class MainActivity : AppCompatActivity() {
         navListener()
     }
 
-
-
-
-
-
-
     private fun nav() {
         bottomNavigation.setOnItemReselectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home_graph -> {
-                    if (navController.currentDestination?.id != item.itemId)
+                    if (navController.currentDestination?.id == R.id.navigation_home) {
+                    } else if (navController.currentDestination?.id != item.itemId)
                         navController.navigate(R.id.navigation_home, null, navOptions {
                             popUpTo(R.id.navigation_home_graph)
                         })
@@ -66,17 +65,21 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.navigation_favourite_graph -> {
                     if (navController.currentDestination?.id != item.itemId)
-                    navController.navigate(R.id.navigation_favourite, null, navOptions {
-                        popUpTo(R.id.navigation_favourite_graph)
-                    })
+                        navController.navigate(R.id.navigation_favourite, null, navOptions {
+                            popUpTo(R.id.navigation_favourite_graph)
+                        })
                 }
             }
         }
     }
 
-    private fun navListener(){
+    private fun navListener() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if(destination.id == R.id.nearestCinemaFragment) {
+            if (destination.id == R.id.nearestCinemaFragment
+                || destination.id == R.id.filterFragment
+                || destination.id == R.id.filterResultFragment
+                || destination.id == R.id.cinemaWelcomeFragment
+            ) {
                 bottomNavigation.visibility = View.GONE
             } else {
                 bottomNavigation.visibility = View.VISIBLE
