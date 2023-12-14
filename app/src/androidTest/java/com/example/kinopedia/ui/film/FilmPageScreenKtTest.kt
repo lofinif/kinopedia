@@ -8,14 +8,15 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.example.kinopedia.MainActivity
+import com.example.kinopedia.R
+import com.example.kinopedia.launchFragmentInHiltContainer
+import com.example.kinopedia.ui.film.view.FilmPageFragment
+import com.example.sharedtest.kinopoiskFilmMock
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import com.example.kinopedia.R
-import com.example.kinopedia.launchFragmentInHiltContainer
-import com.example.kinopedia.ui.film.view.FilmPageFragment
 
 @HiltAndroidTest
 class FilmPageScreenKtTest {
@@ -26,79 +27,97 @@ class FilmPageScreenKtTest {
     @get:Rule(order = 1)
     val testActivity = ActivityScenarioRule(MainActivity::class.java)
 
+    private val mock = kinopoiskFilmMock
+
     @Before
-    fun setup(){
+    fun setup() {
         hiltRule.inject()
         launchFragmentInHiltContainer<FilmPageFragment>()
     }
 
     @Test
-    fun posterBackgroundIsShownTest(){
-        launchFragmentInHiltContainer<FilmPageFragment>()
+    fun posterBackgroundIsShownTest() {
         onView(withId(R.id.poster_background)).check(matches(isDisplayed()))
     }
+
     @Test
-    fun posterIsShownTest(){
+    fun posterIsShownTest() {
         onView(withId(R.id.poster_movie)).check(matches(isDisplayed()))
     }
+
     @Test
-    fun nameMovieIsShownTest(){
-        onView(withText("NameRu")).check(matches(isDisplayed()))
+    fun nameMovieIsShownTest() {
+        onView(withText(mock.nameRu)).check(matches(isDisplayed()))
     }
+
     @Test
-    fun nameMovieOriginalIsShownTest(){
-        onView(withText("NameOriginal")).check(matches(isDisplayed()))
+    fun nameMovieOriginalIsShownTest() {
+        onView(withText(mock.nameOriginal)).check(matches(isDisplayed()))
     }
+
     @Test
-    fun detailsMovieIsShownTest(){
-        onView(withText("1999, genre, 123, country")).check(matches(isDisplayed()))
+    fun detailsMovieIsShownTest() {
+        onView(withText("${mock.year}, ${mock.genres[0].genre}, ${mock.filmLength}, ${mock.countries[0].country}")).check(
+            matches(isDisplayed())
+        )
     }
+
     @Test
-    fun descriptionMovieIsShownTest(){
-        onView(withText("description")).perform(scrollTo()).check(matches(isDisplayed()))
+    fun descriptionMovieIsShownTest() {
+        onView(withText(mock.description)).perform(scrollTo()).check(matches(isDisplayed()))
     }
+
     @Test
-    fun ratingImdbIsShownTest(){
-        onView(withText("9.9")).check(matches(isDisplayed()))
+    fun ratingImdbIsShownTest() {
+        onView(withText(mock.ratingImdb.toString())).check(matches(isDisplayed()))
     }
+
     @Test
-    fun ratingKinopoiskIsShownTest(){
-        onView(withText("2.3")).check(matches(isDisplayed()))
+    fun ratingKinopoiskIsShownTest() {
+        onView(withText(mock.ratingKinopoisk.toString())).check(matches(isDisplayed()))
     }
+
     @Test
-    fun ratingImdbLogoIsShownTest(){
+    fun ratingImdbLogoIsShownTest() {
         onView(withId(R.id.imdb_logo)).check(matches(isDisplayed()))
     }
+
     @Test
-    fun ratingKinopoiskLogoIsShownTest(){
+    fun ratingKinopoiskLogoIsShownTest() {
         onView(withId(R.id.kinopoisk_logo)).check(matches(isDisplayed()))
     }
+
     @Test
-    fun actorsIsShownTest(){
+    fun actorsIsShownTest() {
         onView(withText("nameRuActor1")).perform(scrollTo()).check(matches(isDisplayed()))
         onView(withText("nameRuActor2")).perform(scrollTo()).check(matches(isDisplayed()))
         onView(withText("nameRuActor3")).perform(scrollTo()).check(matches(isDisplayed()))
     }
+
     @Test
-    fun staffIsShownTest(){
+    fun staffIsShownTest() {
         onView(withText("nameRuStaff4")).perform(scrollTo()).check(matches(isDisplayed()))
         onView(withText("nameRuStaff5")).perform(scrollTo()).check(matches(isDisplayed()))
         onView(withText("nameRuStaff6")).perform(scrollTo()).check(matches(isDisplayed()))
     }
+
     @Test
-    fun similarIsShownTest(){
+    fun similarIsShownTest() {
         onView(withText("nameRu")).perform(scrollTo()).check(matches(isDisplayed()))
     }
+
     @Test
-    fun similarPosterIsShownTest(){
+    fun similarPosterIsShownTest() {
         onView(withId(R.id.poster_similar)).perform(scrollTo()).check(matches(isDisplayed()))
     }
+
     @Test
-    fun externalIsShownTest(){
+    fun externalIsShownTest() {
         onView(withText("platform")).perform(scrollTo()).check(matches(isDisplayed()))
     }
+
     @Test
-    fun externalLogoIsShownTest(){
+    fun externalLogoIsShownTest() {
         onView(withId(R.id.logo)).perform(scrollTo()).check(matches(isDisplayed()))
     }
 }
