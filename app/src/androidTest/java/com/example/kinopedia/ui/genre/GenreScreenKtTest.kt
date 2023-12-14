@@ -32,21 +32,15 @@ class GenreScreenKtTest {
     @Before
     fun setup() {
         hiltRule.inject()
-        launchFragmentInHiltContainer<GenreFragment>(Bundle().apply {
-            putInt(
-                "genreId" +
-                        "+-", 1
-            )
+        val args = Bundle().apply {
             putString("genre", "detective")
+            putInt("genreId", 1)
         }
-        )
+        launchFragmentInHiltContainer<GenreFragment>(args)
     }
 
     @Test
     fun filmItemDetailsIsShownTest() {
-        //   launchFragmentInHiltContainer<GenreFragment>(Bundle().apply { putInt("genre", 1) })
-
-        Thread.sleep(123123123)
 
         onView(withText(mock.displayName)).check(matches(isDisplayed()))
         onView(withText(mock.displayNameOriginal)).check(matches(isDisplayed()))
