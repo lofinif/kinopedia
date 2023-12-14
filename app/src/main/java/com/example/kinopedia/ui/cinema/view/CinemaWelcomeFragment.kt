@@ -82,8 +82,8 @@ class CinemaWelcomeFragment : Fragment() {
         if (sharedViewModel.city.value == null) {
             sharedViewModel.fetchCinemas(location.latitude, location.longitude)
         }
-        bundle.putDouble("latitude", location.latitude)
-        bundle.putDouble("longitude", location.longitude)
+        bundle.putDouble(getString(R.string.latitude), location.latitude)
+        bundle.putDouble(getString(R.string.longitude), location.longitude)
     }
 
     @Deprecated("Deprecated in Java")
@@ -99,7 +99,7 @@ class CinemaWelcomeFragment : Fragment() {
                 } else {
                     Toast.makeText(
                         requireContext(),
-                        "Нет разрешения на использование GPS",
+                        getString(R.string.no_permission_to_use_gps),
                         Toast.LENGTH_LONG
                     ).show()
                 }

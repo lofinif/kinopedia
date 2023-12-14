@@ -220,12 +220,12 @@ class FilmPageFragment : Fragment(), UpdateFilmCallBack {
 
     private fun buttonPressed() {
         binding.filmContent.buttonFavourite.setBackgroundResource(R.drawable.button_pressed)
-        binding.filmContent.buttonFavourite.text = "Удалить из избранного"
+        binding.filmContent.buttonFavourite.text = getString(R.string.delete_from_favourite)
     }
 
     private fun buttonUnpressed() {
         binding.filmContent.buttonFavourite.setBackgroundResource(R.drawable.button_unpressed)
-        binding.filmContent.buttonFavourite.text = "В избранное"
+        binding.filmContent.buttonFavourite.text = getString(R.string.add_to_favourite)
     }
 
     private fun formatDate(dateString: String): String {

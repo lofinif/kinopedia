@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
@@ -43,16 +42,6 @@ class SearchResultFragment : Fragment(), NavigationActionListener, OnRetryClickL
         (activity as AppCompatActivity).supportActionBar
 
         binding = FragmentSearchResultBinding.inflate(inflater, container, false)
-        if (sharedViewModel.flowKeyWord.asLiveData().value == null) {
-            val inputMethodManager =
-                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
-                        as InputMethodManager
-            binding.searchButtonSearchResult.requestFocus()
-            inputMethodManager.showSoftInput(
-                binding.searchButtonSearchResult,
-                InputMethodManager.SHOW_IMPLICIT
-            )
-        }
         return binding.root
     }
 
@@ -80,8 +69,7 @@ class SearchResultFragment : Fragment(), NavigationActionListener, OnRetryClickL
 
     @SuppressLint("ClickableViewAccessibility")
     fun bind() {
-        val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
-                as InputMethodManager
+        binding.searchButtonSearchResult.clearFocus()
         binding.recyclerViewSearch.adapter = adapter.withLoadStateFooter(
             SearchResultLoadingAdapter(this)
         )
@@ -92,6 +80,9 @@ class SearchResultFragment : Fragment(), NavigationActionListener, OnRetryClickL
         }
         binding.recyclerViewSearch.setOnTouchListener(
             (View.OnTouchListener { v, event ->
+                val inputMethodManager =
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)
+                            as InputMethodManager
                 v.performClick()
                 if (inputMethodManager.isActive) {
                     inputMethodManager.hideSoftInputFromWindow(
@@ -105,9 +96,6 @@ class SearchResultFragment : Fragment(), NavigationActionListener, OnRetryClickL
     }
 
     private fun search() {
-        if (sharedViewModel.flowKeyWord.asLiveData().value != null) {
-            binding.searchButtonSearchResult.clearFocus()
-        }
         binding.searchButtonSearchResult.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -125,9 +113,11 @@ class SearchResultFragment : Fragment(), NavigationActionListener, OnRetryClickL
 
         binding.searchButtonSearchResult.setOnQueryTextFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
-                val imm =
-                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.showSoftInput(view, 0)
+                if (binding.searchButtonSearchResult.query.isNullOrEmpty()) {
+                    val imm =
+                        requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+                    imm?.showSoftInput(view, 0)
+                }
             }
         }
     }
@@ -139,7 +129,6 @@ class SearchResultFragment : Fragment(), NavigationActionListener, OnRetryClickL
     override fun retryLoading() {
         adapter.retry()
     }
-
 }
 
 private fun addItemDecoration(recyclerView: RecyclerView) {
@@ -155,3 +144,4 @@ private fun addItemDecoration(recyclerView: RecyclerView) {
         }
     })
 }
+

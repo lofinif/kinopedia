@@ -31,6 +31,8 @@ class SearchFragment : Fragment(), NavigationActionListener, OnRetryClickListene
     private val itemOffsetDecoration = ItemOffsetDecoration(0, 30, 0, 0)
     private val adapter = SearchAdapter(this)
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,7 +49,6 @@ class SearchFragment : Fragment(), NavigationActionListener, OnRetryClickListene
 
         binding.searchError.tryAgain.setOnClickListener {
             adapter.refresh()
-            Log.e("SearchFragment", "try again")
         }
     }
 
@@ -62,7 +63,6 @@ class SearchFragment : Fragment(), NavigationActionListener, OnRetryClickListene
         }
         viewLifecycleOwner.lifecycleScope.launch {
             adapter.loadStateFlow.collect {
-                Log.e("searchTest", "state0")
                 binding.searchError.root.isVisible = it.refresh is LoadState.Error
                 binding.searchLoading.root.isVisible = it.refresh is LoadState.Loading
                 binding.searchContent.root.isVisible = it.refresh is LoadState.NotLoading

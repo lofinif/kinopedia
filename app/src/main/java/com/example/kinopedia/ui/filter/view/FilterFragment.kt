@@ -71,7 +71,7 @@ class FilterFragment : Fragment() {
         yearPickerTo.value = filterSettings.currentYear
 
 
-        title.text = "Год"
+        title.text = getString(R.string.year)
         title.setPadding(60, 40, 10, 10)
         title.setTextColor(ContextCompat.getColor(requireContext(), R.color.grey))
         title.textSize = 16f
@@ -79,7 +79,7 @@ class FilterFragment : Fragment() {
         val builder = AlertDialog.Builder(requireContext(), R.style.year_picker_style)
             .setView(dialogView)
             .setCustomTitle(title)
-            .setPositiveButton("Выбрать") { dialog, _ ->
+            .setPositiveButton(getString(R.string.select)) { dialog, _ ->
                 filterSettings.selectedYearFrom = yearPickerFrom.value
                 filterSettings.selectedYearTo = yearPickerTo.value
                 filterSettings.selectedYears =
@@ -87,10 +87,10 @@ class FilterFragment : Fragment() {
                 binding.selectedYear.text = filterSettings.selectedYears
                 dialog.dismiss()
             }
-            .setNegativeButton("Сбросить") { dialog, _ ->
+            .setNegativeButton(getString(R.string.reset)) { dialog, _ ->
                 filterSettings.selectedYearFrom = filterSettings.currentYear - 200
                 filterSettings.selectedYearTo = filterSettings.currentYear
-                binding.selectedYear.text = "любой"
+                binding.selectedYear.text = getString(R.string.any)
                 filterSettings.selectedYears = ""
                 dialog.dismiss()
             }
@@ -118,13 +118,13 @@ class FilterFragment : Fragment() {
             filterSettings.minRating = values[0].toInt()
             filterSettings.maxRating = values[1].toInt()
             if (filterSettings.minRating == 0 && filterSettings.maxRating == 10) binding.selectedRating.text =
-                "неважно"
+                getString(R.string.no_matter)
             else if (filterSettings.minRating == 0) binding.selectedRating.text =
                 "до ${filterSettings.maxRating}"
             else if (filterSettings.maxRating == 10) binding.selectedRating.text =
                 "от ${filterSettings.minRating}"
             else if (filterSettings.minRating == 0 && filterSettings.maxRating == 10) binding.selectedRating.text =
-                "неважно"
+                getString(R.string.no_matter)
             else binding.selectedRating.text =
                 "от ${filterSettings.minRating} до ${filterSettings.maxRating}"
         }
@@ -141,23 +141,23 @@ class FilterFragment : Fragment() {
         popupMenu.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.option1 -> {
-                    binding.sortBy.text = "рейтингу"
-                    filterSettings.sortType = "RATING"
-                    filterSettings.selectedSort = "рейтингу"
+                    binding.sortBy.text = getString(R.string.sort_by_rating)
+                    filterSettings.sortType = getString(R.string.rating_eng)
+                    filterSettings.selectedSort = getString(R.string.sort_by_rating)
                     true
                 }
 
                 R.id.option2 -> {
-                    binding.sortBy.text = "дате"
-                    filterSettings.sortType = "YEAR"
-                    filterSettings.selectedSort = "дате"
+                    binding.sortBy.text = getString(R.string.sort_by_date)
+                    filterSettings.sortType = getString(R.string.year_eng)
+                    filterSettings.selectedSort = getString(R.string.sort_by_date)
                     true
                 }
 
                 R.id.option3 -> {
-                    binding.sortBy.text = "популярности"
-                    filterSettings.sortType = "NUM_VOTE"
-                    filterSettings.selectedSort = "популярности"
+                    binding.sortBy.text = getString(R.string.sort_by_popular)
+                    filterSettings.sortType = getString(R.string.num_vote)
+                    filterSettings.selectedSort = getString(R.string.sort_by_popular)
                     true
                 }
 
@@ -223,7 +223,7 @@ class FilterFragment : Fragment() {
                     alertDialog.dismiss()
                 }
                 buttonResetGenres.setOnClickListener {
-                    binding.moreGenres.text = "все жанры"
+                    binding.moreGenres.text = getString(R.string.all_genres)
                     filterSettings.genreId = -1
                     filterSettings.selectedGenre = ""
 
@@ -300,7 +300,7 @@ class FilterFragment : Fragment() {
                     alertDialog.dismiss()
                 }
                 buttonResetCountries.setOnClickListener {
-                    binding.selectedCountry.text = "любая"
+                    binding.selectedCountry.text = getString(R.string.selected_country_any)
                     filterSettings.countryId = -1
                     filterSettings.selectedCountry = ""
                     alertDialog.dismiss()
@@ -318,12 +318,12 @@ class FilterFragment : Fragment() {
 
     private fun reset() {
         binding.apply {
-            selectedCountry.text = "любая"
-            filterSettings.sortType = "RATING"
-            sortBy.text = "рейтингу"
-            selectedRating.text = "неважно"
-            moreGenres.text = "все жанры"
-            selectedYear.text = "любой"
+            selectedCountry.text = getString(R.string.selected_country_any)
+            filterSettings.sortType = getString(R.string.rating_eng)
+            sortBy.text = getString(R.string.sort_by_rating)
+            selectedRating.text = getString(R.string.no_matter)
+            moreGenres.text = getString(R.string.all_genres)
+            selectedYear.text = getString(R.string.any)
             rangeSlider.setValues(0f, 10f)
             filterSettings.clearFilters()
         }

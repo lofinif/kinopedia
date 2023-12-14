@@ -24,6 +24,7 @@ class FilmPageAdapter<T>(private val updateFilmCallBack: UpdateFilmCallBack) :
     ListAdapter<T, RecyclerView.ViewHolder>(DiffUtilCallBack()) {
 
     companion object {
+        const val TAG = "FilmPageAdapter"
         const val TYPE_ACTORS = 0
         const val TYPE_SIMILAR = 1
         const val TYPE_EXTERNAL = 2
@@ -35,7 +36,7 @@ class FilmPageAdapter<T>(private val updateFilmCallBack: UpdateFilmCallBack) :
             is ExternalSourceModel -> TYPE_EXTERNAL
             is ActorFilmPageModel -> TYPE_ACTORS
             is FilmForAdapterModel -> TYPE_SIMILAR
-            else -> Log.e("FilmPageAdapter", "Unknown type")
+            else -> Log.e(TAG, "Unknown type")
         }
     }
 
@@ -79,7 +80,6 @@ class FilmPageAdapter<T>(private val updateFilmCallBack: UpdateFilmCallBack) :
     class ExternalViewHolder(private val binding: ExternalSourceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(externalSource: ExternalSourceModel) {
-            Log.e("bind", "bind")
             binding.platform.text = externalSource.displayPlatform
             binding.logo.setOnClickListener {
                 openWebPage(externalSource.url)
@@ -111,13 +111,11 @@ class FilmPageAdapter<T>(private val updateFilmCallBack: UpdateFilmCallBack) :
     }
 
     class SimilarViewHolder(
-        private val binding: FilmItemBinding,
-        updateFilmCallBack: UpdateFilmCallBack
+        private val binding: FilmItemBinding, updateFilmCallBack: UpdateFilmCallBack
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(film: FilmForAdapterModel, updateFilmCallBack: UpdateFilmCallBack) {
             Picasso.get().load(film.posterUrl).into(binding.posterSimilar)
             binding.nameMovie.text = film.displayName
-            Log.e("adapter", film.displayName.toString())
             binding.posterSimilar.setOnClickListener {
                 updateFilmCallBack.update(film.filmId)
             }

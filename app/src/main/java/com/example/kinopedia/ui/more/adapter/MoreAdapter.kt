@@ -19,6 +19,7 @@ class MoreAdapter<T : Any>(private val navigation: NavigationActionListener) : P
 ) {
 
     companion object{
+        const val TAG = "MoreAdapter"
         const val TYPE_PREMIER = 0
         const val TYPE_AWAIT_AND_COMING = 1
     }
@@ -64,7 +65,7 @@ class MoreAdapter<T : Any>(private val navigation: NavigationActionListener) : P
         return when (getItem(position)) {
             is FilmForAdapterModel -> TYPE_AWAIT_AND_COMING
             is ThisMonthFilmModel -> TYPE_PREMIER
-            else -> Log.e("HomeAdapter", "Unknown type")
+            else -> Log.e(TAG, "Unknown type")
         }
     }
 

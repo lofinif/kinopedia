@@ -3,7 +3,7 @@
     <string name="title_home">Главная</string>
     <string name="title_favorite">Избранное</string>
     <string name="title_search">Поиск</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <!-- Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="top_await">Ожидаемые новинки</string>
     <string name="categories">Категории</string>
@@ -40,9 +40,13 @@
     <string name="every">любая</string>
     <string name="all_genres">все жанры</string>
     <string name="country">Страна</string>
+    <string name="selected_country_any">любая</string>
     <string name="rating">Рейтинг</string>
     <string name="no_matter">неважно</string>
-    <string name="sort_by">Сортировать по</string>
+    <string name="num_vote">NUM_VOTE</string>
+=    <string name="sort_by">Сортировать по</string>
+    <string name="sort_by_date">дате</string>
+    <string name="sort_by_popular">популярности</string>
     <string name="sort_by_rating">рейтингу</string>
     <string name="show">Показать</string>
     <string name="collections">Подборки</string>
@@ -53,6 +57,8 @@
     <string name="collection_thriller">Триллеры</string>
     <string name="collection_horror">Ужасы</string>
     <string name="top_twenty">Топ 20</string>
+    <string name="select">Выбрать</string>
+    <string name="year_eng">YEAR</string>
     <string name="title_fragment_filter">Поиск по фильтрам</string>
     <string name="title_fragment_filter_result">Результаты поиска</string>
     <string name="to_favourite">В избранное</string>
@@ -60,6 +66,17 @@
     <string name="search_movies">Поиск фильмов</string>
     <string name="loading_error">Ошибка</string>
     <string name="try_again">Попробовать еще раз</string>
+    <string name="latitude">latitude</string>
+    <string name="longitude">longitude</string>
+    <string name="film_id_bundle">filmId</string>
+    <string name="wink">wink</string>
+    <string name="delete_from_favourite">Удалить из избранного</string>
+    <string name="add_to_favourite">В избранное</string>
+    <string name="rating_eng">RATING</string>
+    <string name="no_permission_to_use_gps">Нет разрешения на использование GPS</string>
+    <string name="cinemas">Кинотеатры</string>
+    <string name="city">Город</string>
+    <string name="premier_in_russia">Премьера в России:</string>
 
 
 </resources>

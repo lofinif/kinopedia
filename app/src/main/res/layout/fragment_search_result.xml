@@ -38,7 +38,7 @@
                 android:closeIcon="@drawable/baseline_close_24"
                 android:iconifiedByDefault="false"
                 android:queryBackground="@drawable/empty_background"
-                android:queryHint="Поиск фильмов"
+                android:queryHint="@string/search_movies"
                 android:searchIcon="@null" />
 
         </androidx.appcompat.widget.Toolbar>

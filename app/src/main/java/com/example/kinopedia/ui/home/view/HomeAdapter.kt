@@ -19,6 +19,7 @@ class HomeAdapter<T>(private val navigation: NavigationActionListener) :
     ListAdapter<T, RecyclerView.ViewHolder>(DiffUtilCallBack()) {
 
     companion object {
+        const val TAG = "HomeAdapter"
         const val TYPE_PREMIER = 0
         const val TYPE_AWAIT_AND_COMING = 1
     }
@@ -27,7 +28,7 @@ class HomeAdapter<T>(private val navigation: NavigationActionListener) :
         return when (getItem(position)) {
             is FilmForAdapterModel -> TYPE_AWAIT_AND_COMING
             is ThisMonthFilmModel -> TYPE_PREMIER
-            else -> Log.e("HomeAdapter", "Unknown type")
+            else -> Log.e(TAG, "Unknown type")
         }
     }
 

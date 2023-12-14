@@ -45,12 +45,12 @@ class GenreFragment : Fragment(), NavigationActionListener, OnRetryClickListener
 
     private fun genre() {
         when (GenreFragmentArgs.fromBundle(requireArguments()).genre) {
-            "drama" -> binding.titleToolbarGenre.text = "Драмы"
-            "thriller" -> binding.titleToolbarGenre.text = "Триллеры"
-            "comedy" -> binding.titleToolbarGenre.text = "Комедии"
-            "horror" -> binding.titleToolbarGenre.text = "Ужасы"
-            "fantasy" -> binding.titleToolbarGenre.text = "Фэнтези"
-            "detective" -> binding.titleToolbarGenre.text = "Детективы"
+            "drama" -> binding.titleToolbarGenre.text = getString(R.string.collection_drama)
+            "thriller" -> binding.titleToolbarGenre.text = getString(R.string.collection_thriller)
+            "comedy" -> binding.titleToolbarGenre.text = getString(R.string.collection_comedy)
+            "horror" -> binding.titleToolbarGenre.text = getString(R.string.collection_horror)
+            "fantasy" -> binding.titleToolbarGenre.text = getString(R.string.collection_fantasy)
+            "detective" -> binding.titleToolbarGenre.text = getString(R.string.collection_detective)
 
         }
     }

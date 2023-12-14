@@ -52,7 +52,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/button_filters"
                 app:layout_constraintStart_toStartOf="@+id/content_start"
                 app:layout_constraintTop_toTopOf="parent"
-                app:showAsAction="always"></Button>
+                app:showAsAction="always"/>
 
             <ImageButton
                 android:id="@+id/button_filters"
