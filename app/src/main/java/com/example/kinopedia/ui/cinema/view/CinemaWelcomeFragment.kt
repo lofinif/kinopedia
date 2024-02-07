@@ -17,6 +17,7 @@ import com.example.kinopedia.R
 import com.example.kinopedia.databinding.FragmentCinemaWelcomeBinding
 import com.example.kinopedia.ui.cinema.state.CinemaScreenState
 import com.example.kinopedia.ui.cinema.viewmodel.NearestCinemaViewModel
+import com.example.kinopedia.utils.EspressoIdlingResource
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -42,6 +43,7 @@ class CinemaWelcomeFragment : Fragment() {
     }
 
     private fun bind() {
+        EspressoIdlingResource.increment()
         sharedViewModel.setCallBack(::onLocationReceived)
         binding.cinemaContent.apply {
             recyclerViewCinemas.adapter = adapter
@@ -61,8 +63,12 @@ class CinemaWelcomeFragment : Fragment() {
         sharedViewModel.apply {
             sharedViewModel.screenState.observe(viewLifecycleOwner) {
                 binding.cinemaLoading.root.isVisible = it is CinemaScreenState.Loading
-                binding.cinemaContent.root.isVisible = it is CinemaScreenState.Loaded
                 binding.cinemaError.root.isVisible = it is CinemaScreenState.Error
+                binding.cinemaContent.root.isVisible = it is CinemaScreenState.Loaded
+                if (it is CinemaScreenState.Loaded){
+                    EspressoIdlingResource.decrement()
+                }
+
             }
             city.observe(viewLifecycleOwner) {
                 if (it != null) {
