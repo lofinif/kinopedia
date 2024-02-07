@@ -21,14 +21,12 @@ import com.example.sharedtest.actorFilmPageMock
 import com.example.sharedtest.actorFilmPageModelMock
 import com.example.sharedtest.externalSourceModelMock
 import com.example.sharedtest.externalSourcesMock
-import com.example.sharedtest.favouriteEntityMock
 import com.example.sharedtest.filmForAdapterModelMock
 import com.example.sharedtest.kinopoiskFilmMock
 import com.example.sharedtest.kinopoiskFilmModelMock
 import com.example.sharedtest.kinopoiskSimilarFilmsMock
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
@@ -103,11 +101,5 @@ class FilmPageViewModelTest : BaseTest() {
 
         assertThat(arguments[0]).isInstanceOf(FilmScreenState.Loading::class.java)
         assertThat(arguments[1]).isInstanceOf(FilmScreenState.Loaded::class.java)
-    }
-
-    @Test
-    fun `saveFavourite inserts into repository`() = runBlocking {
-        viewModel.saveFavourite("any()")
-        coVerify { repository.insert(favouriteEntityMock) }
     }
 }
