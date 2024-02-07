@@ -38,7 +38,7 @@ class PagingSourceSearchWithFilters @AssistedInject constructor(
             val fromPage = params.key ?: STARTING_PAGE
             val page = params.key ?: 1
             try {
-                val films = apiService.getFilmByFilters(
+                val result = apiService.getFilmByFilters(
                     countryId,
                     genreId,
                     filterSettings.sortType,
@@ -50,9 +50,9 @@ class PagingSourceSearchWithFilters @AssistedInject constructor(
                     filterSettings.selectedYearTo,
                     fromPage
                 )
-                val mappedUsers = films.items.map(mapper::map)
-                val nextKey = if (page < films.totalPages) page + 1 else null
-                LoadResult.Page(mappedUsers, null, nextKey)
+                val mappedFilms = result.items.map(mapper::map)
+                val nextKey = if (page < result.totalPages) page + 1 else null
+                LoadResult.Page(mappedFilms, null, nextKey)
             } catch (e: Exception) {
                 Log.e(TAG, "error while fetching data from kinopoisk api", e)
                 LoadResult.Error(e)

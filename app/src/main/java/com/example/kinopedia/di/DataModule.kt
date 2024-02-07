@@ -9,7 +9,6 @@ import com.example.kinopedia.data.cinema.dto.CinemaOSM
 import com.example.kinopedia.data.cinema.dto.CityOSM
 import com.example.kinopedia.data.dao.FavouriteDao
 import com.example.kinopedia.data.database.FavouriteDatabase
-import com.example.kinopedia.data.database.FavouriteDatabase.Companion.INSTANCE
 import com.example.kinopedia.data.favourite.FavouriteRepositoryImpl
 import com.example.kinopedia.data.favourite.dto.FavouriteEntity
 import com.example.kinopedia.data.film.ExternalSource
@@ -142,14 +141,9 @@ class DataModule {
     @Provides
     @Singleton
     fun provideDataBase(@ApplicationContext context: Context): FavouriteDatabase {
-        return INSTANCE ?: synchronized(this) {
-            val instance =
-                Room.databaseBuilder(context, FavouriteDatabase::class.java, "favourite_database")
+        return Room.databaseBuilder(context, FavouriteDatabase::class.java, "favourite_database")
                     .fallbackToDestructiveMigration().build()
-            INSTANCE = instance
-            instance
         }
-    }
 
     @Provides
     @Singleton

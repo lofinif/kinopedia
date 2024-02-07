@@ -47,6 +47,7 @@ class MoreFragment : Fragment(), NavigationActionListener, OnRetryClickListener 
     }
 
     private fun observeViewModelPopular() {
+        binding.moreToolbarTitle.text = getString(R.string.trending)
         binding.recyclerViewMore.adapter =
             adapterAwait.withLoadStateFooter(MoreLoadingAdapter(this))
         viewLifecycleOwner.lifecycleScope.launch {
@@ -65,6 +66,7 @@ class MoreFragment : Fragment(), NavigationActionListener, OnRetryClickListener 
     }
 
     private fun observeViewModelComingSoon() {
+        binding.moreToolbarTitle.text = getString(R.string.coming_soon)
         binding.recyclerViewMore.adapter =
             adapterAwait.withLoadStateFooter(MoreLoadingAdapter(this))
         viewLifecycleOwner.lifecycleScope.launch {
@@ -82,6 +84,7 @@ class MoreFragment : Fragment(), NavigationActionListener, OnRetryClickListener 
     }
 
     private fun observeViewModelPremier() {
+        binding.moreToolbarTitle.text = getString(R.string.premiers)
         binding.recyclerViewMore.adapter =
             adapterPremier.withLoadStateFooter(MoreLoadingAdapter(this))
         viewLifecycleOwner.lifecycleScope.launch {

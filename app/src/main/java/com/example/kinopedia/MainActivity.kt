@@ -9,8 +9,8 @@ import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.navigateUp
-import com.example.kinopedia.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.kinopedia.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-    lateinit var bottomNavigation: BottomNavigationView
+    private lateinit var bottomNavigation: BottomNavigationView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +77,6 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.nearestCinemaFragment
                 || destination.id == R.id.filterFragment
-                || destination.id == R.id.filterResultFragment
                 || destination.id == R.id.cinemaWelcomeFragment
             ) {
                 bottomNavigation.visibility = View.GONE

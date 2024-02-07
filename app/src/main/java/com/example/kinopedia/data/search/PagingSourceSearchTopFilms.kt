@@ -31,10 +31,10 @@ class PagingSourceSearchTopFilms(
             val fromPage = params.key ?: STARTING_PAGE
             val page = params.key ?: 1
             try {
-                val films = api.getTopFilms(fromPage)
-                val mappedUsers = films.films.map(mapper::map)
-                val nextKey = if (page < films.pagesCount) page + 1 else null
-                LoadResult.Page(mappedUsers, null, nextKey)
+                val result = api.getTopFilms(fromPage)
+                val mappedFilms = result.films.map(mapper::map)
+                val nextKey = if (page < result.pagesCount) page + 1 else null
+                LoadResult.Page(mappedFilms, null, nextKey)
             } catch (e: Exception) {
                 Log.e(TAG, "error while fetching data from kinopoisk api", e)
                 LoadResult.Error(e)

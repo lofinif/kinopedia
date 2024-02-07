@@ -34,10 +34,10 @@ class MorePagingSourcePremier (
         val fromPage = params.key ?: STARTING_PAGE
         val page = params.key ?: 1
         try {
-            val users = apiService.getFilmsThisMonth(year, month, fromPage)
-            val mappedUsers = users.items.map(mapper::map)
-            val nextKey = if (page < users.total) page + 1 else null
-            LoadResult.Page(mappedUsers, null, nextKey)
+            val result = apiService.getFilmsThisMonth(year, month, fromPage)
+            val mappedFilms = result.items.map(mapper::map)
+            val nextKey = if (page < result.total) page + 1 else null
+            LoadResult.Page(mappedFilms, null, nextKey)
         } catch (e: Exception){
             Log.e(TAG, "error while fetching data from kinopoisk api", e)
             LoadResult.Error(e)

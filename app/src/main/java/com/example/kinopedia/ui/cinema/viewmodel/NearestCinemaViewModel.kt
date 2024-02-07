@@ -47,6 +47,7 @@ class NearestCinemaViewModel @Inject constructor(
 
     fun fetchCinemas(latitude: Double, longitude: Double) {
         _screenState.value = CinemaScreenState.Loading
+        Log.e(TAG, "start fetching")
         viewModelScope.launch {
             when (val getCity = getCinemasInteractor.getCity(latitude, longitude)) {
                 is CallResult.Success -> {
@@ -57,14 +58,12 @@ class NearestCinemaViewModel @Inject constructor(
                             _cinemas.value = getCinemas.value.elements.map(mapperCinemas::map)
                             _screenState.value = CinemaScreenState.Loaded
                         }
-
                         else -> {
                             Log.e(TAG, "error fetching cinema overpass api")
                             _screenState.value = CinemaScreenState.Error
                         }
                     }
                 }
-
                 else -> {
                     Log.e(TAG, "error fetching city overpass api")
                     _screenState.value = CinemaScreenState.Error

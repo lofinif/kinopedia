@@ -7,9 +7,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.example.kinopedia.domain.usecase.GetCountriesGenresUseCase
-import com.example.kinopedia.domain.usecase.GetFilmsWithFiltersUseCase
 import com.example.kinopedia.factory.PagerSourceFactoryFilters
-import com.example.kinopedia.ui.film.model.KinopoiskFilmModel
 import com.example.kinopedia.ui.filter.mapper.FilterCountryToFilterCountryModelMapper
 import com.example.kinopedia.ui.filter.mapper.FilterGenreToFilterGenreModelMapper
 import com.example.kinopedia.ui.filter.model.FilterSettings
@@ -26,7 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class FilterViewModel @Inject constructor(
     getCountriesGenresUseCase: GetCountriesGenresUseCase,
-    getFilmsWithFiltersUseCase: GetFilmsWithFiltersUseCase,
     mapperCountry: FilterCountryToFilterCountryModelMapper,
     mapperGenre: FilterGenreToFilterGenreModelMapper,
     val factory: PagerSourceFactoryFilters
@@ -54,22 +51,13 @@ class FilterViewModel @Inject constructor(
         }.asLiveData()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val flowFilters by lazy {
-        filterSettings.flatMapLatest { settings ->
-            getFilmsWithFiltersUseCase.getFilmsWithFilters(providePager(factory, settings))
-                .cachedIn(viewModelScope)
-        }
-    }
+    val flowFilters = filterSettings.flatMapLatest { filterSettings ->
+        Pager(PagingConfig(20)) {
+            factory.create(filterSettings)
+        }.flow
+    }.cachedIn(viewModelScope)
 
     fun updateFilterSettings(filterSettings: FilterSettings) {
         _filterSettings.value = filterSettings
     }
-
-    private fun providePager(factory: PagerSourceFactoryFilters, filterSettings: FilterSettings):
-            Pager<Int, KinopoiskFilmModel> {
-        return Pager(PagingConfig(20)) {
-            factory.create(filterSettings)
-        }
-    }
-
 }

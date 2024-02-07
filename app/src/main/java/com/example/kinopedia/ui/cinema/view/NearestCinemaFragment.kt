@@ -38,7 +38,6 @@ class NearestCinemaFragment : Fragment() {
             sharedViewModel.latitude = it.getDouble("latitude", 0.0)
             sharedViewModel.longitude = it.getDouble("longitude", 0.0)
         }
-        Log.e("lotlan", "lat: ${sharedViewModel.latitude}, lon: ${sharedViewModel.longitude}")
         setupUI()
         return binding.root
     }
