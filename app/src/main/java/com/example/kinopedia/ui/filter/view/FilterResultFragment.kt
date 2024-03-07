@@ -1,6 +1,5 @@
 package com.example.kinopedia.ui.filter.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,16 +45,15 @@ class FilterResultFragment : Fragment(), NavigationActionListener {
             sharedViewModel.flowFilters.collectLatest {
                 adapter.submitData(it)
             }
-            viewLifecycleOwner.lifecycleScope.launch {
-                adapter.loadStateFlow.collect {
-                    binding.listError.root.isVisible = it.refresh is LoadState.Error
-                    binding.listLoading.root.isVisible = it.refresh is LoadState.Loading
-                }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            adapter.loadStateFlow.collect {
+                binding.listError.root.isVisible = it.refresh is LoadState.Error
+                binding.listLoading.root.isVisible = it.refresh is LoadState.Loading
             }
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun bind() {
         binding.apply {
             recyclerViewFilterResult.adapter = adapter.withLoadStateFooter(
