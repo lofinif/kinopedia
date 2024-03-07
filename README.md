@@ -6,7 +6,7 @@ Kinopedia is an application designed for convenient organization and management 
 ## Features:
 Movie Search: Search for movies based on various criteria such as title, genre, release year, and more.
 
-Theaters: Discover which theaters are available in your city, facilitating the planning of your cinematic outings.
+Cinemas: Discover which cinemas are available in your city, facilitating the planning of your cinematic outings.
 
 Collection Management: Easily add favorite movies to your collection or remove them at any time.
 
