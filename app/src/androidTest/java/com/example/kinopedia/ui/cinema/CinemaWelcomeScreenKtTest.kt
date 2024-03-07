@@ -51,6 +51,9 @@ class CinemaWelcomeScreenKtTest {
 
     @Test
     fun cityIsShown() {
+        /* IMPORTANT: This test may fail on an emulator due to the use of locationManager, which relies on the network_provider.
+         It is recommended to run the test on a real device for successful execution. */
+
         onView(withText(cityOSMMock.address.displayCity)).check(matches(isDisplayed()))
         onView(withText(cinemaOSMMock.tags!!.city)).check(matches(isDisplayed()))
         onView(withText(cinemaOSMMock.tags!!.address)).check(matches(isDisplayed()))
